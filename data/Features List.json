@@ -9,8 +9,8 @@
     "schema": {
         "item_fields": [
             "id",
-            "category",
             "title",
+            "category",
             "severity",
             "description",
             "risks",

@@ -4,7 +4,7 @@ A comprehensive WordPress Plugin for VAPT (Vulnerability Assessment and Penetrat
 
 ## Version
 
-1.0.0
+2.1.0
 
 ## Description
 
@@ -153,7 +153,7 @@ This plugin uses Semantic Versioning (Major.Minor.Patch):
 - **Minor**: New features that are backward compatible
 - **Patch**: Bug fixes and minor updates
 
-Current version: 1.0.0
+Current version: 2.1.0
 
 ## License
 
@@ -169,6 +169,13 @@ Email: tanmalik786@gmail.com
 For support, issues, or feature requests, please contact the author.
 
 ## Changelog
+
+### Version 2.1.0
+- **Sleek UI Overhaul**: Unified header with branded icons and systematic aesthetics.
+- **Ultra-Slim Filter Bar**: Optimized 28px controls for increased density.
+- **Stability Fixes**: Resolved dashboard loading hang and bracket hierarchy issues.
+- **Integrated Configuration**: Moved "Configure Columns" into the main unified header.
+- **Enhanced Performance**: Optimized React mounting and data fetching logic.
 
 ### Version 1.0.0
 - Initial release

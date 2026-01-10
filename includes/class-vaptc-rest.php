@@ -133,10 +133,27 @@ class VAPTC_REST
     }
 
     $content = file_get_contents($json_path);
-    $features = json_decode($content, true);
+    $raw_data = json_decode($content, true);
 
-    if (! is_array($features)) {
+    if (! is_array($raw_data)) {
       return new WP_REST_Response(array('error' => 'Invalid JSON format'), 400);
+    }
+
+    $features = [];
+    $schema = [];
+
+    if (isset($raw_data['wordpress_vapt']) && is_array($raw_data['wordpress_vapt'])) {
+      $features = $raw_data['wordpress_vapt'];
+      $schema = isset($raw_data['schema']) ? $raw_data['schema'] : [];
+    } else {
+      $features = $raw_data;
+    }
+
+    // Default schema if missing
+    if (empty($schema)) {
+      $schema = array(
+        'item_fields' => array('id', 'category', 'title', 'severity', 'description')
+      );
     }
 
     $statuses = VAPTC_DB::get_feature_statuses_full();
@@ -160,10 +177,15 @@ class VAPTC_REST
 
     // Merge with status and meta
     foreach ($features as &$feature) {
-      // Correct mapping: 'name' from JSON is the display label.
-      // Generate a stable 'key' by slugifying the name if not present.
-      $feature['label'] = isset($feature['name']) ? $feature['name'] : __('Unnamed Feature', 'vapt-master');
-      $key = isset($feature['key']) ? $feature['key'] : sanitize_title($feature['label']);
+      // Robust Title/Label mapping
+      $label = '';
+      if (isset($feature['title'])) $label = $feature['title'];
+      else if (isset($feature['name'])) $label = $feature['name'];
+      else $label = __('Unnamed Feature', 'vapt-master');
+
+      $feature['label'] = $label;
+
+      $key = isset($feature['id']) ? $feature['id'] : (isset($feature['key']) ? $feature['key'] : sanitize_title($label));
       $feature['key'] = $key;
 
       $st = isset($status_map[$key]) ? $status_map[$key] : array('status' => 'Draft', 'implemented_at' => null, 'assigned_to' => null);
@@ -179,7 +201,7 @@ class VAPTC_REST
         $feature['include_verification_engine'] = isset($meta['include_verification_engine']) ? (bool) $meta['include_verification_engine'] : false;
         $feature['is_enforced'] = (bool) $meta['is_enforced'];
         $feature['wireframe_url'] = $meta['wireframe_url'];
-        
+
         // Expose Verification Context for AI Prompt
         if (!empty($meta['verification_steps'])) $feature['verification_steps'] = $meta['verification_steps'];
         if (!empty($meta['test_method'])) $feature['test_method'] = $meta['test_method'];
@@ -343,7 +365,10 @@ class VAPTC_REST
       }));
     }
 
-    return new WP_REST_Response($features, 200);
+    return new WP_REST_Response(array(
+      'features' => $features,
+      'schema' => $schema
+    ), 200);
   }
 
   public function get_data_files()
@@ -406,11 +431,11 @@ class VAPTC_REST
       $schema = (is_array($generated_schema) || is_object($generated_schema))
         ? json_decode(json_encode($generated_schema), true) // Normalize to array
         : json_decode($generated_schema, true);
-      
+
       // Skip validation for legacy/auto-generated schema formats (type: 'wp_config', 'htaccess', 'manual', etc.)
       // These are temporary schemas that will be replaced with full schemas later
       $is_legacy_format = isset($schema['type']) && in_array($schema['type'], ['wp_config', 'htaccess', 'manual', 'complex_input']);
-      
+
       if (!$is_legacy_format) {
         // Validate only full schemas with controls array
         $validation = self::validate_schema($schema);
@@ -423,7 +448,7 @@ class VAPTC_REST
           ), 400);
         }
       }
-      
+
       $meta_updates['generated_schema'] = json_encode($schema);
     }
     if ($implementation_data !== null) $meta_updates['implementation_data'] = is_array($implementation_data) ? json_encode($implementation_data) : $implementation_data;
@@ -750,8 +775,9 @@ class VAPTC_REST
       if (!in_array($control['type'], $valid_types)) {
         return new WP_Error(
           'invalid_schema',
-          sprintf('Control at index %d has invalid type "%s". Valid types: %s', 
-            $index, 
+          sprintf(
+            'Control at index %d has invalid type "%s". Valid types: %s',
+            $index,
             $control['type'],
             implode(', ', $valid_types)
           ),
@@ -764,7 +790,8 @@ class VAPTC_REST
         if (empty($control['test_logic'])) {
           return new WP_Error(
             'invalid_schema',
-            sprintf('Test action control "%s" must have a "test_logic" field', 
+            sprintf(
+              'Test action control "%s" must have a "test_logic" field',
               $control['key'] ?? $index
             ),
             array('status' => 400)
@@ -795,7 +822,8 @@ class VAPTC_REST
       if (!in_array($schema['enforcement']['driver'], $valid_drivers)) {
         return new WP_Error(
           'invalid_schema',
-          sprintf('Invalid enforcement driver "%s". Valid drivers: %s',
+          sprintf(
+            'Invalid enforcement driver "%s". Valid drivers: %s',
             $schema['enforcement']['driver'],
             implode(', ', $valid_drivers)
           ),

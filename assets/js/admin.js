@@ -67,22 +67,64 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
     return;
   }
 
-  const FeatureList = ({ features, updateFeature, loading, dataFiles, selectedFile, onSelectFile, onUpload, allFiles, hiddenFiles, onUpdateHiddenFiles, isManageModalOpen, setIsManageModalOpen }) => {
+  const FeatureList = ({ features, schema, updateFeature, loading, dataFiles, selectedFile, onSelectFile, onUpload, allFiles, hiddenFiles, onUpdateHiddenFiles, isManageModalOpen, setIsManageModalOpen }) => {
+    const [columnOrder, setColumnOrder] = useState(() => {
+      const saved = localStorage.getItem(`vaptm_col_order_${selectedFile}`);
+      return saved ? JSON.parse(saved) : (schema?.item_fields || ['id', 'category', 'title', 'severity', 'description']);
+    });
+
+    const [visibleCols, setVisibleCols] = useState(() => {
+      const saved = localStorage.getItem(`vaptm_visible_cols_${selectedFile}`);
+      return saved ? JSON.parse(saved) : (schema?.item_fields || ['id', 'category', 'title', 'severity', 'description']);
+    });
+
+    // Update column defaults when schema changes if not already set
+    useEffect(() => {
+      if (!localStorage.getItem(`vaptm_col_order_${selectedFile}`) && schema?.item_fields) {
+        setColumnOrder(schema.item_fields);
+        setVisibleCols(schema.item_fields);
+      }
+    }, [schema, selectedFile]);
+
+    // Effective columns to show in table
+    const activeCols = columnOrder.filter(c => visibleCols.includes(c));
+
+    useEffect(() => {
+      localStorage.setItem(`vaptm_col_order_${selectedFile}`, JSON.stringify(columnOrder));
+      localStorage.setItem(`vaptm_visible_cols_${selectedFile}`, JSON.stringify(visibleCols));
+    }, [columnOrder, visibleCols, selectedFile]);
+
     const [filterStatus, setFilterStatus] = useState(() => localStorage.getItem('vaptm_filter_status') || 'all');
     const [selectedCategories, setSelectedCategories] = useState(() => {
       const saved = localStorage.getItem('vaptm_selected_categories');
       return saved ? JSON.parse(saved) : [];
     });
+    const [selectedSeverities, setSelectedSeverities] = useState(() => {
+      const saved = localStorage.getItem('vaptm_selected_severities');
+      return saved ? JSON.parse(saved) : [];
+    });
     const [sortBy, setSortBy] = useState(() => localStorage.getItem('vaptm_sort_by') || 'name');
+    const [sortOrder, setSortOrder] = useState(() => localStorage.getItem('vaptm_sort_order') || 'asc');
     const [searchQuery, setSearchQuery] = useState(() => localStorage.getItem('vaptm_search_query') || '');
+
+    const toggleSort = (key) => {
+      if (sortBy === key) {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortBy(key);
+        setSortOrder('asc');
+      }
+    };
 
     // Persist filters
     useEffect(() => {
       localStorage.setItem('vaptm_filter_status', filterStatus);
       localStorage.setItem('vaptm_selected_categories', JSON.stringify(selectedCategories));
+      localStorage.setItem('vaptm_selected_severities', JSON.stringify(selectedSeverities));
       localStorage.setItem('vaptm_sort_by', sortBy);
+      localStorage.setItem('vaptm_sort_order', sortOrder);
       localStorage.setItem('vaptm_search_query', searchQuery);
-    }, [filterStatus, selectedCategories, sortBy, searchQuery]);
+    }, [filterStatus, selectedCategories, selectedSeverities, sortBy, sortOrder, searchQuery]);
 
     const [historyFeature, setHistoryFeature] = useState(null);
     const [designFeature, setDesignFeature] = useState(null);
@@ -121,8 +163,33 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
 
     // 1. Analytics (Moved below filtering for scope)
 
-    // 2. Extract Categories
+    // 2. Extract Categories & Severities & All Keys
     const categories = [...new Set(features.map(f => f.category))].filter(Boolean).sort();
+    const severities = [...new Set(features.map(f => f.severity))].filter(Boolean);
+    const severityOrder = ['critical', 'high', 'medium', 'low', 'informational'];
+    const uniqueSeverities = [...new Set(severities.map(s => s.toLowerCase()))]
+      .sort((a, b) => severityOrder.indexOf(a) - severityOrder.indexOf(b))
+      .map(s => {
+        const map = {
+          'critical': 'Critical',
+          'high': 'High',
+          'medium': 'Medium',
+          'low': 'Low',
+          'informational': 'Informational'
+        };
+        return map[s] || (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
+      });
+
+    // Collect all available keys from features data
+    const allKeys = [...new Set(features.reduce((acc, f) => [...acc, ...Object.keys(f)], []))].filter(k => !['key', 'label', 'status', 'has_history', 'include_test_method', 'include_verification', 'include_verification_engine', 'wireframe_url', 'generated_schema'].includes(k));
+
+    // Update columnOrder if new keys are found that aren't in there
+    useEffect(() => {
+      const missingKeys = allKeys.filter(k => !columnOrder.includes(k));
+      if (missingKeys.length > 0) {
+        setColumnOrder([...columnOrder, ...missingKeys]);
+      }
+    }, [allKeys, columnOrder]);
 
     // 3. Filter & Sort
     let processedFeatures = [...features];
@@ -130,6 +197,12 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
     // Category Filter First
     if (selectedCategories.length > 0) {
       processedFeatures = processedFeatures.filter(f => selectedCategories.includes(f.category));
+    }
+
+    // Severity Filter (Case-Insensitive)
+    if (selectedSeverities.length > 0) {
+      const lowSelected = selectedSeverities.map(s => s.toLowerCase());
+      processedFeatures = processedFeatures.filter(f => f.severity && lowSelected.includes(f.severity.toLowerCase()));
     }
 
     const stats = {
@@ -160,17 +233,30 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
     }
 
     processedFeatures.sort((a, b) => {
-      if (sortBy === 'name') return (a.name || a.label).localeCompare(b.name || b.label);
-      if (sortBy === 'status') {
+      const nameA = (a.name || a.label || '').toLowerCase();
+      const nameB = (b.name || b.label || '').toLowerCase();
+      const catA = (a.category || '').toLowerCase();
+      const catB = (b.category || '').toLowerCase();
+
+      const sevPriority = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1, 'informational': 0 };
+      const sevA = sevPriority[(a.severity || '').toLowerCase()] || 0;
+      const sevB = sevPriority[(b.severity || '').toLowerCase()] || 0;
+
+      let comparison = 0;
+      if (sortBy === 'name' || sortBy === 'title') comparison = nameA.localeCompare(nameB);
+      else if (sortBy === 'category') comparison = catA.localeCompare(catB);
+      else if (sortBy === 'severity') comparison = sevA - sevB;
+      else if (sortBy === 'status') {
         const priority = {
           'Release': 4, 'release': 4, 'implemented': 4,
           'Test': 3, 'test': 3,
           'Develop': 2, 'develop': 2, 'in_progress': 2,
           'Draft': 1, 'draft': 1, 'available': 1
         };
-        return (priority[b.status] || 0) - (priority[a.status] || 0);
+        comparison = (priority[a.status] || 0) - (priority[b.status] || 0);
       }
-      return 0;
+
+      return sortOrder === 'asc' ? comparison : -comparison;
     });
 
     // History Modal Component
@@ -591,28 +677,173 @@ Please provide ONLY the JSON block.`;
     };
 
     return el(PanelBody, { title: __('Exhaustive Feature List', 'vapt-Copilot'), initialOpen: true }, [
-      // Top Controls
-      el('div', { key: 'controls', style: { marginBottom: '20px', background: '#f6f7f7', padding: '15px', borderRadius: '4px', border: '1px solid #dcdcde' } }, [
-        // Source Selection
-        el('div', { style: { display: 'flex', gap: '20px', alignItems: 'flex-end', marginBottom: '15px' } }, [
-          el('div', { style: { flexGrow: 1, display: 'flex', gap: '10px', alignItems: 'flex-end' } }, [
-            el('div', { style: { flexGrow: 1 } }, el(SelectControl, {
-              label: __('Feature Source (JSON)', 'vapt-Copilot'),
-              value: selectedFile,
-              options: dataFiles,
-              onChange: (val) => onSelectFile(val)
-            })),
+      // Top Controls & Unified Header
+      el('div', { key: 'controls', style: { marginBottom: '10px' } }, [
+        // Unified Header Block (Source, Columns, Manage, Upload)
+        el('div', {
+          style: {
+            display: 'flex',
+            gap: '12px',
+            background: '#f6f7f7',
+            padding: '10px 15px',
+            borderRadius: '4px',
+            border: '1px solid #dcdcde',
+            marginBottom: '10px',
+            alignItems: 'center'
+          }
+        }, [
+          // Branded Icon
+          el('div', {
+            style: {
+              background: '#2271b1',
+              color: '#fff',
+              borderRadius: '3px',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+            }
+          }, el(Icon, { icon: 'layout', size: 18 })),
+
+          // Feature Source Selection
+          el('div', { style: { flexGrow: 1 } }, el(SelectControl, {
+            label: el('span', { style: { fontSize: '9px', fontWeight: '600', textTransform: 'uppercase', color: '#666', letterSpacing: '0.02em', marginBottom: '2px', display: 'block' } }, __('Feature Source (JSON)', 'vapt-Copilot')),
+            value: selectedFile,
+            options: dataFiles,
+            onChange: (val) => onSelectFile(val),
+            style: { margin: 0, height: '30px', minHeight: '30px', fontSize: '13px' }
+          })),
+
+          // Configure Columns Dropdown
+          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
+            el(Dropdown, {
+              renderToggle: ({ isOpen, onToggle }) => el(Button, {
+                isSecondary: true,
+                icon: 'admin-appearance', // Use layout/gear like icon
+                onClick: onToggle,
+                'aria-expanded': isOpen,
+                label: __('Configure Columns', 'vapt-Copilot'),
+                style: { height: '30px', minHeight: '30px', width: '30px', border: '1px solid #2271b1', color: '#2271b1' }
+              }),
+              renderContent: () => {
+                const activeFields = columnOrder.filter(c => visibleCols.includes(c));
+                const availableFields = columnOrder.filter(c => !visibleCols.includes(c));
+                const half = Math.ceil(availableFields.length / 2);
+                const availableCol1 = availableFields.slice(0, half);
+                const availableCol2 = availableFields.slice(half);
+
+                return el('div', { style: { padding: '20px', width: '850px' } }, [
+                  el('h4', { style: { marginTop: 0, marginBottom: '5px' } }, __('Configure Table Columns', 'vapt-Copilot')),
+                  el('p', { style: { fontSize: '12px', color: '#666', marginBottom: '20px' } }, __('Confirm the table sequence and add/remove fields.', 'vapt-Copilot')),
+                  el('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(280px, 1.2fr) 1fr 1fr', gap: '25px' } }, [
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#2271b1', fontWeight: 'bold' } }, __('Active Table Sequence', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        activeFields.map((field, activeIdx) => {
+                          const masterIdx = columnOrder.indexOf(field);
+                          return el('div', { key: field, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#f0f6fb', borderRadius: '4px', border: '1px solid #c8d7e1' } }, [
+                            el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+                              el('span', { style: { fontSize: '10px', fontWeight: 'bold', color: '#72777c', minWidth: '20px' } }, `#${activeIdx + 1}`),
+                              el(CheckboxControl, {
+                                label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                                checked: true,
+                                onChange: () => setVisibleCols(visibleCols.filter(c => c !== field)),
+                                style: { margin: 0 }
+                              })
+                            ]),
+                            el('div', { style: { display: 'flex', gap: '2px' } }, [
+                              el(Button, {
+                                isSmall: true, icon: 'arrow-up-alt2', disabled: masterIdx === 0,
+                                onClick: (e) => {
+                                  e.stopPropagation();
+                                  const next = [...columnOrder];
+                                  [next[masterIdx], next[masterIdx - 1]] = [next[masterIdx - 1], next[masterIdx]];
+                                  setColumnOrder(next);
+                                }
+                              }),
+                              el(Button, {
+                                isSmall: true, icon: 'arrow-down-alt2', disabled: masterIdx === columnOrder.length - 1,
+                                onClick: (e) => {
+                                  e.stopPropagation();
+                                  const next = [...columnOrder];
+                                  [next[masterIdx], next[masterIdx + 1]] = [next[masterIdx + 1], next[masterIdx]];
+                                  setColumnOrder(next);
+                                }
+                              })
+                            ])
+                          ]);
+                        })
+                      )
+                    ]),
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields I', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        availableCol1.map((field) => (
+                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
+                            el(CheckboxControl, {
+                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                              checked: false,
+                              onChange: () => setVisibleCols([...visibleCols, field]),
+                              style: { margin: 0 }
+                            })
+                          ])
+                        ))
+                      )
+                    ]),
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields II', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        availableCol2.map((field) => (
+                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
+                            el(CheckboxControl, {
+                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                              checked: false,
+                              onChange: () => setVisibleCols([...visibleCols, field]),
+                              style: { margin: 0 }
+                            })
+                          ])
+                        ))
+                      )
+                    ])
+                  ]),
+                  el('div', { style: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
+                    el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
+                    el(Button, {
+                      isLink: true, isDestructive: true,
+                      onClick: () => {
+                        const defaultFields = schema?.item_fields || ['id', 'category', 'title', 'severity', 'description'];
+                        setColumnOrder(defaultFields);
+                        setVisibleCols(defaultFields);
+                      }
+                    }, __('Reset to Factory Defaults', 'vapt-Copilot'))
+                  ])
+                ]);
+              }
+            })
+          ]),
+
+          // Manage Sources Trigger
+          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
             el(Button, {
               isSecondary: true,
               icon: 'admin-settings',
               onClick: () => setIsManageModalOpen(true),
-              label: __('Manage JSON Sources', 'vapt-Copilot'),
-              style: { marginBottom: '8px' }
+              label: __('Manage Sources', 'vapt-Copilot'),
+              style: { height: '30px', minHeight: '30px', width: '30px', border: '1px solid #2271b1', color: '#2271b1' }
             })
           ]),
-          el('div', null, [
-            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '4px' } }, __('Upload New Features', 'vapt-Copilot')),
-            el('input', { type: 'file', accept: '.json', onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]) })
+
+          // Upload Section
+          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', flexDirection: 'column' } }, [
+            el('label', { style: { fontSize: '9px', fontWeight: '600', textTransform: 'uppercase', color: '#666', letterSpacing: '0.02em', marginBottom: '2px' } }, __('Upload New Features', 'vapt-Copilot')),
+            el('input', {
+              type: 'file',
+              accept: '.json',
+              onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]),
+              style: { fontSize: '11px', color: '#555' }
+            })
           ])
         ]),
 
@@ -640,114 +871,187 @@ Please provide ONLY the JSON block.`;
             el(Button, { isPrimary: true, onClick: () => setIsManageModalOpen(false) }, __('Close', 'vapt-Copilot'))
           ])
         ]),
-        // Analytics Bar
-        el('div', { style: { display: 'flex', gap: '15px', padding: '10px', background: '#fff', border: '1px solid #c3c4c7', borderRadius: '4px', marginBottom: '15px', alignItems: 'center', flexWrap: 'wrap' } }, [
-          el('span', { style: { fontWeight: 'bold' } }, __('Summary:', 'vapt-Copilot')),
-          el('span', { className: 'vaptm-badge-total' }, sprintf(__('Total: %d', 'vapt-Copilot'), stats.total)),
-          el('span', { className: 'vaptm-badge-draft', style: { color: '#666' } }, sprintf(__('Draft: %d', 'vapt-Copilot'), stats.draft)),
-          el('span', { className: 'vaptm-badge-develop', style: { color: '#d63638' } }, sprintf(__('Develop: %d', 'vapt-Copilot'), stats.develop)),
-          el('span', { className: 'vaptm-badge-test', style: { color: '#dba617' } }, sprintf(__('Test: %d', 'vapt-Copilot'), stats.test)),
-          el('span', { className: 'vaptm-badge-release', style: { color: 'green', fontWeight: 'bold' } }, sprintf(__('Release: %d', 'vapt-Copilot'), stats.release)),
-        ]),
-        // Filters & Sort
-        el('div', { style: { display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'flex-end' } }, [
-          el('div', { style: { flex: '1 1 200px' } }, el(TextControl, {
-            label: __('Search Features', 'vapt-Copilot'),
+
+        // Summary Pill Row
+        el('div', {
+          style: {
+            display: 'flex',
+            gap: '15px',
+            padding: '6px 15px',
+            background: '#fff',
+            border: '1px solid #dcdcde',
+            borderRadius: '4px',
+            marginBottom: '10px',
+            alignItems: 'center',
+            fontSize: '11px',
+            color: '#333'
+          }
+        }, [
+          el('span', { style: { fontWeight: '700', textTransform: 'uppercase', fontSize: '10px', color: '#666' } }, __('Summary:', 'vapt-Copilot')),
+          el('span', { style: { fontWeight: '500' } }, sprintf(__('Total: %d', 'vapt-Copilot'), stats.total)),
+          el('span', { style: { opacity: 0.7 } }, sprintf(__('Draft: %d', 'vapt-Copilot'), stats.draft)),
+          el('span', { style: { color: '#d63638', fontWeight: '600' } }, sprintf(__('Develop: %d', 'vapt-Copilot'), stats.develop)),
+          el('span', { style: { color: '#dba617', fontWeight: '600' } }, sprintf(__('Test: %d', 'vapt-Copilot'), stats.test)),
+          el('span', { style: { color: '#46b450', fontWeight: '700' } }, sprintf(__('Release: %d', 'vapt-Copilot'), stats.release)),
+        ])
+      ]),
+      // Filters Row (Ultra-Slim)
+      el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'nowrap', alignItems: 'stretch', marginBottom: '15px' } }, [
+        // Search Box
+        el('div', { style: { flex: '1 1 180px', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Search Features', 'vapt-Copilot')),
+          el(TextControl, {
             value: searchQuery,
             onChange: setSearchQuery,
-            placeholder: __('Search by name or description...', 'vapt-Copilot')
-          })),
+            placeholder: __('Search...', 'vapt-Copilot'),
+            hideLabelFromVision: true,
+            style: { margin: 0, height: '28px', minHeight: '28px', fontSize: '12px' }
+          })
+        ]),
 
-          // Category Dropdown with Checkboxes (Wrapped in BaseControl for alignment)
-          el('div', { style: { flex: '0 0 auto' } }, [
-            el(BaseControl, {
-              label: __('Filter by Category', 'vapt-Copilot'),
-              id: 'vaptm-category-filter',
-              className: 'vaptm-category-control'
-            },
-              el(Dropdown, {
-                renderToggle: ({ isOpen, onToggle }) => el(Button, {
-                  isSecondary: true,
-                  onClick: onToggle,
-                  'aria-expanded': isOpen,
-                  icon: 'filter',
-                  style: { height: '30px', minHeight: '30px', width: '100%', justifyContent: 'space-between' } // Match SelectControl height
-                }, selectedCategories.length === 0 ? __('All Categories', 'vapt-Copilot') : sprintf(__('%d Selected', 'vapt-Copilot'), selectedCategories.length)),
-                renderContent: () => el('div', { style: { padding: '15px', minWidth: '250px', maxHeight: '300px', overflowY: 'auto' } }, [
-                  // All Categories Option
-                  el(CheckboxControl, {
-                    label: __('All Categories', 'vapt-Copilot'),
-                    checked: selectedCategories.length === 0,
-                    onChange: () => setSelectedCategories([])
-                  }),
-                  el('hr', { style: { margin: '10px 0' } }),
-                  // Individual Categories
-                  ...categories.map(cat => el(CheckboxControl, {
-                    key: cat,
-                    label: cat,
-                    checked: selectedCategories.includes(cat),
-                    onChange: (isChecked) => {
-                      if (isChecked) {
-                        setSelectedCategories([...selectedCategories, cat]);
-                      } else {
-                        setSelectedCategories(selectedCategories.filter(c => c !== cat));
-                      }
-                    }
-                  }))
-                ])
-              })
-            )
-          ]),
+        // Category Unit
+        el('div', { style: { flex: '0 0 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '150px' } }, [
+          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Category', 'vapt-Copilot')),
+          el(Dropdown, {
+            renderToggle: ({ isOpen, onToggle }) => el(Button, {
+              isSecondary: true,
+              onClick: onToggle,
+              'aria-expanded': isOpen,
+              icon: 'filter',
+              style: {
+                height: '28px',
+                minHeight: '28px',
+                width: '100%',
+                justifyContent: 'flex-start',
+                gap: '6px',
+                borderColor: '#2271b1',
+                color: '#2271b1',
+                background: '#fff',
+                fontSize: '11px',
+                padding: '0 8px'
+              }
+            }, selectedCategories.length === 0 ? __('All Categories', 'vapt-Copilot') : sprintf(__('%d Selected', 'vapt-Copilot'), selectedCategories.length)),
+            renderContent: () => el('div', { style: { padding: '15px', minWidth: '250px', maxHeight: '300px', overflowY: 'auto' } }, [
+              el(CheckboxControl, {
+                label: __('All Categories', 'vapt-Copilot'),
+                checked: selectedCategories.length === 0,
+                onChange: () => setSelectedCategories([])
+              }),
+              el('hr', { style: { margin: '10px 0' } }),
+              ...categories.map(cat => el(CheckboxControl, {
+                key: cat,
+                label: cat,
+                checked: selectedCategories.includes(cat),
+                onChange: (isChecked) => {
+                  if (isChecked) setSelectedCategories([...selectedCategories, cat]);
+                  else setSelectedCategories(selectedCategories.filter(c => c !== cat));
+                }
+              }))
+            ])
+          })
+        ]),
 
-          el('div', { style: { flex: '1 1 auto', background: '#f0f0f1', padding: '10px 15px', borderRadius: '6px', border: '1px solid #dcdcde' } }, [
-            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', fontSize: '11px', color: '#555' } }, __('Filter by Lifecycle Status', 'vapt-Copilot')),
-            el('div', { style: { display: 'flex', gap: '15px', flexWrap: 'wrap' } },
-              [
-                { label: __('All', 'vapt-Copilot'), value: 'all' },
-                { label: __('Draft', 'vapt-Copilot'), value: 'draft' },
-                { label: __('Develop', 'vapt-Copilot'), value: 'develop' },
-                { label: __('Test', 'vapt-Copilot'), value: 'test' },
-                { label: __('Release', 'vapt-Copilot'), value: 'release' },
-              ].map(opt => el('label', { key: opt.value, style: { display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', fontSize: '13px' } }, [
-                el('input', {
-                  type: 'radio',
-                  name: 'vaptm_filter_status',
-                  value: opt.value,
-                  checked: filterStatus === opt.value,
-                  onChange: (e) => setFilterStatus(e.target.value),
-                  style: { margin: 0 }
-                }),
-                opt.label
-              ])))
-          ]),
-          el('div', { style: { flex: '1 1 150px' } }, el(SelectControl, {
-            label: __('Sort By', 'vapt-Copilot'),
-            value: sortBy,
-            options: [
-              { label: __('Name (A-Z)', 'vapt-Copilot'), value: 'name' },
-              { label: __('Status (Priority)', 'vapt-Copilot'), value: 'status' },
-            ],
-            onChange: setSortBy
-          }))
+        // Severity Unit
+        el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Severity', 'vapt-Copilot')),
+          el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
+            uniqueSeverities.map(sev => el(CheckboxControl, {
+              key: sev,
+              label: sev,
+              checked: selectedSeverities.some(s => s.toLowerCase() === sev.toLowerCase()),
+              onChange: (val) => {
+                const lowSev = sev.toLowerCase();
+                if (val) setSelectedSeverities([...selectedSeverities, sev]);
+                else setSelectedSeverities(selectedSeverities.filter(s => s.toLowerCase() !== lowSev));
+              },
+              style: { margin: 0, fontSize: '11px' }
+            }))
+          )
+        ]),
+
+        // Lifecycle Unit
+        el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Lifecycle Status', 'vapt-Copilot')),
+          el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
+            [
+              { label: __('All', 'vapt-Copilot'), value: 'all' },
+              { label: __('Draft', 'vapt-Copilot'), value: 'draft' },
+              { label: __('Develop', 'vapt-Copilot'), value: 'develop' },
+              { label: __('Test', 'vapt-Copilot'), value: 'test' },
+              { label: __('Release', 'vapt-Copilot'), value: 'release' },
+            ].map(opt => el('label', { key: opt.value, style: { display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '11px' } }, [
+              el('input', {
+                type: 'radio',
+                name: 'vaptm_filter_status',
+                value: opt.value,
+                checked: filterStatus === opt.value,
+                onChange: (e) => setFilterStatus(e.target.value),
+                style: { margin: 0, width: '14px', height: '14px' }
+              }),
+              opt.label
+            ])))
         ])
       ]),
 
       loading ? el(Spinner, { key: 'loader' }) : el('table', { key: 'table', className: 'wp-list-table widefat fixed striped vaptm-feature-table' }, [
         el('thead', null, el('tr', null, [
-          el('th', { style: { width: '280px', whiteSpace: 'nowrap' } }, __('Feature Name', 'vapt-Copilot')),
-          el('th', { style: { width: '100px' } }, __('Category', 'vapt-Copilot')),
-          el('th', null, __('Description', 'vapt-Copilot')),
+          ...activeCols.map(col => {
+            const label = col.charAt(0).toUpperCase() + col.slice(1).replace(/_/g, ' ');
+            let width = 'auto';
+            if (col === 'title' || col === 'name') width = '280px';
+            if (col === 'category') width = '150px';
+            if (col === 'severity') width = '100px';
+            if (col === 'id') width = '150px';
+
+            const isSortable = ['title', 'name', 'category', 'severity'].includes(col);
+            const isActive = sortBy === col || (col === 'title' && sortBy === 'name');
+
+            return el('th', {
+              key: col,
+              onClick: isSortable ? () => toggleSort(col === 'title' ? 'name' : col) : null,
+              style: {
+                width,
+                whiteSpace: 'nowrap',
+                cursor: isSortable ? 'pointer' : 'default',
+                background: isActive ? '#f0f6fb' : 'inherit',
+                position: 'relative',
+                paddingRight: isSortable ? '10px' : '10px',
+                paddingLeft: isSortable ? '30px' : '10px'
+              },
+              className: isSortable ? 'vaptm-sortable-header' : ''
+            }, [
+              isSortable && el('span', {
+                style: {
+                  position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
+                  opacity: isActive ? 1 : 0.3,
+                  color: isActive ? '#2271b1' : '#72777c'
+                }
+              }, el(Icon, {
+                icon: isActive
+                  ? (sortOrder === 'asc' ? 'arrow-up' : 'arrow-down')
+                  : 'sort'
+              })),
+              label
+            ]);
+          }),
           el('th', { style: { width: '380px' } }, __('Lifecycle Status', 'vapt-Copilot')),
-          el('th', { style: { width: '150px' } }, __('Updated', 'vapt-Copilot')),
           el('th', { style: { width: '180px' } }, __('Include', 'vapt-Copilot')),
         ])),
         el('tbody', null, processedFeatures.map((f) => el(Fragment, { key: f.key }, [
           el('tr', null, [
-            el('td', { style: { width: '280px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, [
-              el('strong', null, f.label)
-            ]),
-            el('td', null, f.category),
-            el('td', null, f.description),
+            ...activeCols.map(col => {
+              let content = f[col] || '-';
+              if (col === 'title' || col === 'label' || col === 'name') {
+                content = el('strong', null, f.label || f.title || f.name);
+              } else if (col === 'severity') {
+                const s = (f[col] || '').toLowerCase();
+                const map = { 'critical': 'Critical', 'high': 'High', 'medium': 'Medium', 'low': 'Low', 'informational': 'Informational' };
+                content = map[s] || (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
+              } else if (col === 'implemented_at' && f[col]) {
+                content = new Date(f[col]).toLocaleString();
+              }
+              return el('td', { key: col }, content);
+            }),
             el('td', { style: { display: 'flex', gap: '10px', alignItems: 'center' } }, [
               el(LifecycleIndicator, {
                 feature: f,
@@ -769,36 +1073,57 @@ Please provide ONLY the JSON block.`;
                 style: { marginLeft: '10px', opacity: f.has_history ? 1 : 0.4 }
               })
             ]),
-            el('td', null, f.implemented_at ? new Date(f.implemented_at).toLocaleString() : '-'),
-            el('td', { className: 'vaptm-support-cell' }, el('div', { style: { display: 'flex', flexDirection: 'column', gap: '0px' } }, [
-              el(ToggleControl, {
-                label: __('Test Method', 'vapt-Copilot'),
-                checked: f.include_test_method,
-                disabled: ['Draft', 'draft', 'available'].includes(f.status),
-                onChange: (val) => updateFeature(f.key, { include_test_method: val }),
-                style: { marginBottom: '0px' }
-              }),
-              el(ToggleControl, {
-                label: __('Verification Steps', 'vapt-Copilot'),
-                checked: f.include_verification,
-                disabled: ['Draft', 'draft', 'available'].includes(f.status),
-                onChange: (val) => updateFeature(f.key, { include_verification: val }),
-                style: { marginBottom: '0px' }
-              }),
-              el(ToggleControl, {
-                label: __('Verification Engine', 'vapt-Copilot'),
-                checked: f.include_verification_engine,
-                disabled: ['Draft', 'draft', 'available'].includes(f.status),
-                onChange: (val) => updateFeature(f.key, { include_verification_engine: val }),
-                style: { marginBottom: '0px', color: '#d63638' },
-                help: __('Enable 2-Column Test Workbench', 'vapt-Copilot')
-              }),
-              !['Draft', 'draft', 'available'].includes(f.status) && el(Button, {
-                isSecondary: true, isSmall: true,
-                icon: 'external',
+            el('td', { className: 'vaptm-support-cell', style: { verticalAlign: 'middle' } }, el('div', { style: { display: 'flex', gap: '4px', alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap' } }, [
+              // Pill Group for Include unit
+              el('div', {
+                onClick: () => updateFeature(f.key, { include_test_method: !f.include_test_method }),
+                title: __('Toggle Test Method', 'vapt-Copilot'),
+                style: {
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '0.05em',
+                  background: f.include_test_method ? '#2271b1' : '#f0f0f1',
+                  color: f.include_test_method ? '#fff' : '#72777c',
+                  opacity: ['Draft', 'draft', 'available'].includes(f.status) ? 0.3 : 1,
+                  pointerEvents: ['Draft', 'draft', 'available'].includes(f.status) ? 'none' : 'auto',
+                  border: '1px solid', borderColor: f.include_test_method ? '#2271b1' : '#dcdcde'
+                }
+              }, __('TEST', 'vapt-Copilot')),
+
+              el('div', {
+                onClick: () => updateFeature(f.key, { include_verification: !f.include_verification }),
+                title: __('Toggle Verification Steps', 'vapt-Copilot'),
+                style: {
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '0.05em',
+                  background: f.include_verification ? '#2271b1' : '#f0f0f1',
+                  color: f.include_verification ? '#fff' : '#72777c',
+                  opacity: ['Draft', 'draft', 'available'].includes(f.status) ? 0.3 : 1,
+                  pointerEvents: ['Draft', 'draft', 'available'].includes(f.status) ? 'none' : 'auto',
+                  border: '1px solid', borderColor: f.include_verification ? '#2271b1' : '#dcdcde'
+                }
+              }, __('STEPS', 'vapt-Copilot')),
+
+              el('div', {
+                onClick: () => updateFeature(f.key, { include_verification_engine: !f.include_verification_engine }),
+                title: __('Toggle Verification Engine', 'vapt-Copilot'),
+                style: {
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '0.05em',
+                  background: f.include_verification_engine ? '#d63638' : '#f0f0f1',
+                  color: f.include_verification_engine ? '#fff' : '#d63638',
+                  opacity: ['Draft', 'draft', 'available'].includes(f.status) ? 0.3 : 1,
+                  pointerEvents: ['Draft', 'draft', 'available'].includes(f.status) ? 'none' : 'auto',
+                  border: '1px solid', borderColor: f.include_verification_engine ? '#d63638' : '#dcdcde'
+                }
+              }, __('ENG', 'vapt-Copilot')),
+
+              !['Draft', 'draft', 'available'].includes(f.status) && el('div', {
                 onClick: () => setDesignFeature(f),
-                style: { marginTop: '5px', width: '100%', justifyContent: 'center' }
-              }, __('Open Design Hub...', 'vapt-Copilot'))
+                title: __('Open Design Hub', 'vapt-Copilot'),
+                style: {
+                  cursor: 'pointer', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold', letterSpacing: '0.05em',
+                  background: '#f0f0f1',
+                  color: '#2271b1',
+                  border: '1px solid #2271b1'
+                }
+              }, __('HUB', 'vapt-Copilot'))
             ]))
           ]),
           // Interface Preview removed from grid view per user request
@@ -820,12 +1145,14 @@ Please provide ONLY the JSON block.`;
       designFeature && el(DesignModal, {
         feature: designFeature,
         onClose: () => setDesignFeature(null)
-      })
+      }),
+
     ]);
   };
 
   const VAPTMAdmin = () => {
     const [features, setFeatures] = useState([]);
+    const [schema, setSchema] = useState({ item_fields: [] });
     const [domains, setDomains] = useState([]);
     const [dataFiles, setDataFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(() => localStorage.getItem('vaptm_selected_file') || 'features-with-test-methods.json');
@@ -856,9 +1183,10 @@ Please provide ONLY the JSON block.`;
         .catch(err => { console.error('VAPT Master: Data files fetch error:', err); return []; });
 
       return Promise.all([fetchFeatures, fetchDomains, fetchDataFiles])
-        .then(([featureData, domainData, files]) => {
+        .then(([res, domainData, files]) => {
           const cleanedFiles = (files || []).map(f => ({ ...f, label: (f.label || f.filename).replace(/_/g, ' ') }));
-          setFeatures(featureData || []);
+          setFeatures(res.features || []);
+          setSchema(res.schema || { item_fields: [] });
           setDomains(domainData || []);
           setDataFiles(cleanedFiles);
           setLoading(false);
@@ -1203,6 +1531,7 @@ Please provide ONLY the JSON block.`;
         switch (tab.name) {
           case 'features': return el(FeatureList, {
             features,
+            schema,
             updateFeature,
             loading,
             dataFiles,
