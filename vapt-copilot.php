@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 2.1.0
+ * Version: 2.1.1
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin Constants (Copilot-specific)
-define('VAPTC_VERSION', '2.1.0');
+define('VAPTC_VERSION', '2.1.1');
 define('VAPTC_PATH', plugin_dir_path(__FILE__));
 define('VAPTC_URL', plugin_dir_url(__FILE__));
 define('VAPTC_SUPERADMIN_EMAIL', 'tanmalik786@gmail.com');

@@ -692,137 +692,129 @@ Please provide ONLY the JSON block.`;
             alignItems: 'center'
           }
         }, [
-          // Branded Icon
-          el('div', {
-            style: {
-              background: '#2271b1',
-              color: '#fff',
-              borderRadius: '3px',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          // Branded Icon with Configure Columns Dropdown
+          el(Dropdown, {
+            renderToggle: ({ isOpen, onToggle }) => el('div', {
+              onClick: onToggle,
+              style: {
+                cursor: 'pointer',
+                background: '#2271b1',
+                color: '#fff',
+                borderRadius: '3px',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+              },
+              'aria-expanded': isOpen,
+              title: __('Configure Table Columns', 'vapt-Copilot')
+            }, el(Icon, { icon: 'layout', size: 18 })),
+            renderContent: () => {
+              const activeFields = columnOrder.filter(c => visibleCols.includes(c));
+              const availableFields = columnOrder.filter(c => !visibleCols.includes(c));
+              const half = Math.ceil(availableFields.length / 2);
+              const availableCol1 = availableFields.slice(0, half);
+              const availableCol2 = availableFields.slice(half);
+
+              return el('div', { style: { padding: '20px', width: '850px' } }, [
+                el('h4', { style: { marginTop: 0, marginBottom: '5px' } }, __('Configure Table Columns', 'vapt-Copilot')),
+                el('p', { style: { fontSize: '12px', color: '#666', marginBottom: '20px' } }, __('Confirm the table sequence and add/remove fields.', 'vapt-Copilot')),
+                el('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(280px, 1.2fr) 1fr 1fr', gap: '25px' } }, [
+                  el('div', null, [
+                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#2271b1', fontWeight: 'bold' } }, __('Active Table Sequence', 'vapt-Copilot')),
+                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                      activeFields.map((field, activeIdx) => {
+                        const masterIdx = columnOrder.indexOf(field);
+                        return el('div', { key: field, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#f0f6fb', borderRadius: '4px', border: '1px solid #c8d7e1' } }, [
+                          el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+                            el('span', { style: { fontSize: '10px', fontWeight: 'bold', color: '#72777c', minWidth: '20px' } }, `#${activeIdx + 1}`),
+                            el(CheckboxControl, {
+                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                              checked: true,
+                              onChange: () => setVisibleCols(visibleCols.filter(c => c !== field)),
+                              style: { margin: 0 }
+                            })
+                          ]),
+                          el('div', { style: { display: 'flex', gap: '2px' } }, [
+                            el(Button, {
+                              isSmall: true, icon: 'arrow-up-alt2', disabled: masterIdx === 0,
+                              onClick: (e) => {
+                                e.stopPropagation();
+                                const next = [...columnOrder];
+                                [next[masterIdx], next[masterIdx - 1]] = [next[masterIdx - 1], next[masterIdx]];
+                                setColumnOrder(next);
+                              }
+                            }),
+                            el(Button, {
+                              isSmall: true, icon: 'arrow-down-alt2', disabled: masterIdx === columnOrder.length - 1,
+                              onClick: (e) => {
+                                e.stopPropagation();
+                                const next = [...columnOrder];
+                                [next[masterIdx], next[masterIdx + 1]] = [next[masterIdx + 1], next[masterIdx]];
+                                setColumnOrder(next);
+                              }
+                            })
+                          ])
+                        ]);
+                      })
+                    )
+                  ]),
+                  el('div', null, [
+                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields I', 'vapt-Copilot')),
+                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                      availableCol1.map((field) => (
+                        el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
+                          el(CheckboxControl, {
+                            label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                            checked: false,
+                            onChange: () => setVisibleCols([...visibleCols, field]),
+                            style: { margin: 0 }
+                          })
+                        ])
+                      ))
+                    )
+                  ]),
+                  el('div', null, [
+                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields II', 'vapt-Copilot')),
+                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                      availableCol2.map((field) => (
+                        el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
+                          el(CheckboxControl, {
+                            label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                            checked: false,
+                            onChange: () => setVisibleCols([...visibleCols, field]),
+                            style: { margin: 0 }
+                          })
+                        ])
+                      ))
+                    )
+                  ])
+                ]),
+                el('div', { style: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
+                  el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
+                  el(Button, {
+                    isLink: true, isDestructive: true,
+                    onClick: () => {
+                      const defaultFields = schema?.item_fields || ['id', 'category', 'title', 'severity', 'description'];
+                      setColumnOrder(defaultFields);
+                      setVisibleCols(defaultFields);
+                    }
+                  }, __('Reset to Factory Defaults', 'vapt-Copilot'))
+                ])
+              ]);
             }
-          }, el(Icon, { icon: 'layout', size: 18 })),
+          }),
 
           // Feature Source Selection
-          el('div', { style: { flexGrow: 1 } }, el(SelectControl, {
+          el('div', { style: { flexGrow: 1, paddingLeft: '12px' } }, el(SelectControl, {
             label: el('span', { style: { fontSize: '9px', fontWeight: '600', textTransform: 'uppercase', color: '#666', letterSpacing: '0.02em', marginBottom: '2px', display: 'block' } }, __('Feature Source (JSON)', 'vapt-Copilot')),
             value: selectedFile,
             options: dataFiles,
             onChange: (val) => onSelectFile(val),
             style: { margin: 0, height: '30px', minHeight: '30px', fontSize: '13px' }
           })),
-
-          // Configure Columns Dropdown
-          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
-            el(Dropdown, {
-              renderToggle: ({ isOpen, onToggle }) => el(Button, {
-                isSecondary: true,
-                icon: 'admin-appearance', // Use layout/gear like icon
-                onClick: onToggle,
-                'aria-expanded': isOpen,
-                label: __('Configure Columns', 'vapt-Copilot'),
-                style: { height: '30px', minHeight: '30px', width: '30px', border: '1px solid #2271b1', color: '#2271b1' }
-              }),
-              renderContent: () => {
-                const activeFields = columnOrder.filter(c => visibleCols.includes(c));
-                const availableFields = columnOrder.filter(c => !visibleCols.includes(c));
-                const half = Math.ceil(availableFields.length / 2);
-                const availableCol1 = availableFields.slice(0, half);
-                const availableCol2 = availableFields.slice(half);
-
-                return el('div', { style: { padding: '20px', width: '850px' } }, [
-                  el('h4', { style: { marginTop: 0, marginBottom: '5px' } }, __('Configure Table Columns', 'vapt-Copilot')),
-                  el('p', { style: { fontSize: '12px', color: '#666', marginBottom: '20px' } }, __('Confirm the table sequence and add/remove fields.', 'vapt-Copilot')),
-                  el('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(280px, 1.2fr) 1fr 1fr', gap: '25px' } }, [
-                    el('div', null, [
-                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#2271b1', fontWeight: 'bold' } }, __('Active Table Sequence', 'vapt-Copilot')),
-                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                        activeFields.map((field, activeIdx) => {
-                          const masterIdx = columnOrder.indexOf(field);
-                          return el('div', { key: field, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#f0f6fb', borderRadius: '4px', border: '1px solid #c8d7e1' } }, [
-                            el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
-                              el('span', { style: { fontSize: '10px', fontWeight: 'bold', color: '#72777c', minWidth: '20px' } }, `#${activeIdx + 1}`),
-                              el(CheckboxControl, {
-                                label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                                checked: true,
-                                onChange: () => setVisibleCols(visibleCols.filter(c => c !== field)),
-                                style: { margin: 0 }
-                              })
-                            ]),
-                            el('div', { style: { display: 'flex', gap: '2px' } }, [
-                              el(Button, {
-                                isSmall: true, icon: 'arrow-up-alt2', disabled: masterIdx === 0,
-                                onClick: (e) => {
-                                  e.stopPropagation();
-                                  const next = [...columnOrder];
-                                  [next[masterIdx], next[masterIdx - 1]] = [next[masterIdx - 1], next[masterIdx]];
-                                  setColumnOrder(next);
-                                }
-                              }),
-                              el(Button, {
-                                isSmall: true, icon: 'arrow-down-alt2', disabled: masterIdx === columnOrder.length - 1,
-                                onClick: (e) => {
-                                  e.stopPropagation();
-                                  const next = [...columnOrder];
-                                  [next[masterIdx], next[masterIdx + 1]] = [next[masterIdx + 1], next[masterIdx]];
-                                  setColumnOrder(next);
-                                }
-                              })
-                            ])
-                          ]);
-                        })
-                      )
-                    ]),
-                    el('div', null, [
-                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields I', 'vapt-Copilot')),
-                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                        availableCol1.map((field) => (
-                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
-                            el(CheckboxControl, {
-                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                              checked: false,
-                              onChange: () => setVisibleCols([...visibleCols, field]),
-                              style: { margin: 0 }
-                            })
-                          ])
-                        ))
-                      )
-                    ]),
-                    el('div', null, [
-                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields II', 'vapt-Copilot')),
-                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                        availableCol2.map((field) => (
-                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
-                            el(CheckboxControl, {
-                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                              checked: false,
-                              onChange: () => setVisibleCols([...visibleCols, field]),
-                              style: { margin: 0 }
-                            })
-                          ])
-                        ))
-                      )
-                    ])
-                  ]),
-                  el('div', { style: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
-                    el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
-                    el(Button, {
-                      isLink: true, isDestructive: true,
-                      onClick: () => {
-                        const defaultFields = schema?.item_fields || ['id', 'category', 'title', 'severity', 'description'];
-                        setColumnOrder(defaultFields);
-                        setVisibleCols(defaultFields);
-                      }
-                    }, __('Reset to Factory Defaults', 'vapt-Copilot'))
-                  ])
-                ]);
-              }
-            })
-          ]),
 
           // Manage Sources Trigger
           el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
@@ -1049,6 +1041,20 @@ Please provide ONLY the JSON block.`;
                 content = map[s] || (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase());
               } else if (col === 'implemented_at' && f[col]) {
                 content = new Date(f[col]).toLocaleString();
+              } else if (col === 'references' && Array.isArray(f[col])) {
+                content = el('ul', { style: { margin: 0, padding: 0, listStyle: 'none' } },
+                  f[col].map((ref, idx) => el('li', { key: idx, style: { fontSize: '11px', marginBottom: '2px' } },
+                    el('a', { href: ref.url, target: '_blank', rel: 'noopener noreferrer' },
+                      ref.name || ref.url
+                    )
+                  ))
+                );
+              } else if (Array.isArray(f[col])) {
+                content = el('div', { style: { fontSize: '11px' } }, f[col].map((item, idx) => el('span', { key: idx, className: 'vaptm-pill-compact' },
+                  typeof item === 'object' ? JSON.stringify(item) : String(item)
+                )));
+              } else if (typeof f[col] === 'object' && f[col] !== null) {
+                content = el('pre', { style: { fontSize: '10px', margin: 0, background: '#f0f0f0', padding: '4px' } }, JSON.stringify(f[col], null, 2));
               }
               return el('td', { key: col }, content);
             }),
@@ -1125,8 +1131,7 @@ Please provide ONLY the JSON block.`;
                 }
               }, __('HUB', 'vapt-Copilot'))
             ]))
-          ]),
-          // Interface Preview removed from grid view per user request
+          ])
         ])))
       ]),
 
