@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 1.6.7
+ * Version: 2.0.0
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin Constants (Copilot-specific)
-define('VAPTC_VERSION', '1.6.7');
+define('VAPTC_VERSION', '2.0.0');
 define('VAPTC_PATH', plugin_dir_path(__FILE__));
 define('VAPTC_URL', plugin_dir_url(__FILE__));
 define('VAPTC_SUPERADMIN_EMAIL', 'tanmalik786@gmail.com');
@@ -213,6 +213,7 @@ if (! function_exists('vaptc_manual_db_fix')) {
         $wpdb->query("ALTER TABLE $meta_table ADD COLUMN generated_schema LONGTEXT DEFAULT NULL");
       }
 
+      $col_data = $wpdb->get_results("SHOW COLUMNS FROM $meta_table LIKE 'implementation_data'");
       if (empty($col_data)) {
         $wpdb->query("ALTER TABLE $meta_table ADD COLUMN implementation_data LONGTEXT DEFAULT NULL");
       }
@@ -560,14 +561,6 @@ if (! function_exists('vaptc_master_dashboard_page')) {
   function vaptc_master_dashboard_page()
   {
     if (! VAPTC_Auth::is_authenticated()) {
-      if (isset($_POST['vaptc_verify_otp'])) {
-        VAPTC_Auth::verify_otp();
-        // If verification successful, page will reload, so return for now
-        if (VAPTC_Auth::is_authenticated()) {
-          echo '<script>window.location.reload();</script>';
-          return;
-        }
-      }
       if (! get_transient('vaptc_otp_email_' . VAPTC_SUPERADMIN_USER)) {
         VAPTC_Auth::send_otp();
       }

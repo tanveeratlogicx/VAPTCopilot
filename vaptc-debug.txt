@@ -1,0 +1,30 @@
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":3}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-10 07:33:14
+Feature: 
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules...

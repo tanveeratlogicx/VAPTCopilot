@@ -212,5 +212,3 @@ class VAPTC_Auth
 <?php
   }
 }
-
-new VAPTC_Auth();
