@@ -1,0 +1,2014 @@
+[
+  {
+    "name": "WordPress Version Disclosure",
+    "description": "Checks if the WordPress version is publicly visible via generator tags, readme files, or error messages, which can help attackers target known vulnerabilities.",
+    "category": "Information Disclosure",
+    "severity": "low",
+    "owasp": "A6:2021-Vulnerable and Outdated Components",
+    "test_method": "Manual inspection & automated scanning",
+    "verification_steps": [
+      "1. View page source and search for 'generator' meta tag",
+      "2. Access /readme.html and check for version number",
+      "3. Trigger error by accessing non-existent page, check if version appears",
+      "4. Use wpscan or similar tool: `wpscan --url http://example.com --enumerate vp`",
+      "5. Check REST API endpoints: `/wp-json/wp/v2` may return version"
+    ],
+    "remediation": "Add to wp-config.php: `remove_action('wp_head', 'wp_generator');`. Delete readme.html. Configure server to not reveal version in errors."
+  },
+  {
+    "name": "Weak Password Policy Enforcement",
+    "description": "Tests if the application enforces strong password policies including minimum length, complexity requirements, and prevents common passwords.",
+    "category": "Authentication",
+    "severity": "high",
+    "owasp": "A7:2017-Identification and Authentication Failures",
+    "test_method": "Manual testing & automated brute force",
+    "verification_steps": [
+      "1. Attempt to register or change password with weak passwords (123456, password, qwerty)",
+      "2. Test minimum length requirement by trying passwords under 8 characters",
+      "3. Test complexity: try passwords without numbers, special characters, or mixed case",
+      "4. Check if password strength meter enforces requirements",
+      "5. Attempt to reuse old passwords during password change",
+      "6. Use Burp Suite Intruder with common passwords list"
+    ],
+    "remediation": "Implement strong password policy (min 12 chars, complexity). Use password strength meter. Consider password blacklist. Implement password history (prevent reuse)."
+  },
+  {
+    "name": "SQL Injection Protection",
+    "description": "Verifies that all user inputs are properly sanitized and parameterized queries or prepared statements are used to prevent SQL injection attacks.",
+    "category": "Injection",
+    "severity": "critical",
+    "owasp": "A03:2021-Injection",
+    "test_method": "Automated scanning & manual payload testing",
+    "verification_steps": [
+      "1. Test all input fields with SQLi payloads: `' OR '1'='1`, `\" OR \"1\"=\"1`",
+      "2. Test numeric inputs: `1 OR 1=1`, `1 AND 1=2`",
+      "3. Test time-based payloads: `'; WAITFOR DELAY '00:00:05'--`",
+      "4. Test UNION-based injections: `' UNION SELECT null,username,password FROM users--`",
+      "5. Test error-based: `' AND 1=CAST((SELECT table_name FROM information_schema.tables) AS INT)--`",
+      "6. Use SQLMap: `sqlmap -u 'http://site.com/page?id=1' --batch --level=3`",
+      "7. Check for database errors in response"
+    ],
+    "remediation": "Use prepared statements with parameterized queries. Sanitize all inputs with `$wpdb->prepare()`. Implement input validation. Use WordPress security plugins with SQLi protection."
+  },
+  {
+    "name": "Cross-Site Scripting (XSS) Protection",
+    "description": "Tests for proper input sanitization and output escaping to prevent reflected, stored, and DOM-based XSS attacks.",
+    "category": "Injection",
+    "severity": "high",
+    "owasp": "A03:2021-Injection",
+    "test_method": "Manual payload testing & automated scanning",
+    "verification_steps": [
+      "1. Test all input fields with basic XSS payload: `<script>alert('XSS')</script>`",
+      "2. Test for stored XSS in comments, user profiles, posts",
+      "3. Test reflected XSS in search, contact forms, URL parameters",
+      "4. Test DOM-based XSS: `<img src=x onerror=alert('XSS')>`",
+      "5. Test SVG file upload with XSS payload",
+      "6. Test event handlers: `onload`, `onerror`, `onclick` in HTML attributes",
+      "7. Use OWASP ZAP or Burp Suite active scanner",
+      "8. Check if output is properly escaped with `esc_html()`, `esc_attr()`"
+    ],
+    "remediation": "Use `esc_html()`, `esc_attr()`, `esc_url()` for output. Validate and sanitize inputs with `sanitize_text_field()`. Implement Content Security Policy (CSP)."
+  },
+  {
+    "name": "XML External Entity (XXE) Protection",
+    "description": "Checks if XML processors are configured to prevent XXE attacks by disabling external entity processing.",
+    "category": "Injection",
+    "severity": "high",
+    "owasp": "A04:2017-XML External Entities (XXE)",
+    "test_method": "Manual XML payload testing",
+    "verification_steps": [
+      "1. Identify XML input points (file uploads, API endpoints)",
+      "2. Test with malicious XML: `<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///etc/passwd\">]><root>&test;</root>`",
+      "3. Test for out-of-band XXE using external domains",
+      "4. Check RSS/Atom feed import functionality",
+      "5. Test XML file upload functionality",
+      "6. Use XXEinjector tool for comprehensive testing"
+    ],
+    "remediation": "Disable XML external entity processing. Use JSON instead of XML where possible. Use PHP's `libxml_disable_entity_loader(true)`. Keep XML processors updated."
+  },
+  {
+    "name": "Broken Access Control",
+    "description": "Tests for insecure direct object references, missing function-level access controls, and privilege escalation vulnerabilities.",
+    "category": "Access Control",
+    "severity": "high",
+    "owasp": "A01:2021-Broken Access Control",
+    "test_method": "Manual testing with privilege escalation attempts",
+    "verification_steps": [
+      "1. Test IDOR by changing numeric IDs in URLs: `/user/123` → `/user/124`",
+      "2. Test parameter tampering in POST/PUT requests",
+      "3. Test admin functionality without admin role: `/wp-admin/` access",
+      "4. Test API endpoints without proper authentication",
+      "5. Check if users can edit others' content",
+      "6. Test direct access to uploaded files without permission",
+      "7. Test CSRF on state-changing actions (see separate CSRF test)"
+    ],
+    "remediation": "Implement proper role-based access control (RBAC). Validate permissions on every request. Use WordPress capabilities system properly. Implement CSRF tokens."
+  },
+  {
+    "name": "Security Misconfiguration",
+    "description": "Checks for default configurations, verbose error messages, unnecessary services, and insecure HTTP headers.",
+    "category": "Configuration",
+    "severity": "medium",
+    "owasp": "A05:2021-Security Misconfiguration",
+    "test_method": "Configuration review & automated scanning",
+    "verification_steps": [
+      "1. Check for default admin username 'admin'",
+      "2. Verify debug mode is disabled: `wp config get WP_DEBUG`",
+      "3. Test for directory listing: access `/wp-content/uploads/`",
+      "4. Check HTTP headers with securityheaders.com or `curl -I`",
+      "5. Test for exposed configuration files: `/wp-config.php`, `/wp-config.php.save`",
+      "6. Check for unnecessary plugins/themes installed",
+      "7. Test for default database table prefix 'wp_'",
+      "8. Verify file permissions: `find . -type f -perm 0644 -ls`"
+    ],
+    "remediation": "Harden WordPress configuration. Remove unused plugins/themes. Secure file permissions. Implement security headers. Regular security audits."
+  },
+  {
+    "name": "Insecure Deserialization",
+    "description": "Tests for insecure deserialization of user-supplied data that could lead to remote code execution or privilege escalation.",
+    "category": "Injection",
+    "severity": "critical",
+    "owasp": "A08:2017-Insecure Deserialization",
+    "test_method": "Manual payload testing",
+    "verification_steps": [
+      "1. Identify serialized data in cookies, parameters, or files",
+      "2. Test PHP object injection: `O:8:\"stdClass\":1:{s:4:\"test\";s:7:\"TEST123\";}`",
+      "3. Test with ysoserial or similar exploit generation tools",
+      "4. Look for `unserialize()` function usage in code",
+      "5. Test file upload with serialized payloads",
+      "6. Check session handling for serialized data"
+    ],
+    "remediation": "Avoid unserializing user input. Use JSON instead of serialization. Implement digital signatures on serialized data. Use safe deserialization libraries."
+  },
+  {
+    "name": "Using Components with Known Vulnerabilities",
+    "description": "Identifies outdated WordPress core, themes, and plugins with known CVEs and security vulnerabilities.",
+    "category": "Dependencies",
+    "severity": "high",
+    "owasp": "A06:2021-Vulnerable and Outdated Components",
+    "test_method": "Automated vulnerability scanning",
+    "verification_steps": [
+      "1. Run `wp core version` to check WordPress version",
+      "2. Run `wp plugin list --fields=name,version` for plugins",
+      "3. Run `wp theme list --fields=name,version` for themes",
+      "4. Use wpscan: `wpscan --url http://example.com --enumerate ap,at,u`",
+      "5. Check for known vulnerabilities with CVE databases",
+      "6. Use retire.js for JavaScript library vulnerabilities",
+      "7. Test with nikto or similar vulnerability scanners"
+    ],
+    "remediation": "Regular updates of core, plugins, themes. Remove unused components. Subscribe to security bulletins. Use vulnerability scanners regularly."
+  },
+  {
+    "name": "Insufficient Logging & Monitoring",
+    "description": "Verifies that security events are properly logged, monitored, and alerts are configured for suspicious activities.",
+    "category": "Logging",
+    "severity": "medium",
+    "owasp": "A09:2021-Security Logging and Monitoring Failures",
+    "test_method": "Manual review & log analysis",
+    "verification_steps": [
+      "1. Check if failed login attempts are logged",
+      "2. Test if admin actions are recorded",
+      "3. Verify file modification logging",
+      "4. Check for SQL query logging in debug mode",
+      "5. Test if brute force attempts trigger alerts",
+      "6. Check log rotation and retention policies",
+      "7. Verify logs are stored securely (not in web root)",
+      "8. Test real-time monitoring alerts"
+    ],
+    "remediation": "Implement comprehensive logging with plugins like WP Security Audit Log. Set up log monitoring. Configure alerts for suspicious activities. Regular log review."
+  },
+  {
+    "name": "Cross-Site Request Forgery (CSRF) Protection",
+    "description": "Tests for presence of anti-CSRF tokens in state-changing requests and proper validation mechanisms.",
+    "category": "Access Control",
+    "severity": "medium",
+    "owasp": "A01:2021-Broken Access Control",
+    "test_method": "Manual testing with token manipulation",
+    "verification_steps": [
+      "1. Identify state-changing actions (post creation, user update, plugin activation)",
+      "2. Check for nonce tokens in forms: look for `_wpnonce` or `nonce` parameters",
+      "3. Test without token: remove nonce and submit form",
+      "4. Test with invalid token: change nonce value",
+      "5. Check if token is tied to user session and action",
+      "6. Test token reuse: use same token twice",
+      "7. Use Burp Suite to test for CSRF vulnerabilities"
+    ],
+    "remediation": "Use WordPress nonces (`wp_nonce_field()`, `wp_nonce_url()`). Implement SameSite cookies. Add CSRF protection to custom forms. Use framework CSRF protection."
+  },
+  {
+    "name": "Server-Side Request Forgery (SSRF)",
+    "description": "Checks for vulnerabilities that allow attackers to make requests from the server to internal resources or external domains.",
+    "category": "Injection",
+    "severity": "high",
+    "owasp": "A10:2021-Server-Side Request Forgery",
+    "test_method": "Manual payload testing",
+    "verification_steps": [
+      "1. Test URL parameters that fetch external resources",
+      "2. Test file import/export functionality",
+      "3. Check webhook configurations",
+      "4. Test with internal IPs: `http://127.0.0.1`, `http://169.254.169.254` (AWS metadata)",
+      "5. Test with file protocol: `file:///etc/passwd`",
+      "6. Test for blind SSRF using Burp Collaborator",
+      "7. Check XML import functionality for XXE-based SSRF"
+    ],
+    "remediation": "Validate and sanitize URL inputs. Use allowlists for domains/IPs. Implement network segmentation. Disable unused URL schemes. Use cloud metadata protection."
+  },
+  {
+    "name": "File Upload Security",
+    "description": "Tests file upload functionality for proper file type validation, content checking, and secure storage.",
+    "category": "Input Validation",
+    "severity": "high",
+    "owasp": "A03:2021-Injection",
+    "test_method": "Manual file upload testing",
+    "verification_steps": [
+      "1. Upload files with different extensions: `.php`, `.phtml`, `.php5`",
+      "2. Try double extensions: `test.jpg.php`",
+      "3. Test content-type bypass: change Content-Type header",
+      "4. Upload malicious files with valid image headers (Polyglot files)",
+      "5. Test file size limits",
+      "6. Check if files are stored outside web root",
+      "7. Test path traversal in filename: `../../../etc/passwd`",
+      "8. Upload SVG with JavaScript content"
+    ],
+    "remediation": "Validate file type by content, not extension. Use allowlists for file types. Store files outside web root. Use secure file permissions. Scan uploaded files."
+  },
+  {
+    "name": "Directory Traversal",
+    "description": "Tests for vulnerabilities that allow reading or writing files outside the web root directory.",
+    "category": "Access Control",
+    "severity": "high",
+    "test_method": "Manual path traversal testing",
+    "verification_steps": [
+      "1. Test file parameters: `?file=../../../etc/passwd`",
+      "2. Test path traversal with encoded characters: `..%2f..%2f`",
+      "3. Test absolute paths: `/etc/passwd`",
+      "4. Test null byte injection: `../../../etc/passwd%00.jpg`",
+      "5. Test in file upload functionality",
+      "6. Test in log file viewing features",
+      "7. Use dot-dot-slash payloads with various encodings"
+    ],
+    "remediation": "Validate file paths. Use basename() to extract filename. Implement path canonicalization. Use allowlists for accessible files. Web server hardening."
+  },
+  {
+    "name": "Admin Interface Protection",
+    "description": "Verifies that WordPress admin interface is properly protected with strong authentication, IP restrictions, and rate limiting.",
+    "category": "Authentication",
+    "severity": "critical",
+    "test_method": "Manual access testing & configuration review",
+    "verification_steps": [
+      "1. Attempt to access `/wp-admin/` without authentication",
+      "2. Test with default credentials (admin/admin)",
+      "3. Test brute force on login page",
+      "4. Check if admin area uses HTTPS",
+      "5. Test IP whitelisting if configured",
+      "6. Check for 2FA implementation",
+      "7. Test session timeout in admin area",
+      "8. Verify admin email is not publicly accessible"
+    ],
+    "remediation": "Implement strong passwords + 2FA. Rename admin path or IP restrict. Use HTTPS. Implement login attempt limiting. Regular admin session timeout."
+  },
+  {
+    "name": "XML-RPC API Security",
+    "description": "Tests the XML-RPC interface for vulnerabilities including pingback DDoS amplification, brute force attacks, and remote code execution.",
+    "category": "API Security",
+    "severity": "medium",
+    "test_method": "Manual API testing & automated scanning",
+    "verification_steps": [
+      "1. Check if XML-RPC is enabled: `curl -X POST -d '<methodCall><methodName>system.listMethods</methodName></methodCall>' http://site.com/xmlrpc.php`",
+      "2. Test pingback DDoS: use `pingback.ping` method",
+      "3. Test brute force via `wp.getUsersBlogs`",
+      "4. Check for authentication bypass",
+      "5. Test for XXE in XML-RPC requests",
+      "6. Use wpscan: `wpscan --url http://site.com --disable-tls-checks --enumerate`"
+    ],
+    "remediation": "Disable XML-RPC if not needed: add to .htaccess `RewriteRule ^xmlrpc\\.php$ - [F,L]`. Use security plugins to block abuse. Implement rate limiting."
+  },
+  {
+    "name": "REST API Endpoint Security",
+    "description": "Tests WordPress REST API endpoints for proper authentication, authorization, and input validation.",
+    "category": "API Security",
+    "severity": "medium",
+    "test_method": "Manual API testing & automated scanning",
+    "verification_steps": [
+      "1. Discover endpoints: `curl http://site.com/wp-json/`",
+      "2. Test unauthenticated access to protected endpoints",
+      "3. Test user enumeration via `/wp-json/wp/v2/users`",
+      "4. Test privilege escalation via API",
+      "5. Check for information disclosure",
+      "6. Test injection vulnerabilities in API parameters",
+      "7. Test rate limiting on API endpoints",
+      "8. Check CORS configuration"
+    ],
+    "remediation": "Disable REST API if not used. Require authentication for sensitive endpoints. Implement proper permissions. Add rate limiting. Use API security plugins."
+  },
+  {
+    "name": "User Enumeration",
+    "description": "Tests for user enumeration vulnerabilities via author archives, login error messages, or REST API endpoints.",
+    "category": "Information Disclosure",
+    "severity": "low",
+    "test_method": "Manual testing & automated scanning",
+    "verification_steps": [
+      "1. Check author archives: `/author/1/`, try incrementing IDs",
+      "2. Test login page error messages with valid/invalid usernames",
+      "3. Check REST API: `/wp-json/wp/v2/users`",
+      "4. Test registration page for existing username check",
+      "5. Check sitemap.xml for author pages",
+      "6. Test comment feeds for author information",
+      "7. Use wpscan: `wpscan --url http://site.com --enumerate u`"
+    ],
+    "remediation": "Disable author archives or use numeric IDs. Use generic login error messages. Restrict REST API user endpoint. Use security plugins to prevent enumeration."
+  },
+  {
+    "name": "Brute Force Protection",
+    "description": "Verifies implementation of account lockout, CAPTCHA, and rate limiting mechanisms for login attempts.",
+    "category": "Authentication",
+    "severity": "high",
+    "test_method": "Automated brute force testing",
+    "verification_steps": [
+      "1. Test multiple failed login attempts on same account",
+      "2. Test distributed attacks from different IPs",
+      "3. Check if lockout duration is reasonable",
+      "4. Test CAPTCHA bypass (if implemented)",
+      "5. Test XML-RPC brute force",
+      "6. Test REST API login endpoints",
+      "7. Monitor server logs during testing",
+      "8. Use Hydra or similar tools (with permission)"
+    ],
+    "remediation": "Implement account lockout after X attempts. Use CAPTCHA. Add rate limiting per IP. Use 2FA. Monitor failed login attempts. Use WordPress security plugins."
+  },
+  {
+    "name": "Session Management Security",
+    "description": "Tests for secure session handling including proper timeout, regeneration, and secure cookie attributes.",
+    "category": "Session Management",
+    "severity": "high",
+    "owasp": "A07:2017-Identification and Authentication Failures",
+    "test_method": "Manual session testing & cookie analysis",
+    "verification_steps": [
+      "1. Check cookie attributes: HttpOnly, Secure, SameSite",
+      "2. Test session fixation: login with known session ID",
+      "3. Test session timeout after inactivity",
+      "4. Check if session regenerates on login",
+      "5. Test concurrent session control",
+      "6. Check for session data exposure",
+      "7. Test cookie scope (domain/path)",
+      "8. Use Burp Suite to analyze session cookies"
+    ],
+    "remediation": "Set Secure, HttpOnly, SameSite cookies. Implement session timeout. Regenerate session IDs on privilege change. Store sessions securely. Limit concurrent sessions."
+  },
+  {
+    "name": "HTTP Security Headers",
+    "description": "Checks for presence of security headers like Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, etc.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Automated header scanning",
+    "verification_steps": [
+      "1. Use `curl -I http://site.com` to check headers",
+      "2. Test with securityheaders.com",
+      "3. Check for: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options",
+      "4. Verify Strict-Transport-Security (HSTS)",
+      "5. Check Referrer-Policy",
+      "6. Test Permissions-Policy (formerly Feature-Policy)",
+      "7. Verify X-XSS-Protection (deprecated but still used)",
+      "8. Test caching headers for sensitive content"
+    ],
+    "remediation": "Add security headers via .htaccess or plugin. Use CSP with proper directives. Implement HSTS. Set secure Referrer-Policy. Regular header testing."
+  },
+  {
+    "name": "SSL/TLS Configuration",
+    "description": "Tests for proper SSL/TLS configuration including protocol versions, cipher suites, and certificate validity.",
+    "category": "Cryptography",
+    "severity": "high",
+    "test_method": "Automated SSL scanning",
+    "verification_steps": [
+      "1. Test with SSL Labs: `https://www.ssllabs.com/ssltest/`",
+      "2. Check certificate validity and chain",
+      "3. Test for SSLv2, SSLv3, TLS 1.0, TLS 1.1 support",
+      "4. Check cipher strength and weak ciphers",
+      "5. Test for Heartbleed vulnerability",
+      "6. Check for POODLE vulnerability",
+      "7. Test HSTS implementation",
+      "8. Check mixed content issues"
+    ],
+    "remediation": "Disable old protocols (SSLv2, SSLv3, TLS 1.0). Use strong cipher suites. Implement HSTS. Renew certificates before expiration. Use Qualys SSL Test regularly."
+  },
+  {
+    "name": "Database Security Configuration",
+    "description": "Verifies secure database configuration including proper permissions, encryption, and connection security.",
+    "category": "Configuration",
+    "severity": "high",
+    "test_method": "Configuration review & manual testing",
+    "verification_steps": [
+      "1. Check database user permissions (SELECT only needed)",
+      "2. Verify database connection uses SSL if remote",
+      "3. Check if database credentials are in wp-config.php",
+      "4. Test SQL injection (covered separately)",
+      "5. Check for database backups exposure",
+      "6. Verify table prefix is not default 'wp_'",
+      "7. Test database error messages exposure",
+      "8. Check database version for known vulnerabilities"
+    ],
+    "remediation": "Use least privilege database users. Encrypt database connections. Secure wp-config.php. Change default table prefix. Regular database updates and patches."
+  },
+  {
+    "name": "File Permissions",
+    "description": "Checks for proper file and directory permissions on WordPress files, preventing unauthorized read/write access.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Manual permission checking",
+    "verification_steps": [
+      "1. Check WordPress directory permissions: `ls -la /var/www/html/`",
+      "2. Verify wp-config.php is 640 or 600",
+      "3. Check uploads directory permissions (should be 755)",
+      "4. Test for writable PHP files in web root",
+      "5. Check ownership of WordPress files",
+      "6. Verify .htaccess permissions",
+      "7. Use WordPress security scanner plugins",
+      "8. Test with command: `find . -type f -perm 0777 -ls`"
+    ],
+    "remediation": "Set proper permissions: directories 755, files 644, wp-config.php 640. Use correct ownership. Regular permission audits. Use security plugins to check."
+  },
+  {
+    "name": "wp-config.php Protection",
+    "description": "Verifies that wp-config.php file is properly protected and contains secure configuration settings.",
+    "category": "Configuration",
+    "severity": "critical",
+    "test_method": "Configuration review & direct access testing",
+    "verification_steps": [
+      "1. Attempt to access directly: `http://site.com/wp-config.php`",
+      "2. Check file permissions (should be 640 or 600)",
+      "3. Verify database credentials are defined",
+      "4. Check for security keys: `AUTH_KEY`, `SECURE_AUTH_KEY`",
+      "5. Verify WP_DEBUG is false in production",
+      "6. Check for database table prefix customization",
+      "7. Test for backup files: wp-config.php.bak, wp-config.php.save",
+      "8. Verify DISALLOW_FILE_EDIT is true"
+    ],
+    "remediation": "Move wp-config.php one level above web root if possible. Set proper file permissions. Use unique security keys. Disable file editor. Remove backup files."
+  },
+  {
+    "name": ".htaccess Security Rules",
+    "description": "Tests for presence of security hardening rules in .htaccess or web server configuration.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Configuration review",
+    "verification_steps": [
+      "1. Check if .htaccess exists in WordPress root",
+      "2. Verify directory listing is disabled: `Options -Indexes`",
+      "3. Check for file access restrictions",
+      "4. Verify XML-RPC blocking if not used",
+      "5. Check for security headers",
+      "6. Test for PHP execution in uploads directory",
+      "7. Verify hotlink protection",
+      "8. Check for user agent blocking if applicable"
+    ],
+    "remediation": "Implement security hardening in .htaccess. Block directory listing. Restrict file access. Disable XML-RPC if unused. Add security headers. Regular .htaccess review."
+  },
+  {
+    "name": "Debug Mode Exposure",
+    "description": "Checks if WordPress debug mode is enabled in production, potentially exposing sensitive information.",
+    "category": "Information Disclosure",
+    "severity": "medium",
+    "test_method": "Configuration review & error testing",
+    "verification_steps": [
+      "1. Check wp-config.php for `define('WP_DEBUG', true);`",
+      "2. Trigger PHP errors and check for detailed messages",
+      "3. Check for `define('WP_DEBUG_DISPLAY', true);`",
+      "4. Look for `define('WP_DEBUG_LOG', true);` and log location",
+      "5. Test with invalid query parameter to trigger errors",
+      "6. Check if debug information appears in page source",
+      "7. Use WordPress CLI: `wp config get WP_DEBUG`"
+    ],
+    "remediation": "Set `WP_DEBUG` to false in production. Use `WP_DEBUG_LOG` for debugging but not `WP_DEBUG_DISPLAY`. Remove debug information from production. Regular config review."
+  },
+  {
+    "name": "Database Error Disclosure",
+    "description": "Tests for database error messages exposed to users, which could reveal sensitive information.",
+    "category": "Information Disclosure",
+    "severity": "medium",
+    "test_method": "Manual error triggering",
+    "verification_steps": [
+      "1. Trigger SQL errors with invalid queries",
+      "2. Test with SQL injection payloads",
+      "3. Check for detailed error messages in response",
+      "4. Test error handling in forms",
+      "5. Check if errors are logged instead of displayed",
+      "6. Test with malformed database queries",
+      "7. Check AJAX endpoints for error disclosure",
+      "8. Monitor network traffic for error details"
+    ],
+    "remediation": "Set `display_errors` to Off in php.ini. Configure WordPress to log errors instead of displaying. Use custom error pages. Implement proper error handling."
+  },
+  {
+    "name": "PHP Error Reporting",
+    "description": "Verifies that PHP error reporting is disabled in production environment.",
+    "category": "Information Disclosure",
+    "severity": "low",
+    "test_method": "Configuration review & error testing",
+    "verification_steps": [
+      "1. Create a PHP file with `<?php echo ini_get('display_errors'); ?>`",
+      "2. Check php.ini for `display_errors = Off`",
+      "3. Test with syntax error in PHP files",
+      "4. Check for `error_reporting` level",
+      "5. Look for `.user.ini` or `.htaccess` PHP settings",
+      "6. Test with division by zero or undefined variables",
+      "7. Use PHPinfo() page if accessible"
+    ],
+    "remediation": "Set `display_errors = Off` in php.ini. Set `error_reporting` to appropriate level. Use `ini_set()` in code if needed. Regular PHP configuration review."
+  },
+  {
+    "name": "Directory Listing",
+    "description": "Tests for enabled directory listing which could expose sensitive files and directory structure.",
+    "category": "Information Disclosure",
+    "severity": "low",
+    "test_method": "Manual directory access testing",
+    "verification_steps": [
+      "1. Access directories without index files: `/wp-content/uploads/`",
+      "2. Test `/wp-includes/` directory access",
+      "3. Check `/wp-content/plugins/` directory",
+      "4. Test `/wp-content/themes/` directory",
+      "5. Verify server responds with directory listing",
+      "6. Check for .htaccess `Options -Indexes` directive",
+      "7. Use DirBuster or similar directory brute-forcing tools"
+    ],
+    "remediation": "Add `Options -Indexes` to .htaccess. Ensure each directory has index.php or index.html. Configure web server to disable directory listing. Regular directory checks."
+  },
+  {
+    "name": "Backup File Exposure",
+    "description": "Scans for exposed backup files (.bak, .backup, .sql, etc.) containing sensitive data.",
+    "category": "Information Disclosure",
+    "severity": "high",
+    "test_method": "Automated file discovery",
+    "verification_steps": [
+      "1. Scan for common backup extensions: `.bak`, `.backup`, `.old`, `.save`",
+      "2. Check for database backups: `.sql`, `.dump`, `.export`",
+      "3. Look for zip files: `.zip`, `.tar.gz`, `.rar`",
+      "4. Test for wp-config backups: `wp-config.php.bak`",
+      "5. Use tools like DirBuster with backup file wordlists",
+      "6. Check git repository exposure: `.git/` directory",
+      "7. Look for IDE backup files: `.idea/`, `.vscode/`"
+    ],
+    "remediation": "Remove backup files from web root. Store backups in secure locations. Use .htaccess to block backup file access. Implement proper backup procedures outside web root."
+  },
+  {
+    "name": "Configuration File Exposure",
+    "description": "Tests for exposed configuration files (config.php, configuration.php, etc.) with database credentials.",
+    "category": "Information Disclosure",
+    "severity": "critical",
+    "test_method": "Automated file discovery",
+    "verification_steps": [
+      "1. Test access to `wp-config.php` directly",
+      "2. Check for `wp-config.php.save`, `wp-config.php.old`",
+      "3. Look for other config files: `config.php`, `configuration.php`",
+      "4. Check for `.env` files with credentials",
+      "5. Test for `.htpasswd` files",
+      "6. Look for `robots.txt` that may reveal sensitive paths",
+      "7. Use automated scanners for configuration files"
+    ],
+    "remediation": "Move sensitive config files outside web root. Set proper file permissions (600). Use environment variables for credentials. Regular security scans for exposed files."
+  },
+  {
+    "name": "Log File Exposure",
+    "description": "Checks for exposed log files containing sensitive information about users and system activities.",
+    "category": "Information Disclosure",
+    "severity": "high",
+    "test_method": "Manual file discovery",
+    "verification_steps": [
+      "1. Check for common log file locations",
+      "2. Test for `debug.log` in wp-content directory",
+      "3. Look for access/error logs: `access.log`, `error.log`",
+      "4. Check for plugin-specific log files",
+      "5. Test for PHP error logs",
+      "6. Look for `.log` extension files",
+      "7. Use directory traversal to access log files"
+    ],
+    "remediation": "Disable public access to log files via .htaccess. Store logs outside web root. Regularly rotate and delete old logs. Use secure logging plugins."
+  },
+  {
+    "name": "Source Code Disclosure",
+    "description": "Tests for source code disclosure vulnerabilities through misconfigured servers or file handling.",
+    "category": "Information Disclosure",
+    "severity": "medium",
+    "test_method": "Manual testing & file access attempts",
+    "verification_steps": [
+      "1. Test for PHP source disclosure via path manipulation",
+      "2. Check for `.phps` files (PHP source files)",
+      "3. Test file inclusion with PHP filters",
+      "4. Check for exposed `.git` repository",
+      "5. Look for `.svn` or other version control files",
+      "6. Test for LFI vulnerabilities that reveal source code",
+      "7. Check for misconfigured servers exposing source"
+    ],
+    "remediation": "Configure web server to parse PHP files properly. Remove version control directories. Secure file inclusion. Regular source code disclosure checks."
+  },
+  {
+    "name": "Clickjacking Protection",
+    "description": "Verifies implementation of X-Frame-Options or Content-Security-Policy frame-ancestors directives.",
+    "category": "Client-Side Security",
+    "severity": "medium",
+    "test_method": "Header analysis & manual testing",
+    "verification_steps": [
+      "1. Check HTTP headers for X-Frame-Options",
+      "2. Verify X-Frame-Options is set to DENY or SAMEORIGIN",
+      "3. Check Content-Security-Policy for frame-ancestors",
+      "4. Test with clickjacking proof-of-concept pages",
+      "5. Verify admin pages cannot be framed",
+      "6. Use browser developer tools to test framing",
+      "7. Check for frame-busting JavaScript"
+    ],
+    "remediation": "Implement X-Frame-Options: DENY. Use CSP frame-ancestors directive. Add frame-busting JavaScript for older browsers. Test clickjacking protection regularly."
+  },
+  {
+    "name": "MIME Type Sniffing Protection",
+    "description": "Tests for X-Content-Type-Options: nosniff header to prevent MIME type sniffing attacks.",
+    "category": "Client-Side Security",
+    "severity": "low",
+    "test_method": "Header analysis",
+    "verification_steps": [
+      "1. Check HTTP headers for X-Content-Type-Options",
+      "2. Verify it's set to 'nosniff'",
+      "3. Test with different file types and Content-Type headers",
+      "4. Check if browsers respect the header",
+      "5. Use security header scanning tools",
+      "6. Test upload functionality with mismatched MIME types",
+      "7. Verify all resources serve with correct Content-Type"
+    ],
+    "remediation": "Add X-Content-Type-Options: nosniff header. Ensure correct Content-Type for all resources. Test MIME type handling. Regular header verification."
+  },
+  {
+    "name": "Cross-Origin Resource Sharing (CORS)",
+    "description": "Tests for misconfigured CORS policies that could expose sensitive data to unauthorized domains.",
+    "category": "Access Control",
+    "severity": "medium",
+    "test_method": "Manual CORS testing",
+    "verification_steps": [
+      "1. Check for Access-Control-Allow-Origin header",
+      "2. Test if wildcard (*) is used improperly",
+      "3. Verify allowed origins are restricted",
+      "4. Test CORS with credentials (cookies)",
+      "5. Check for preflight request handling",
+      "6. Test different HTTP methods with CORS",
+      "7. Use browser developer tools for CORS testing"
+    ],
+    "remediation": "Implement strict CORS policies. Avoid wildcard origins. Validate origin headers. Handle preflight requests properly. Test CORS configuration."
+  },
+  {
+    "name": "Subresource Integrity (SRI)",
+    "description": "Checks for Subresource Integrity implementation on externally loaded scripts and stylesheets.",
+    "category": "Client-Side Security",
+    "severity": "low",
+    "test_method": "Manual HTML inspection",
+    "verification_steps": [
+      "1. Check script and link tags for integrity attribute",
+      "2. Verify external resources have SRI hashes",
+      "3. Test if SRI prevents tampered resource loading",
+      "4. Check for crossorigin attribute with SRI",
+      "5. Use browser developer tools to verify SRI",
+      "6. Test with modified external resources",
+      "7. Check CDN resources for SRI support"
+    ],
+    "remediation": "Implement SRI for all external scripts/styles. Generate integrity hashes. Use crossorigin attribute. Regularly update SRI hashes when resources change."
+  },
+  {
+    "name": "Content Security Policy (CSP)",
+    "description": "Tests for proper Content Security Policy implementation to mitigate XSS and data injection attacks.",
+    "category": "Client-Side Security",
+    "severity": "medium",
+    "test_method": "Header analysis & policy testing",
+    "verification_steps": [
+      "1. Check for Content-Security-Policy header",
+      "2. Verify CSP directives are properly configured",
+      "3. Test for overly permissive policies (unsafe-inline, unsafe-eval)",
+      "4. Check CSP reporting with report-uri or report-to",
+      "5. Test CSP in different browsers",
+      "6. Use CSP evaluator tools",
+      "7. Monitor CSP violation reports"
+    ],
+    "remediation": "Implement strict CSP policy. Avoid unsafe directives. Use nonces or hashes for inline scripts. Enable CSP reporting. Test CSP regularly."
+  },
+  {
+    "name": "Referrer Policy",
+    "description": "Verifies proper Referrer-Policy header implementation to control referrer information leakage.",
+    "category": "Information Disclosure",
+    "severity": "low",
+    "test_method": "Header analysis",
+    "verification_steps": [
+      "1. Check for Referrer-Policy HTTP header",
+      "2. Verify appropriate policy (no-referrer, same-origin, etc.)",
+      "3. Test referrer leakage with external links",
+      "4. Check meta tag implementation if header not used",
+      "5. Use browser developer tools to monitor referrers",
+      "6. Test sensitive pages for referrer information",
+      "7. Verify policy applies to all resources"
+    ],
+    "remediation": "Implement Referrer-Policy header. Use strict policy (no-referrer or same-origin). Test referrer leakage. Regular policy review."
+  },
+  {
+    "name": "Feature Policy / Permissions Policy",
+    "description": "Tests for Feature-Policy header to restrict browser features and APIs.",
+    "category": "Client-Side Security",
+    "severity": "low",
+    "test_method": "Header analysis",
+    "verification_steps": [
+      "1. Check for Feature-Policy or Permissions-Policy header",
+      "2. Verify restrictive policies for sensitive features",
+      "3. Test camera, microphone, geolocation permissions",
+      "4. Check for fullscreen, payment, notifications policies",
+      "5. Use browser developer tools to test policies",
+      "6. Verify policy inheritance",
+      "7. Test with feature policy testing tools"
+    ],
+    "remediation": "Implement restrictive Feature-Policy. Disable unnecessary browser features. Use Permissions-Policy for modern browsers. Test policy effectiveness."
+  },
+  {
+    "name": "Insecure HTTP Methods",
+    "description": "Tests for enabled dangerous HTTP methods like PUT, DELETE, TRACE, which could be abused.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Manual HTTP method testing",
+    "verification_steps": [
+      "1. Use OPTIONS method to discover allowed methods",
+      "2. Test PUT method for file upload vulnerabilities",
+      "3. Test DELETE method for file removal",
+      "4. Test TRACE method for XST attacks",
+      "5. Check for WebDAV methods if enabled",
+      "6. Use nmap: `nmap --script http-methods target.com`",
+      "7. Test each method with authentication bypass attempts"
+    ],
+    "remediation": "Disable unnecessary HTTP methods. Allow only GET, POST, HEAD. Use .htaccess to restrict methods. Implement proper authentication for all methods."
+  },
+  {
+    "name": "HTTP Verb Tampering",
+    "description": "Tests for authentication/authorization bypass using different HTTP methods.",
+    "category": "Access Control",
+    "severity": "high",
+    "test_method": "Manual method manipulation testing",
+    "verification_steps": [
+      "1. Test protected endpoints with different HTTP methods",
+      "2. Try GET instead of POST on authenticated actions",
+      "3. Test HEAD method for information disclosure",
+      "4. Check if authentication checks are method-dependent",
+      "5. Test with mixed-case methods (GeT, PoSt)",
+      "6. Use Burp Suite to tamper with request methods",
+      "7. Test API endpoints with various methods"
+    ],
+    "remediation": "Implement consistent authentication across all methods. Validate methods properly. Use framework routing correctly. Test all endpoints with different methods."
+  },
+  {
+    "name": "Cache Poisoning",
+    "description": "Tests for web cache poisoning vulnerabilities through improper cache configuration.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Manual cache testing",
+    "verification_steps": [
+      "1. Test for unkeyed input in requests",
+      "2. Check cache-control headers",
+      "3. Test with different Host headers",
+      "4. Check for X-Forwarded-Host header injection",
+      "5. Test with different user agents",
+      "6. Verify cache key normalization",
+      "7. Use tools like param miner to find unkeyed inputs"
+    ],
+    "remediation": "Configure cache keys properly. Validate and sanitize headers. Implement proper cache-control. Use CDN security features. Regular cache configuration review."
+  },
+  {
+    "name": "Host Header Injection",
+    "description": "Tests for host header injection vulnerabilities leading to password reset poisoning or cache poisoning.",
+    "category": "Injection",
+    "severity": "medium",
+    "test_method": "Manual header manipulation testing",
+    "verification_steps": [
+      "1. Test Host header manipulation",
+      "2. Check X-Forwarded-Host header",
+      "3. Test for password reset poisoning",
+      "4. Check for host override in URLs",
+      "5. Test with absolute URLs generation",
+      "6. Verify email links use correct host",
+      "7. Test cache poisoning via host headers"
+    ],
+    "remediation": "Validate Host header against allowlist. Use SERVER_NAME instead of Host where possible. Implement proper canonical URLs. Secure password reset functionality."
+  },
+  {
+    "name": "Open Redirect",
+    "description": "Tests for open redirect vulnerabilities that could be used in phishing attacks.",
+    "category": "Input Validation",
+    "severity": "low",
+    "test_method": "Manual redirect testing",
+    "verification_steps": [
+      "1. Test URL parameters for redirects (redirect, return, url)",
+      "2. Test with external domains in redirect parameters",
+      "3. Check for protocol-relative URLs",
+      "4. Test with JavaScript URLs",
+      "5. Check for bypass techniques (encoded URLs)",
+      "6. Test login/logout redirects",
+      "7. Use automated scanners for open redirects"
+    ],
+    "remediation": "Validate redirect URLs. Use allowlist for redirect domains. Implement redirect confirmation pages. Use relative URLs where possible."
+  },
+  {
+    "name": "Local File Inclusion (LFI)",
+    "description": "Tests for local file inclusion vulnerabilities through improper file path handling.",
+    "category": "Injection",
+    "severity": "high",
+    "test_method": "Manual path traversal testing",
+    "verification_steps": [
+      "1. Test file parameters with directory traversal",
+      "2. Try including configuration files",
+      "3. Test with null bytes: `../../etc/passwd%00`",
+      "4. Check for PHP wrappers: `php://filter`",
+      "5. Test with encoded paths",
+      "6. Use LFI to RCE techniques",
+      "7. Check log poisoning possibilities"
+    ],
+    "remediation": "Validate file paths strictly. Use allowlists for includable files. Disable dangerous PHP wrappers. Implement proper file permission controls."
+  },
+  {
+    "name": "Remote File Inclusion (RFI)",
+    "description": "Tests for remote file inclusion vulnerabilities allowing inclusion of external malicious files.",
+    "category": "Injection",
+    "severity": "critical",
+    "test_method": "Manual URL inclusion testing",
+    "verification_steps": [
+      "1. Test file parameters with external URLs",
+      "2. Try including files from attacker-controlled servers",
+      "3. Test with different protocols (http, ftp, php://)",
+      "4. Check allow_url_include PHP setting",
+      "5. Test for RFI to RCE conversion",
+      "6. Use automated RFI scanners",
+      "7. Check for filter bypass techniques"
+    ],
+    "remediation": "Disable allow_url_fopen and allow_url_include. Validate file paths. Use allowlists. Implement WAF rules for RFI. Regular code review for inclusion functions."
+  },
+  {
+    "name": "Command Injection",
+    "description": "Tests for command injection vulnerabilities through system command execution with user input.",
+    "category": "Injection",
+    "severity": "critical",
+    "test_method": "Manual command payload testing",
+    "verification_steps": [
+      "1. Test input fields with command separators: `;`, `|`, `&`",
+      "2. Test with command substitution: `$(whoami)`",
+      "3. Try backticks: `` `id` ``",
+      "4. Test with newlines in commands",
+      "5. Check for OS command functions: `system()`, `exec()`, `shell_exec()`",
+      "6. Use time-based command injection detection",
+      "7. Test with blind command injection payloads"
+    ],
+    "remediation": "Avoid shell command execution with user input. Use built-in PHP functions instead of shell commands. If needed, use `escapeshellarg()`. Implement input validation."
+  },
+  {
+    "name": "Template Injection",
+    "description": "Tests for server-side template injection vulnerabilities in templating engines.",
+    "category": "Injection",
+    "severity": "high",
+    "test_method": "Manual template payload testing",
+    "verification_steps": [
+      "1. Identify template engines used (Twig, Smarty, Blade)",
+      "2. Test template parameters with injection payloads",
+      "3. Test for expression language injection",
+      "4. Check for remote code execution via templates",
+      "5. Use template injection scanners",
+      "6. Test with different template syntax",
+      "7. Check for information disclosure via templates"
+    ],
+    "remediation": "Sanitize template inputs. Use sandboxed template environments. Keep template engines updated. Implement proper template context separation."
+  },
+  {
+    "name": "Email Header Injection",
+    "description": "Tests for email header injection vulnerabilities in contact forms and email functionality.",
+    "category": "Injection",
+    "severity": "medium",
+    "test_method": "Manual email header testing",
+    "verification_steps": [
+      "1. Test contact form fields with newlines and headers",
+      "2. Try injecting CC, BCC headers",
+      "3. Test subject and body fields for injection",
+      "4. Check for SMTP command injection",
+      "5. Test with different email headers",
+      "6. Verify email content sanitization",
+      "7. Check for spam relay vulnerabilities"
+    ],
+    "remediation": "Validate email inputs. Remove newlines from headers. Use secure email libraries. Implement rate limiting on email functions. Regular email security testing."
+  },
+  {
+    "name": "Password Reset Vulnerability",
+    "description": "Tests for password reset functionality vulnerabilities including token leakage, weak tokens, and lack of rate limiting.",
+    "category": "Authentication",
+    "severity": "high",
+    "test_method": "Manual password reset testing",
+    "verification_steps": [
+      "1. Test password reset token generation",
+      "2. Check token entropy and predictability",
+      "3. Test token expiration time",
+      "4. Verify rate limiting on reset requests",
+      "5. Test for token leakage in logs or referrers",
+      "6. Check if old tokens are invalidated",
+      "7. Test account enumeration via reset function"
+    ],
+    "remediation": "Use cryptographically secure tokens. Implement short expiration times. Add rate limiting. Invalidate old tokens. Secure token transmission."
+  },
+  {
+    "name": "Account Takeover via Email Change",
+    "description": "Tests for insecure email change functionality that could lead to account takeover.",
+    "category": "Authentication",
+    "severity": "high",
+    "test_method": "Manual email change testing",
+    "verification_steps": [
+      "1. Test email change without confirmation",
+      "2. Check for weak email change tokens",
+      "3. Test if password required for email change",
+      "4. Verify email change notifications",
+      "5. Test for race conditions in email change",
+      "6. Check if old email can still be used",
+      "7. Test account recovery after email change"
+    ],
+    "remediation": "Require password for email changes. Send confirmation to old email. Use secure tokens. Implement delay before email change takes effect."
+  },
+  {
+    "name": "Session Fixation",
+    "description": "Tests for session fixation vulnerabilities where attackers can force users to use a known session ID.",
+    "category": "Session Management",
+    "severity": "medium",
+    "test_method": "Manual session testing",
+    "verification_steps": [
+      "1. Test if session ID changes after login",
+      "2. Check if session ID can be set via URL parameter",
+      "3. Test cookie injection for session fixation",
+      "4. Verify session regeneration on privilege change",
+      "5. Test with different session initialization methods",
+      "6. Check for session adoption vulnerabilities",
+      "7. Test session binding to IP/user agent"
+    ],
+    "remediation": "Regenerate session ID on login. Don't accept session IDs from URLs. Bind sessions to IP/user agent. Implement proper session management."
+  },
+  {
+    "name": "Session Timeout",
+    "description": "Tests for proper session timeout implementation to prevent session hijacking.",
+    "category": "Session Management",
+    "severity": "medium",
+    "test_method": "Manual session duration testing",
+    "verification_steps": [
+      "1. Test session expiration after inactivity",
+      "2. Verify absolute session timeout",
+      "3. Check if sessions expire on browser close",
+      "4. Test remember me functionality security",
+      "5. Verify logout functionality destroys sessions",
+      "6. Test session persistence after password change",
+      "7. Check for session invalidation on logout"
+    ],
+    "remediation": "Implement both idle and absolute timeouts. Destroy sessions properly on logout. Invalidate sessions after password change. Secure remember me functionality."
+  },
+  {
+    "name": "Concurrent Session Control",
+    "description": "Tests for controls preventing multiple concurrent sessions for the same user.",
+    "category": "Session Management",
+    "severity": "low",
+    "test_method": "Manual concurrent session testing",
+    "verification_steps": [
+      "1. Test logging in from multiple devices/browsers",
+      "2. Check if old sessions are invalidated",
+      "3. Test maximum concurrent session limits",
+      "4. Verify session tracking mechanism",
+      "5. Test session database cleanup",
+      "6. Check for session conflict handling",
+      "7. Test administrative session controls"
+    ],
+    "remediation": "Implement concurrent session limits. Invalidate old sessions on new login. Track active sessions. Provide admin controls for session management."
+  },
+  {
+    "name": "Cookie Security Attributes",
+    "description": "Tests for secure, HttpOnly, and SameSite attributes on authentication cookies.",
+    "category": "Session Management",
+    "severity": "medium",
+    "test_method": "Cookie analysis",
+    "verification_steps": [
+      "1. Check cookie flags: Secure, HttpOnly, SameSite",
+      "2. Verify authentication cookies have proper attributes",
+      "3. Test cookie scope (domain, path)",
+      "4. Check for cookie prefix (__Secure-, __Host-)",
+      "5. Verify expiration times",
+      "6. Test cookie theft scenarios",
+      "7. Use browser developer tools for cookie analysis"
+    ],
+    "remediation": "Set Secure, HttpOnly, SameSite=Strict cookies. Use proper cookie scope. Consider __Host- prefix for extra security. Regular cookie security review."
+  },
+  {
+    "name": "Sensitive Data in URL",
+    "description": "Tests for sensitive data exposure through URL parameters (session tokens, passwords, etc.).",
+    "category": "Information Disclosure",
+    "severity": "medium",
+    "test_method": "URL parameter analysis",
+    "verification_steps": [
+      "1. Check for session IDs in URLs",
+      "2. Look for password reset tokens in URLs",
+      "3. Test for API keys in query parameters",
+      "4. Check referrer headers for sensitive data",
+      "5. Test browser history exposure",
+      "6. Verify server logs don't contain sensitive URLs",
+      "7. Use automated scanners for URL parameter analysis"
+    ],
+    "remediation": "Use POST instead of GET for sensitive data. Avoid tokens in URLs. Implement proper session management. Clean URLs of sensitive data. Use HTTP referrer policy."
+  },
+  {
+    "name": "Sensitive Data in Logs",
+    "description": "Tests for sensitive information like passwords or credit card numbers being logged in cleartext.",
+    "category": "Information Disclosure",
+    "severity": "high",
+    "test_method": "Log file analysis",
+    "verification_steps": [
+      "1. Check application logs for sensitive data",
+      "2. Test server access/error logs",
+      "3. Look for database query logs",
+      "4. Check debug logs",
+      "5. Test with credit card numbers, passwords in forms",
+      "6. Verify log file permissions",
+      "7. Use log analysis tools"
+    ],
+    "remediation": "Implement data masking in logs. Don't log sensitive data. Secure log file storage and permissions. Regular log auditing. Use log encryption."
+  },
+  {
+    "name": "Data Encryption at Rest",
+    "description": "Tests for encryption of sensitive data stored in databases or file systems.",
+    "category": "Cryptography",
+    "severity": "high",
+    "test_method": "Configuration review & data inspection",
+    "verification_steps": [
+      "1. Check database for encrypted sensitive fields",
+      "2. Verify file system encryption for sensitive files",
+      "3. Test backup encryption",
+      "4. Check for proper key management",
+      "5. Verify encryption algorithm strength",
+      "6. Test for plaintext data in backups",
+      "7. Check WordPress database for unencrypted sensitive data"
+    ],
+    "remediation": "Encrypt sensitive database fields. Use file system encryption for sensitive files. Implement proper key management. Use strong encryption algorithms. Regular encryption audits."
+  },
+  {
+    "name": "Data Encryption in Transit",
+    "description": "Tests for proper TLS/SSL implementation for data transmission.",
+    "category": "Cryptography",
+    "severity": "high",
+    "test_method": "Automated SSL scanning",
+    "verification_steps": [
+      "1. Verify HTTPS is enforced site-wide",
+      "2. Test for mixed content issues",
+      "3. Check HSTS implementation",
+      "4. Verify TLS version and cipher suites",
+      "5. Test API endpoints for HTTPS",
+      "6. Check admin area SSL enforcement",
+      "7. Use SSL testing tools"
+    ],
+    "remediation": "Enforce HTTPS everywhere. Implement HSTS. Use strong TLS configurations. Regular SSL certificate renewal. Monitor for mixed content."
+  },
+  {
+    "name": "Weak Cryptographic Algorithms",
+    "description": "Tests for use of weak or deprecated cryptographic algorithms and protocols.",
+    "category": "Cryptography",
+    "severity": "high",
+    "test_method": "Configuration review & code analysis",
+    "verification_steps": [
+      "1. Check for MD5, SHA1 hash usage",
+      "2. Test for weak password hashing algorithms",
+      "3. Verify TLS protocol versions",
+      "4. Check for weak cipher suites",
+      "5. Test for custom/weak encryption implementations",
+      "6. Check WordPress password hashing mechanism",
+      "7. Use cryptographic analysis tools"
+    ],
+    "remediation": "Use strong hashing algorithms (bcrypt, Argon2). Deprecate weak algorithms. Use modern TLS configurations. Avoid custom crypto implementations."
+  },
+  {
+    "name": "Insecure Random Number Generation",
+    "description": "Tests for insecure random number generation for tokens, passwords, or cryptographic operations.",
+    "category": "Cryptography",
+    "severity": "high",
+    "test_method": "Code review & randomness testing",
+    "verification_steps": [
+      "1. Check token generation randomness",
+      "2. Test password reset token predictability",
+      "3. Verify CSRF token entropy",
+      "4. Check for use of `rand()` instead of cryptographically secure functions",
+      "5. Test session ID generation",
+      "6. Verify cryptographic key generation",
+      "7. Use statistical randomness tests"
+    ],
+    "remediation": "Use cryptographically secure random functions (`random_bytes()`, `openssl_random_pseudo_bytes()`). Ensure sufficient entropy. Test randomness of generated values."
+  },
+  {
+    "name": "Business Logic Vulnerabilities",
+    "description": "Tests for business logic flaws including price manipulation, quantity manipulation, and workflow bypass.",
+    "category": "Business Logic",
+    "severity": "medium",
+    "test_method": "Manual business logic testing",
+    "verification_steps": [
+      "1. Test for price manipulation in e-commerce",
+      "2. Check for quantity manipulation (negative values)",
+      "3. Test workflow bypass (skip steps)",
+      "4. Verify access controls in multi-step processes",
+      "5. Test for time-of-check to time-of-use (TOCTOU) issues",
+      "6. Check for coupon/discount abuse",
+      "7. Test business rule enforcement"
+    ],
+    "remediation": "Implement server-side validation of business rules. Use atomic transactions. Validate all client-submitted data. Implement proper workflow controls. Regular business logic testing."
+  },
+  {
+    "name": "Race Conditions",
+    "description": "Tests for race condition vulnerabilities in concurrent operations like balance transfers or inventory management.",
+    "category": "Concurrency",
+    "severity": "medium",
+    "test_method": "Concurrent request testing",
+    "verification_steps": [
+      "1. Test concurrent balance transfers",
+      "2. Check inventory management under concurrent access",
+      "3. Test vote/like systems for race conditions",
+      "4. Verify account creation with same details",
+      "5. Use automated race condition testing tools",
+      "6. Test with multiple simultaneous requests",
+      "7. Check database transaction isolation"
+    ],
+    "remediation": "Use database transactions with proper isolation levels. Implement optimistic/pessimistic locking. Use atomic operations. Test under high concurrency."
+  },
+  {
+    "name": "API Rate Limiting",
+    "description": "Tests for proper rate limiting on API endpoints to prevent abuse and DoS attacks.",
+    "category": "Availability",
+    "severity": "medium",
+    "test_method": "Automated rate limit testing",
+    "verification_steps": [
+      "1. Test API endpoints without rate limits",
+      "2. Verify different rate limits for authenticated vs anonymous users",
+      "3. Check for burst limits and sustained limits",
+      "4. Test rate limit bypass techniques",
+      "5. Verify proper rate limit headers (X-RateLimit)",
+      "6. Test with distributed requests (multiple IPs)",
+      "7. Check login/registration rate limits"
+    ],
+    "remediation": "Implement comprehensive rate limiting. Use different tiers for different user types. Include burst protection. Return proper rate limit headers. Monitor for abuse."
+  },
+  {
+    "name": "Denial of Service (DoS) Protection",
+    "description": "Tests for DoS protection mechanisms including request limiting, resource limits, and timeout handling.",
+    "category": "Availability",
+    "severity": "high",
+    "test_method": "Load testing & resource exhaustion testing",
+    "verification_steps": [
+      "1. Test for resource exhaustion attacks",
+      "2. Check for slowloris-type attacks",
+      "3. Verify upload file size limits",
+      "4. Test for memory exhaustion via large inputs",
+      "5. Check database query timeouts",
+      "6. Test connection limit configurations",
+      "7. Verify DoS protection at network/application level"
+    ],
+    "remediation": "Implement resource limits. Use timeouts on operations. Configure web server for DoS protection. Use CDN/WAF for DDoS protection. Monitor resource usage."
+  },
+  {
+    "name": "Web Application Firewall (WAF) Bypass",
+    "description": "Tests for techniques to bypass WAF protections including encoding, fragmentation, and HTTP parameter pollution.",
+    "category": "Protection Bypass",
+    "severity": "high",
+    "test_method": "Manual WAF evasion testing",
+    "verification_steps": [
+      "1. Test SQLi payloads with various encodings",
+      "2. Try HTTP parameter pollution techniques",
+      "3. Test with mixed case and encoding",
+      "4. Check for WAF rule gaps",
+      "5. Test with fragmented requests",
+      "6. Verify WAF logging and alerting",
+      "7. Use automated WAF bypass tools"
+    ],
+    "remediation": "Keep WAF rules updated. Implement multi-layer security. Monitor WAF logs for bypass attempts. Regular WAF testing and tuning. Use behavioral analysis."
+  },
+  {
+    "name": "Input Validation Bypass",
+    "description": "Tests for techniques to bypass input validation including null bytes, unicode, and case manipulation.",
+    "category": "Input Validation",
+    "severity": "high",
+    "test_method": "Manual input manipulation testing",
+    "verification_steps": [
+      "1. Test with null byte injection",
+      "2. Try unicode normalization bypass",
+      "3. Test with different character encodings",
+      "4. Check for case sensitivity issues",
+      "5. Test with extra whitespace and newlines",
+      "6. Verify validation on client vs server",
+      "7. Use fuzzing for input validation testing"
+    ],
+    "remediation": "Implement consistent server-side validation. Normalize inputs before validation. Use allowlists over blocklists. Test validation with various encodings."
+  },
+  {
+    "name": "Authentication Bypass",
+    "description": "Tests for authentication bypass techniques including SQL injection in login, default credentials, and backdoors.",
+    "category": "Authentication",
+    "severity": "critical",
+    "test_method": "Manual authentication testing",
+    "verification_steps": [
+      "1. Test for SQL injection in login forms",
+      "2. Check for default admin credentials",
+      "3. Look for hardcoded credentials",
+      "4. Test for authentication logic flaws",
+      "5. Check for backdoor files/scripts",
+      "6. Test cookie manipulation for auth bypass",
+      "7. Verify all authentication endpoints"
+    ],
+    "remediation": "Implement secure authentication mechanisms. Remove default accounts/credentials. Regular credential audits. Monitor for authentication anomalies. Code review for backdoors."
+  },
+  {
+    "name": "Admin Functionality Exposure",
+    "description": "Tests for exposure of admin functionality to unauthenticated or unauthorized users.",
+    "category": "Access Control",
+    "severity": "critical",
+    "test_method": "Manual access control testing",
+    "verification_steps": [
+      "1. Test direct access to admin URLs",
+      "2. Check for admin functionality in front-end",
+      "3. Verify AJAX admin endpoints",
+      "4. Test API endpoints with admin functions",
+      "5. Check for debug/admin panels",
+      "6. Verify proper role-based access controls",
+      "7. Test privilege escalation to admin"
+    ],
+    "remediation": "Implement strict access controls for admin functions. Use role-based permissions. Regularly audit admin access. Monitor for unauthorized admin access attempts."
+  },
+  {
+    "name": "Privilege Escalation",
+    "description": "Tests for vertical and horizontal privilege escalation vulnerabilities.",
+    "category": "Access Control",
+    "severity": "critical",
+    "test_method": "Manual privilege testing",
+    "verification_steps": [
+      "1. Test user role manipulation",
+      "2. Check for parameter tampering in role assignments",
+      "3. Test horizontal privilege escalation (access other users' data)",
+      "4. Verify vertical escalation (user to admin)",
+      "5. Check for missing authorization checks",
+      "6. Test API endpoints for privilege issues",
+      "7. Verify permission inheritance"
+    ],
+    "remediation": "Implement proper authorization checks. Use principle of least privilege. Validate user permissions on every request. Regular permission audits."
+  },
+  {
+    "name": "Mass Assignment",
+    "description": "Tests for mass assignment vulnerabilities allowing users to modify object properties they shouldn't access.",
+    "category": "Input Validation",
+    "severity": "medium",
+    "test_method": "Manual parameter tampering",
+    "verification_steps": [
+      "1. Test form submissions with extra parameters",
+      "2. Check API endpoints for mass assignment",
+      "3. Try setting admin/privilege fields",
+      "4. Test with JSON/XML input containing extra fields",
+      "5. Verify model/object property filtering",
+      "6. Check WordPress user meta updates",
+      "7. Test with different content types"
+    ],
+    "remediation": "Use allowlists for assignable fields. Implement proper data binding. Validate all input fields. Use framework security features for mass assignment protection."
+  },
+  {
+    "name": "Insecure Direct Object References (IDOR)",
+    "description": "Tests for IDOR vulnerabilities allowing access to unauthorized resources by modifying object references.",
+    "category": "Access Control",
+    "severity": "high",
+    "test_method": "Manual ID manipulation testing",
+    "verification_steps": [
+      "1. Test numeric IDs in URLs (user/123 → user/124)",
+      "2. Check for predictable resource identifiers",
+      "3. Test file download IDs",
+      "4. Verify API endpoint object references",
+      "5. Test with different parameter names (id, uid, user_id)",
+      "6. Check for indirect object references",
+      "7. Use automated IDOR scanners"
+    ],
+    "remediation": "Implement access control checks on all object references. Use unpredictable identifiers. Map user sessions to resources. Regular IDOR testing."
+  },
+  {
+    "name": "File Path Traversal",
+    "description": "Tests for file path traversal vulnerabilities in file download or view functionality.",
+    "category": "Input Validation",
+    "severity": "high",
+    "test_method": "Manual path traversal testing",
+    "verification_steps": [
+      "1. Test file download parameters with ../",
+      "2. Try absolute paths",
+      "3. Test with encoded traversal sequences",
+      "4. Check for null byte injection",
+      "5. Verify file inclusion functions",
+      "6. Test with different OS path separators",
+      "7. Check log file viewing functionality"
+    ],
+    "remediation": "Validate and sanitize file paths. Use basename() to extract filenames. Implement allowlists for accessible files. Use chroot or similar restrictions."
+  },
+  {
+    "name": "Unrestricted File Upload",
+    "description": "Tests for unrestricted file upload allowing malicious file execution on the server.",
+    "category": "Input Validation",
+    "severity": "critical",
+    "test_method": "Manual file upload testing",
+    "verification_steps": [
+      "1. Upload PHP files with various extensions",
+      "2. Test double extensions (file.jpg.php)",
+      "3. Try content-type spoofing",
+      "4. Upload files with malicious content in metadata",
+      "5. Test file size and type restrictions",
+      "6. Check for file execution in upload directory",
+      "7. Verify server-side file validation"
+    ],
+    "remediation": "Validate file type by content, not extension. Use allowlists for file types. Store files outside web root. Scan uploaded files for malware. Set proper permissions."
+  },
+  {
+    "name": "Server-Side Validation Bypass",
+    "description": "Tests for bypassing server-side validation through client-side manipulation or parameter tampering.",
+    "category": "Input Validation",
+    "severity": "high",
+    "test_method": "Manual validation bypass testing",
+    "verification_steps": [
+      "1. Test with modified client-side validation",
+      "2. Try parameter tampering after validation",
+      "3. Check for validation in different application layers",
+      "4. Test with different HTTP methods",
+      "5. Verify validation consistency across endpoints",
+      "6. Test with malformed data after validation",
+      "7. Check for race conditions in validation"
+    ],
+    "remediation": "Implement consistent server-side validation. Don't rely on client-side validation. Validate at multiple layers. Use framework validation features. Regular validation testing."
+  },
+  {
+    "name": "Client-Side Validation Only",
+    "description": "Tests for reliance on client-side validation without server-side validation.",
+    "category": "Input Validation",
+    "severity": "high",
+    "test_method": "Manual JavaScript bypass testing",
+    "verification_steps": [
+      "1. Disable JavaScript to bypass client validation",
+      "2. Modify form data before submission",
+      "3. Use proxy tools to tamper with requests",
+      "4. Test API endpoints directly",
+      "5. Check for missing server-side validation",
+      "6. Verify all inputs are validated server-side",
+      "7. Test with automated form submission tools"
+    ],
+    "remediation": "Always implement server-side validation. Use client-side validation for UX only. Validate all inputs on server. Regular validation implementation review."
+  },
+  {
+    "name": "Insecure Third-Party Integrations",
+    "description": "Tests for security vulnerabilities in third-party integrations including payment gateways, social login, and APIs.",
+    "category": "Third-Party",
+    "severity": "medium",
+    "test_method": "Integration testing & configuration review",
+    "verification_steps": [
+      "1. Test payment gateway callback security",
+      "2. Check social login implementation",
+      "3. Verify API key security for third-party services",
+      "4. Test for insecure direct object references in integrations",
+      "5. Check for data leakage to third parties",
+      "6. Verify SSL/TLS for third-party communications",
+      "7. Test for dependency vulnerabilities"
+    ],
+    "remediation": "Vet third-party integrations for security. Implement proper callback validation. Secure API keys and credentials. Monitor third-party service security. Regular integration audits."
+  },
+  {
+    "name": "Exposed Adminer/phpMyAdmin",
+    "description": "Tests for exposed database management interfaces accessible from the internet.",
+    "category": "Information Disclosure",
+    "severity": "critical",
+    "test_method": "Automated scanning & manual access testing",
+    "verification_steps": [
+      "1. Scan for adminer.php, phpmyadmin directories",
+      "2. Check common database admin paths",
+      "3. Test for default credentials",
+      "4. Verify access controls on admin interfaces",
+      "5. Check for version disclosure",
+      "6. Test for SQL injection in admin interfaces",
+      "7. Use automated scanners for exposed admin panels"
+    ],
+    "remediation": "Remove database admin interfaces from production. If needed, restrict by IP. Use strong authentication. Keep admin tools updated. Monitor access attempts."
+  },
+  {
+    "name": "WordPress File Editor Access",
+    "description": "Tests for enabled file editor in WordPress admin allowing direct theme/plugin file modification.",
+    "category": "Configuration",
+    "severity": "high",
+    "test_method": "Configuration review & access testing",
+    "verification_steps": [
+      "1. Check wp-config.php for DISALLOW_FILE_EDIT",
+      "2. Test access to theme/plugin editor in admin",
+      "3. Verify file modification permissions",
+      "4. Check for editor capabilities in user roles",
+      "5. Test editor functionality if enabled",
+      "6. Verify audit logging for file edits",
+      "7. Check for file editor plugin vulnerabilities"
+    ],
+    "remediation": "Add `define('DISALLOW_FILE_EDIT', true);` to wp-config.php. Restrict editor access to specific users. Implement file change monitoring. Regular file integrity checks."
+  },
+  {
+    "name": "Plugin/Theme Editor Vulnerability",
+    "description": "Tests for vulnerabilities in plugin or theme file editors allowing arbitrary code execution.",
+    "category": "Code Execution",
+    "severity": "critical",
+    "test_method": "Manual editor testing",
+    "verification_steps": [
+      "1. Test plugin editor for file write vulnerabilities",
+      "2. Check theme editor for code injection",
+      "3. Verify file permission checks in editors",
+      "4. Test for path traversal in editor file selection",
+      "5. Check for CSRF in editor save functions",
+      "6. Verify input validation in editor content",
+      "7. Test with malicious file content"
+    ],
+    "remediation": "Disable file editors in production. Implement strict file permission checks. Validate all file paths and content. Use code review for custom editors. Monitor file changes."
+  },
+  {
+    "name": "wp-cron.php Security",
+    "description": "Tests wp-cron.php for vulnerabilities including DoS and unauthorized task execution.",
+    "category": "Configuration",
+    "severity": "medium",
+    "test_method": "Manual cron testing",
+    "verification_steps": [
+      "1. Test wp-cron.php for DoS vulnerabilities",
+      "2. Check for unauthorized cron task execution",
+      "3. Verify cron job authentication",
+      "4. Test with malformed cron requests",
+      "5. Check cron execution frequency limits",
+      "6. Verify server cron vs WordPress cron",
+      "7. Test for information disclosure via cron"
+    ],
+    "remediation": "Disable WordPress cron if using server cron. Implement cron authentication if needed. Monitor cron execution. Limit cron resource usage. Regular cron job review."
+  },
+  {
+    "name": "User Registration Security",
+    "description": "Tests user registration functionality for vulnerabilities including spam registration and privilege assignment.",
+    "category": "Authentication",
+    "severity": "medium",
+    "test_method": "Manual registration testing",
+    "verification_steps": [
+      "1. Test registration without CAPTCHA",
+      "2. Check for role assignment vulnerabilities",
+      "3. Verify email confirmation requirement",
+      "4. Test for username enumeration during registration",
+      "5. Check registration rate limiting",
+      "6. Test with malicious username/email inputs",
+      "7. Verify registration approval workflow"
+    ],
+    "remediation": "Implement CAPTCHA on registration. Require email confirmation. Use role-based registration. Implement rate limiting. Validate all registration inputs."
+  },
+  {
+    "name": "Comment Security",
+    "description": "Tests comment functionality for XSS, spam, and information disclosure vulnerabilities.",
+    "category": "Input Validation",
+    "severity": "low",
+    "test_method": "Manual comment testing",
+    "verification_steps": [
+      "1. Test comment form for XSS vulnerabilities",
+      "2. Check for comment spam without CAPTCHA",
+      "3. Verify comment approval workflow",
+      "4. Test for information disclosure in comments",
+      "5. Check comment rate limiting",
+      "6. Test with malicious file uploads in comments",
+      "7. Verify comment author information exposure"
+    ],
+    "remediation": "Implement comment moderation. Use CAPTCHA for comment submission. Sanitize comment content. Implement rate limiting. Regular comment spam review."
+  },
+  {
+    "name": "Search Functionality Security",
+    "description": "Tests search functionality for SQL injection, XSS, and information disclosure vulnerabilities.",
+    "category": "Input Validation",
+    "severity": "medium",
+    "test_method": "Manual search testing",
+    "verification_steps": [
+      "1. Test search for SQL injection",
+      "2. Check for XSS in search results",
+      "3. Verify search query logging",
+      "4. Test for information disclosure via search",
+      "5. Check search rate limiting",
+      "6. Test with malicious search queries",
+      "7. Verify search result authorization"
+    ],
+    "remediation": "Sanitize search queries. Implement proper search indexing. Limit search result exposure. Add rate limiting. Regular search functionality testing."
+  },
+  {
+    "name": "Contact Form Security",
+    "description": "Tests contact forms for email header injection, XSS, and spam vulnerabilities.",
+    "category": "Input Validation",
+    "severity": "medium",
+    "test_method": "Manual form testing",
+    "verification_steps": [
+      "1. Test contact form for email header injection",
+      "2. Check for XSS in form fields",
+      "3. Verify CAPTCHA implementation",
+      "4. Test for file upload vulnerabilities",
+      "5. Check form submission rate limiting",
+      "6. Test with malicious form inputs",
+      "7. Verify email content sanitization"
+    ],
+    "remediation": "Implement CAPTCHA. Sanitize all form inputs. Validate email headers. Add rate limiting. Use secure form processing libraries."
+  },
+  {
+    "name": "WooCommerce Security",
+    "description": "Tests WooCommerce-specific vulnerabilities including payment bypass, price manipulation, and order tampering.",
+    "category": "E-commerce",
+    "severity": "high",
+    "test_method": "Manual e-commerce testing",
+    "verification_steps": [
+      "1. Test for price manipulation in cart",
+      "2. Check payment gateway callback security",
+      "3. Verify order status manipulation",
+      "4. Test for coupon/discount abuse",
+      "5. Check user role permissions for shop functions",
+      "6. Test for inventory manipulation",
+      "7. Verify secure checkout process"
+    ],
+    "remediation": "Implement server-side price validation. Secure payment callbacks. Validate order status changes. Implement proper user roles. Regular WooCommerce security updates."
+  },
+  {
+    "name": "Payment Gateway Security",
+    "description": "Tests payment gateway integrations for vulnerabilities including callback manipulation and transaction tampering.",
+    "category": "E-commerce",
+    "severity": "critical",
+    "test_method": "Manual payment testing",
+    "verification_steps": [
+      "1. Test payment callback validation",
+      "2. Check for transaction ID manipulation",
+      "3. Verify payment status handling",
+      "4. Test for replay attacks on payment notifications",
+      "5. Check SSL/TLS for payment communications",
+      "6. Verify payment data storage security",
+      "7. Test refund functionality security"
+    ],
+    "remediation": "Validate all payment callbacks. Use secure communication channels. Implement proper transaction tracking. Secure payment data storage. Regular payment gateway testing."
+  },
+  {
+    "name": "Cart Manipulation",
+    "description": "Tests for shopping cart manipulation vulnerabilities including price, quantity, and discount manipulation.",
+    "category": "E-commerce",
+    "severity": "high",
+    "test_method": "Manual cart testing",
+    "verification_steps": [
+      "1. Test cart price parameter tampering",
+      "2. Check for negative quantity attacks",
+      "3. Verify discount/coupon validation",
+      "4. Test for cart session manipulation",
+      "5. Check inventory validation during checkout",
+      "6. Test for tax/shipping manipulation",
+      "7. Verify cart total calculation security"
+    ],
+    "remediation": "Implement server-side cart validation. Validate all price calculations. Check inventory before checkout. Secure cart session data. Regular cart security testing."
+  },
+  {
+    "name": "Checkout Process Security",
+    "description": "Tests checkout process for vulnerabilities including address manipulation, shipping bypass, and coupon abuse.",
+    "category": "E-commerce",
+    "severity": "high",
+    "test_method": "Manual checkout testing",
+    "verification_steps": [
+      "1. Test address validation and manipulation",
+      "2. Check for shipping method bypass",
+      "3. Verify coupon code validation",
+      "4. Test checkout as guest vs registered user",
+      "5. Check payment method selection security",
+      "6. Test order review page manipulation",
+      "7. Verify checkout completion security"
+    ],
+    "remediation": "Implement server-side checkout validation. Validate all user inputs. Secure payment method selection. Monitor for checkout anomalies. Regular checkout process testing."
+  },
+  {
+    "name": "Order Management Security",
+    "description": "Tests order management functionality for vulnerabilities including order status manipulation and information disclosure.",
+    "category": "E-commerce",
+    "severity": "medium",
+    "test_method": "Manual order testing",
+    "verification_steps": [
+      "1. Test order status modification",
+      "2. Check for order information disclosure",
+      "3. Verify order cancellation security",
+      "4. Test order modification after placement",
+      "5. Check order search functionality",
+      "6. Test order export/download security",
+      "7. Verify order notification security"
+    ],
+    "remediation": "Implement proper order access controls. Validate order status changes. Secure order data exposure. Monitor order management activities. Regular order system testing."
+  },
+  {
+    "name": "Inventory Management Security",
+    "description": "Tests inventory management for vulnerabilities including stock manipulation and negative quantity handling.",
+    "category": "E-commerce",
+    "severity": "medium",
+    "test_method": "Manual inventory testing",
+    "verification_steps": [
+      "1. Test inventory quantity manipulation",
+      "2. Check for negative stock attacks",
+      "3. Verify inventory update permissions",
+      "4. Test bulk inventory operations",
+      "5. Check inventory synchronization security",
+      "6. Test low stock notification security",
+      "7. Verify inventory reporting security"
+    ],
+    "remediation": "Implement server-side inventory validation. Secure inventory update permissions. Monitor inventory anomalies. Regular inventory system testing. Implement inventory audit trails."
+  },
+  {
+    "name": "Multi-vendor Marketplace Security",
+    "description": "Tests multi-vendor marketplace functionality for privilege escalation, vendor impersonation, and commission manipulation.",
+    "category": "E-commerce",
+    "severity": "high",
+    "test_method": "Manual marketplace testing",
+    "verification_steps": [
+      "1. Test vendor privilege escalation",
+      "2. Check for vendor impersonation",
+      "3. Verify commission calculation security",
+      "4. Test vendor payment information security",
+      "5. Check vendor product management permissions",
+      "6. Test vendor review/rating manipulation",
+      "7. Verify vendor dashboard security"
+    ],
+    "remediation": "Implement strict vendor role permissions. Secure vendor authentication. Validate commission calculations. Monitor vendor activities. Regular marketplace security testing."
+  },
+  {
+    "name": "Subscription Management Security",
+    "description": "Tests subscription functionality for vulnerabilities including plan manipulation, trial period abuse, and billing bypass.",
+    "category": "E-commerce",
+    "severity": "high",
+    "test_method": "Manual subscription testing",
+    "verification_steps": [
+      "1. Test subscription plan manipulation",
+      "2. Check for trial period abuse",
+      "3. Verify billing cycle security",
+      "4. Test subscription cancellation/renewal",
+      "5. Check payment method update security",
+      "6. Test subscription upgrade/downgrade",
+      "7. Verify subscription notification security"
+    ],
+    "remediation": "Implement server-side subscription validation. Secure billing operations. Monitor subscription anomalies. Regular subscription system testing. Implement subscription audit trails."
+  },
+  {
+    "name": "Digital Download Security",
+    "description": "Tests digital download functionality for unauthorized download, download limit bypass, and direct link exposure.",
+    "category": "E-commerce",
+    "severity": "medium",
+    "test_method": "Manual download testing",
+    "verification_steps": [
+      "1. Test for unauthorized file download",
+      "2. Check download limit bypass",
+      "3. Verify download link expiration",
+      "4. Test direct download link exposure",
+      "5. Check download speed/bandwidth limiting",
+      "6. Test download resumption security",
+      "7. Verify download logging and tracking"
+    ],
+    "remediation": "Implement secure download authorization. Use expiring download links. Limit download attempts. Secure file storage. Monitor download activities."
+  },
+  {
+    "name": "Membership Site Security",
+    "description": "Tests membership functionality for content access bypass, subscription manipulation, and role escalation.",
+    "category": "Access Control",
+    "severity": "high",
+    "test_method": "Manual membership testing",
+    "verification_steps": [
+      "1. Test membership content access bypass",
+      "2. Check membership level escalation",
+      "3. Verify membership payment security",
+      "4. Test membership cancellation/renewal",
+      "5. Check member directory security",
+      "6. Test membership content download",
+      "7. Verify member profile security"
+    ],
+    "remediation": "Implement strict content access controls. Secure membership level management. Monitor membership anomalies. Regular membership system testing. Implement membership audit trails."
+  },
+  {
+    "name": "Learning Management System (LMS) Security",
+    "description": "Tests LMS functionality for course access bypass, grade manipulation, and certificate forgery.",
+    "category": "Education",
+    "severity": "medium",
+    "test_method": "Manual LMS testing",
+    "verification_steps": [
+      "1. Test course content access bypass",
+      "2. Check for grade manipulation",
+      "3. Verify certificate generation security",
+      "4. Test quiz/assessment security",
+      "5. Check student progress tracking",
+      "6. Test course enrollment security",
+      "7. Verify instructor permissions"
+    ],
+    "remediation": "Implement strict course access controls. Secure grade management. Validate certificate generation. Monitor LMS activities. Regular LMS security testing."
+  },
+  {
+    "name": "Forum/Bulletin Board Security",
+    "description": "Tests forum functionality for XSS, CSRF, privilege escalation, and private message interception.",
+    "category": "Community",
+    "severity": "medium",
+    "test_method": "Manual forum testing",
+    "verification_steps": [
+      "1. Test forum posts for XSS",
+      "2. Check private message security",
+      "3. Verify user role permissions",
+      "4. Test forum moderation security",
+      "5. Check file uploads in forums",
+      "6. Test user reputation system",
+      "7. Verify forum search security"
+    ],
+    "remediation": "Implement forum content sanitization. Secure private messaging. Implement proper user roles. Monitor forum activities. Regular forum security testing."
+  },
+  {
+    "name": "Social Network Features Security",
+    "description": "Tests social features for privacy bypass, friend request manipulation, and profile data exposure.",
+    "category": "Social",
+    "severity": "medium",
+    "test_method": "Manual social feature testing",
+    "verification_steps": [
+      "1. Test privacy settings bypass",
+      "2. Check friend request security",
+      "3. Verify profile data exposure",
+      "4. Test social activity stream security",
+      "5. Check photo/video upload security",
+      "6. Test messaging/chat security",
+      "7. Verify social notifications security"
+    ],
+    "remediation": "Implement strict privacy controls. Secure social interactions. Validate user-generated content. Monitor social activities. Regular social feature testing."
+  },
+  {
+    "name": "Calendar/Booking Security",
+    "description": "Tests booking functionality for time slot manipulation, double booking, and appointment tampering.",
+    "category": "Booking",
+    "severity": "medium",
+    "test_method": "Manual booking testing",
+    "verification_steps": [
+      "1. Test booking time slot manipulation",
+      "2. Check for double booking vulnerabilities",
+      "3. Verify appointment modification security",
+      "4. Test booking payment security",
+      "5. Check availability calendar exposure",
+      "6. Test booking notification security",
+      "7. Verify booking cancellation security"
+    ],
+    "remediation": "Implement server-side booking validation. Secure time slot management. Prevent double bookings. Monitor booking anomalies. Regular booking system testing."
+  },
+  {
+    "name": "Real Estate Listing Security",
+    "description": "Tests real estate functionality for listing manipulation, price tampering, and unauthorized access to property details.",
+    "category": "Real Estate",
+    "severity": "medium",
+    "test_method": "Manual real estate testing",
+    "verification_steps": [
+      "1. Test property listing manipulation",
+      "2. Check for price tampering",
+      "3. Verify property detail exposure",
+      "4. Test lead management security",
+      "5. Check property search security",
+      "6. Test agent profile security",
+      "7. Verify property image security"
+    ],
+    "remediation": "Implement strict listing management controls. Secure property data. Validate all price information. Monitor real estate activities. Regular system security testing."
+  },
+  {
+    "name": "Job Board Security",
+    "description": "Tests job board functionality for resume access bypass, job listing manipulation, and application tampering.",
+    "category": "Recruitment",
+    "severity": "medium",
+    "test_method": "Manual job board testing",
+    "verification_steps": [
+      "1. Test job listing manipulation",
+      "2. Check resume access security",
+      "3. Verify application submission security",
+      "4. Test employer profile security",
+      "5. Check job search security",
+      "6. Test application tracking security",
+      "7. Verify job alert security"
+    ],
+    "remediation": "Implement strict job listing controls. Secure resume access. Validate application submissions. Monitor job board activities. Regular security testing."
+  },
+  {
+    "name": "Directory Listing Security",
+    "description": "Tests directory functionality for listing manipulation, unauthorized edits, and sensitive information exposure.",
+    "category": "Directory",
+    "severity": "medium",
+    "test_method": "Manual directory testing",
+    "verification_steps": [
+      "1. Test directory listing manipulation",
+      "2. Check for unauthorized listing edits",
+      "3. Verify business information exposure",
+      "4. Test directory search security",
+      "5. Check review/rating manipulation",
+      "6. Test directory submission security",
+      "7. Verify directory category security"
+    ],
+    "remediation": "Implement strict directory management controls. Secure listing submissions. Validate all directory content. Monitor directory activities. Regular security testing."
+  },
+  {
+    "name": "Event Management Security",
+    "description": "Tests event management functionality for ticket manipulation, attendee data exposure, and event tampering.",
+    "category": "Events",
+    "severity": "medium",
+    "test_method": "Manual event testing",
+    "verification_steps": [
+      "1. Test event creation/manipulation",
+      "2. Check ticket purchase/validation security",
+      "3. Verify attendee data exposure",
+      "4. Test event registration security",
+      "5. Check event payment processing",
+      "6. Test event notification security",
+      "7. Verify event calendar security"
+    ],
+    "remediation": "Implement strict event management controls. Secure ticket validation. Protect attendee data. Monitor event activities. Regular event system testing."
+  },
+  {
+    "name": "Donation/Payment Security",
+    "description": "Tests donation functionality for amount manipulation, donor information exposure, and payment bypass.",
+    "category": "Non-profit",
+    "severity": "high",
+    "test_method": "Manual donation testing",
+    "verification_steps": [
+      "1. Test donation amount manipulation",
+      "2. Check donor information exposure",
+      "3. Verify payment processing security",
+      "4. Test recurring donation security",
+      "5. Check donation receipt security",
+      "6. Test donor management security",
+      "7. Verify campaign goal security"
+    ],
+    "remediation": "Implement server-side donation validation. Secure donor information. Validate payment processing. Monitor donation activities. Regular donation system testing."
+  },
+  {
+    "name": "Newsletter/Email Marketing Security",
+    "description": "Tests email marketing functionality for list manipulation, email injection, and subscriber data exposure.",
+    "category": "Marketing",
+    "severity": "medium",
+    "test_method": "Manual email marketing testing",
+    "verification_steps": [
+      "1. Test email list manipulation",
+      "2. Check for email content injection",
+      "3. Verify subscriber data exposure",
+      "4. Test subscription management security",
+      "5. Check email sending limits",
+      "6. Test campaign tracking security",
+      "7. Verify unsubscribe security"
+    ],
+    "remediation": "Implement strict email list controls. Sanitize email content. Secure subscriber data. Monitor email marketing activities. Regular security testing."
+  },
+  {
+    "name": "Survey/Poll Security",
+    "description": "Tests survey functionality for vote manipulation, result tampering, and respondent data exposure.",
+    "category": "Survey",
+    "severity": "low",
+    "test_method": "Manual survey testing",
+    "verification_steps": [
+      "1. Test survey vote manipulation",
+      "2. Check for multiple voting",
+      "3. Verify survey result exposure",
+      "4. Test respondent data security",
+      "5. Check survey creation security",
+      "6. Test survey analysis security",
+      "7. Verify survey sharing security"
+    ],
+    "remediation": "Implement vote validation and limiting. Secure survey results. Protect respondent data. Monitor survey activities. Regular survey system testing."
+  },
+  {
+    "name": "Quiz/Test Security",
+    "description": "Tests quiz functionality for answer manipulation, score tampering, and question bank exposure.",
+    "category": "Education",
+    "severity": "medium",
+    "test_method": "Manual quiz testing",
+    "verification_steps": [
+      "1. Test quiz answer manipulation",
+      "2. Check for score tampering",
+      "3. Verify question bank exposure",
+      "4. Test quiz timing security",
+      "5. Check quiz result security",
+      "6. Test quiz creation security",
+      "7. Verify quiz certificate security"
+    ],
+    "remediation": "Implement server-side quiz validation. Secure question banks. Validate quiz scores. Monitor quiz activities. Regular quiz system testing."
+  },
+  {
+    "name": "Gallery/Portfolio Security",
+    "description": "Tests gallery functionality for image manipulation, unauthorized downloads, and metadata exposure.",
+    "category": "Media",
+    "severity": "low",
+    "test_method": "Manual gallery testing",
+    "verification_steps": [
+      "1. Test image upload manipulation",
+      "2. Check for unauthorized downloads",
+      "3. Verify image metadata exposure",
+      "4. Test gallery access controls",
+      "5. Check image editing security",
+      "6. Test gallery organization security",
+      "7. Verify image sharing security"
+    ],
+    "remediation": "Implement image upload validation. Secure image access. Strip sensitive metadata. Monitor gallery activities. Regular gallery security testing."
+  },
+  {
+    "name": "Video/Audio Streaming Security",
+    "description": "Tests streaming functionality for unauthorized access, download bypass, and content manipulation.",
+    "category": "Media",
+    "severity": "medium",
+    "test_method": "Manual streaming testing",
+    "verification_steps": [
+      "1. Test streaming access controls",
+      "2. Check for download bypass",
+      "3. Verify content manipulation",
+      "4. Test streaming quality manipulation",
+      "5. Check streaming statistics security",
+      "6. Test content upload security",
+      "7. Verify streaming payment security"
+    ],
+    "remediation": "Implement secure streaming protocols. Prevent download bypass. Validate streaming content. Monitor streaming activities. Regular streaming system testing."
+  },
+  {
+    "name": "Document Management Security",
+    "description": "Tests document management for unauthorized access, document manipulation, and version control bypass.",
+    "category": "Document",
+    "severity": "high",
+    "test_method": "Manual document testing",
+    "verification_steps": [
+      "1. Test document access controls",
+      "2. Check for document manipulation",
+      "3. Verify version control security",
+      "4. Test document sharing security",
+      "5. Check document search security",
+      "6. Test document conversion security",
+      "7. Verify document backup security"
+    ],
+    "remediation": "Implement strict document access controls. Secure document manipulation. Validate version control. Monitor document activities. Regular document system testing."
+  },
+  {
+    "name": "Project Management Security",
+    "description": "Tests project management functionality for task manipulation, file access bypass, and project data exposure.",
+    "category": "Project Management",
+    "severity": "medium",
+    "test_method": "Manual project testing",
+    "verification_steps": [
+      "1. Test project access controls",
+      "2. Check task manipulation security",
+      "3. Verify file attachment security",
+      "4. Test project timeline manipulation",
+      "5. Check team member permissions",
+      "6. Test project reporting security",
+      "7. Verify project notification security"
+    ],
+    "remediation": "Implement strict project permissions. Secure task management. Validate file attachments. Monitor project activities. Regular project system testing."
+  },
+  {
+    "name": "Customer Relationship Management (CRM) Security",
+    "description": "Tests CRM functionality for contact data exposure, activity manipulation, and pipeline tampering.",
+    "category": "CRM",
+    "severity": "high",
+    "test_method": "Manual CRM testing",
+    "verification_steps": [
+      "1. Test contact data exposure",
+      "2. Check for activity manipulation",
+      "3. Verify pipeline stage tampering",
+      "4. Test lead assignment security",
+      "5. Check communication logging security",
+      "6. Test CRM integration security",
+      "7. Verify reporting and analytics security"
+    ],
+    "remediation": "Implement strict CRM access controls. Secure contact data. Validate pipeline changes. Monitor CRM activities. Regular CRM security testing."
+  },
+  {
+    "name": "Help Desk/Support Ticket Security",
+    "description": "Tests support system for ticket manipulation, private data exposure, and privilege escalation.",
+    "category": "Support",
+    "severity": "medium",
+    "test_method": "Manual support testing",
+    "verification_steps": [
+      "1. Test ticket creation/manipulation",
+      "2. Check for private data exposure",
+      "3. Verify ticket assignment security",
+      "4. Test ticket status manipulation",
+      "5. Check attachment security",
+      "6. Test knowledge base security",
+      "7. Verify support agent permissions"
+    ],
+    "remediation": "Implement strict ticket permissions. Secure customer data. Validate ticket operations. Monitor support activities. Regular support system testing."
+  },
+  {
+    "name": "Affiliate Marketing Security",
+    "description": "Tests affiliate functionality for commission manipulation, link tampering, and payout bypass.",
+    "category": "Marketing",
+    "severity": "high",
+    "test_method": "Manual affiliate testing",
+    "verification_steps": [
+      "1. Test affiliate link manipulation",
+      "2. Check for commission calculation tampering",
+      "3. Verify payout information security",
+      "4. Test affiliate registration security",
+      "5. Check referral tracking security",
+      "6. Test affiliate dashboard security",
+      "7. Verify affiliate communication security"
+    ],
+    "remediation": "Implement secure affiliate tracking. Validate commission calculations. Secure payout information. Monitor affiliate activities. Regular affiliate system testing."
+  },
+  {
+    "name": "Analytics/Reporting Security",
+    "description": "Tests analytics functionality for data manipulation, report tampering, and sensitive metric exposure.",
+    "category": "Analytics",
+    "severity": "medium",
+    "test_method": "Manual analytics testing",
+    "verification_steps": [
+      "1. Test analytics data manipulation",
+      "2. Check for report tampering",
+      "3. Verify sensitive metric exposure",
+      "4. Test data export security",
+      "5. Check dashboard access controls",
+      "6. Test real-time analytics security",
+      "7. Verify data source security"
+    ],
+    "remediation": "Implement strict analytics permissions. Secure data processing. Validate report generation. Monitor analytics activities. Regular analytics system testing."
+  }
+]

@@ -1,0 +1,46 @@
+# Task: Create VAPT Ninja Development Plan
+
+- [x] Explore existing codebase in `VAPTMaster` <!-- id: 0 -->
+- [x] Align on Development Plan using `vapt_ninja_development_plan.md.resolved` <!-- id: 1 -->
+- [x] **Phase 1: Foundation & Authentication** <!-- id: 2 -->
+    - [x] Setup `vapt-Copilot.php` structure <!-- id: 11 -->
+    - [x] Implement Enhanced Email OTP <!-- id: 12 -->
+    - [x] Implement Dashboard Separation <!-- id: 13 -->
+- [ ] **Phase 2: Superadmin Dashboard Structure** <!-- id: 3 -->
+    - [x] Rename 'Master' to 'Copilot' in JS/UI <!-- id: 21 -->
+    - [x] Implement Multi-Category Filter <!-- id: 22 -->
+    - [x] **Refinement**: Scoped Stats (Category-aware) <!-- id: 23 -->
+    - [x] **Refinement**: Lifecycle Visual Indicator (Draft->Rel) <!-- id: 24 -->
+    - [x] **Refinement**: Implement `localStorage` Filter Persistence <!-- id: 25 -->
+- [ ] **Phase 3: JSON Feature Management & Workflow** <!-- id: 4 -->
+    - [x] Fix Upload Dropdown Sync (Case-insensitive) <!-- id: 31 -->
+    - [x] Implement Switch Override Warning <!-- id: 32 -->
+    - [x] Consolidate Support Columns <!-- id: 34 -->
+    - [x] Ensure Database Status Sync on Load <!-- id: 33 -->
+    - [x] Phase 3 Refinements & Versioning <!-- id: 40 -->
+        - [x] Rename Dashboard to "VAPT Copilot Dashboard" + Version <!-- id: 41 -->
+        - [x] Adjust Column Widths (Max-width for Feature Name) <!-- id: 42 -->
+        - [x] Improve JSON Management (Hide Sources Modal) <!-- id: 43 -->
+        - [x] Version Bump to next Minor build <!-- id: 44 -->
+        - [x] UI Tweaks (Toggles spacing, Draft disable, Filter alignment) <!-- id: 45 -->
+- [x] **Phase 4: Feature Workflow Engine** <!-- id: 5 -->
+    - [x] Database: `vaptm_feature_history` table <!-- id: 46 -->
+    - [x] PHP: Transition logic State Machine <!-- id: 47 -->
+    - [x] REST: `/transition` and `/history` endpoints <!-- id: 48 -->
+    - [x] UI: History Modal & Status Change Notes <!-- id: 49 -->
+    - [x] UI: Developer Assignment <!-- id: 50 -->
+- [x] **Phase 5: Menu Restructuring & Dashboard Fix** <!-- id: 6 -->
+    - [x] Hierarchy: Parent "VAPT Copilot" with Sub-menus <!-- id: 51 -->
+    - [x] Sub-Menu 1: "VAPT Copilot" (Client) <!-- id: 52 -->
+    - [x] Sub-Menu 2: "VAPT Domain Admin" (Superadmin) <!-- id: 53 -->
+    - [x] Ensure Superadmin sees both; Client sees one <!-- id: 54 -->
+    - [x] Fix Slugs & Component Loading <!-- id: 55 -->
+    - [x] JS Execution Debugging & Safety (IIFE/Diagnostics) <!-- id: 56 -->
+    - [x] **Refinement**: Remove 'Assigned To' Column <!-- id: 57 -->
+    - [x] **Refinement**: Fix Category Filter Alignment <!-- id: 58 -->
+    - [x] **Refinement**: History Icon Placement & Conditional Logic <!-- id: 59 -->
+- [ ] **Phase 6: Client Dashboard Implementation** <!-- id: 7 -->
+- [ ] **Phase 6: Auto-Interface Generation** <!-- id: 7 -->
+- [ ] **Phase 7: Domain Locking & Build System** <!-- id: 8 -->
+- [ ] **Phase 8: Testing, Security & Deployment** <!-- id: 9 -->
+- [x] Review and Refine Plan <!-- id: 10 -->

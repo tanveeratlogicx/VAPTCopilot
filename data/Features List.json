@@ -2,7 +2,7 @@
     "metadata": {
         "version": "2.1.0",
         "focus": "Inclusive WordPress VAPT coverage with populated references",
-        "intended_use": "Feed into WordPress Builder for AI prompt generation and schema creation",
+        "intended_use": "Feed into WordPress Copilot for AI prompt generation and schema creation",
         "maintainer": "Tanveer",
         "last_updated": "2026-01-08"
     },
@@ -1787,7 +1787,7 @@
             ],
             "automation_prompts": {
                 "ai_check": "Generate CSP audits and inline script probes",
-                "ai_ui": "CSP policy builder",
+                "ai_ui": "CSP policy Copilot",
                 "ai_schema": "directives, report_uri, rollout_mode"
             },
             "schema_hints": {
