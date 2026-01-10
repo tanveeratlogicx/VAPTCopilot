@@ -28,3 +28,3458 @@ Feature:
 Enforcement Schema Found. Data Keys: status
 Full Data: {"status":true}
 Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:10
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:40:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:41:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:41:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:42:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:42:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:43:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:44:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:44:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:45:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:45:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:46:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:47:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:48:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:48:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:49:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:49:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:50:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:50:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:50:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:34
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:51:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:52:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:52:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:53:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:53:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:54:02
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:54:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:55:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:56:03
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:56:17
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:56:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:57:54
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:58:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:58:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:59:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 00:59:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:17
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:17
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:00:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:01:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:01:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules...
+VAPTC Enforcement Run at 2026-01-11 01:02:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:03:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:04:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:05:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:06:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:07:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:15
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:15
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:15
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:15
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:15
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:18
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:19
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:41
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:08:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:09:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:02
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","simulate":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:10
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:10:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:11:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:56
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:12:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:13:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:34
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:34
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:34
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:35
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:35
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:35
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:35
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:14:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:38
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:15:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:31
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:31
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:41
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:16:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:17:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:18:14
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:18:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:19:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:20:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:21:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:22:41
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:23:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:24:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:24:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:02
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:25:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:26:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:26:32
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:26:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:27:54
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:12
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:28:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:29:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:30:09
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:30:10
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:32:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:34:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:35:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:36:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:36:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:32
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:32
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:32
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:32
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:33
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:33
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:48
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:38:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha
+Full Data: {"status":true,"enforce_captcha":true}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"1"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"1","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:14
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:24
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:39:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:40:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:40:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:40:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:41:00
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:41:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:42:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:42:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:42:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:42:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:10
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:13
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:17
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:33
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:35
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:35
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:43:50
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:50
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:43:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:53
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:43:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:43:57
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:44:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:01
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:44:14
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:15
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:44:15
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:44:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:16
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:16
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":""}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:16
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":""}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:17
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:17
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:22
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:22
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:23
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:23
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:23
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:25
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:25
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:27
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:27
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:28
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:28
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:29
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:29
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:29
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:30
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:33
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:33
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"5"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"5","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:33
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:33
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"1"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"1","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:36
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:37
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:38
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:44:39
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:01
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:01
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:20
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:20
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:20
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:21
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:21
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:21
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:47
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:47
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:52
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:54
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:54
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:45:54
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:45:54
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:02
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:02
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:26
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:26
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:30
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:30
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:30
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:37
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:37
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:37
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:40
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:40
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:40
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:42
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:42
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:42
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:43
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:43
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:43
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:44
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:44
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:44
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:45
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:45
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:45
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:46
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:46
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:46
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:49
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:49
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: 
+Full Data: []
+Skipped: Missing data or mappings.
+VAPTC Enforcement Run at 2026-01-11 01:46:49
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:51
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:51
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":false}
+Applying rules with Resolved Data: {"status":false,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:51
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:53
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:53
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:54
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:46:54
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:46:54
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:03
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:47:04
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:04
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:47:05
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:05
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:47:06
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:06
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:47:59
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:47:59
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:48:03
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:48:03
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:48:03
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:48:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:48:55
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:48:55
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:49:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:49:59
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:49:59
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:50:04
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:50:04
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:50:05
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:50:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:50:55
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:50:55
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:51:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:51:59
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:51:59
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:52:05
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:52:05
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:52:06
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:52:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:52:55
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:52:55
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:54:10
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:54:11
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:54:11
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:54:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:54:55
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:54:55
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:56:11
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:56:12
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:56:12
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:56:55
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:56:55
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:56:55
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:58:59
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 01:58:59
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 01:58:59
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:00:36
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:00:36
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:00:37
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:02
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:01:02
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:02
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:03
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:06
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:01:06
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:06
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:08
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:01:08
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:01:08
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:02:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:02:07
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:02:07
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:04:07
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:04:07
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:04:07
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:52
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:05:53
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:06:57
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:06:58
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:06:58
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:08:58
+Feature: brute-force-protection
+Enforcement Schema Found. Data Keys: status, enforce_captcha, rate_limit
+Full Data: {"status":true,"enforce_captcha":true,"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null,"enforce_captcha":true}
+VAPTC Enforcement Run at 2026-01-11 02:08:58
+Feature: wordpress-version-disclosure
+Enforcement Schema Found. Data Keys: status
+Full Data: {"status":true}
+Applying rules with Resolved Data: {"status":true,"v1":null,"reset":null}
+VAPTC Enforcement Run at 2026-01-11 02:08:58
+Feature: xml-rpc-api-security
+Enforcement Schema Found. Data Keys: rate_limit
+Full Data: {"rate_limit":"10"}
+Applying rules with Resolved Data: {"status":true,"rate_limit":"10","v1":null,"reset":null}

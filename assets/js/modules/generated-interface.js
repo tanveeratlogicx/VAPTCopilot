@@ -5,7 +5,7 @@
 (function () {
   const { createElement: el, useState, useEffect } = wp.element;
   const { Button, TextControl, ToggleControl, SelectControl, TextareaControl } = wp.components;
-  const { __ } = wp.i18n;
+  const { __, sprintf } = wp.i18n;
 
   /**
    * PROBE REGISTRY: Global Verification Handlers
@@ -18,25 +18,36 @@
       resp.headers.forEach((v, k) => { headers[k] = v; });
       console.log("[VAPTM] Full Response Headers:", headers);
 
-      const vaptmEnforced = resp.headers.get('x-vaptm-enforced');
+      const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
       const securityHeaders = ['x-frame-options', 'x-content-type-options', 'x-xss-protection', 'content-security-policy', 'access-control-expose-headers'];
       const found = securityHeaders.filter(h => resp.headers.has(h)).map(h => `${h}: ${resp.headers.get(h)}`);
 
-      if (vaptmEnforced) {
-        return { success: true, message: `PASS: Plugin is actively enforcing headers (${vaptmEnforced}). Data: ${found.join(' | ')}`, raw: headers };
+      if (vaptcEnforced) {
+        return { success: true, message: `Plugin is actively enforcing headers (${vaptcEnforced}). Data: ${found.join(' | ')}`, raw: headers };
       }
 
       if (found.length > 0) {
-        return { success: true, message: `INFO: Site is secure, but NOT by this plugin. Found: ${found.join(' | ')}`, raw: headers };
+        return { success: true, message: `Site is secure, but NOT by this plugin. Found: ${found.join(' | ')}`, raw: headers };
       }
 
-      return { success: false, message: `FAILED: No security headers found. Raw headers logged to console.`, raw: headers };
+      return { success: false, message: `No security headers found. Raw headers logged to console.`, raw: headers };
     },
 
     // 2. Batch Probe: Verifies Rate Limiting (Sends 125% of RPM)
     spam_requests: async (siteUrl, control, featureData) => {
       try {
-        const rpm = parseInt(featureData['rpm'] || featureData['rate_limit'] || '60', 10);
+        // Resolve RPM: Check 'rpm', then 'rate_limit', then try to find ANY numeric value in featureData, else default to 5
+        let rpm = parseInt(featureData['rpm'] || featureData['rate_limit'], 10);
+
+        if (isNaN(rpm)) {
+          // Fallback: look for ANY key that looks like a limit
+          const limitKey = Object.keys(featureData).find(k => k.includes('limit') || k.includes('max') || k.includes('rpm'));
+          if (limitKey) rpm = parseInt(featureData[limitKey], 10);
+        }
+
+        if (isNaN(rpm)) rpm = 5; // Safe default for security tests
+
+        console.log(`[VAPTM] spam_requests Debug: rpm=${rpm}, load=${Math.ceil(rpm * 1.25)}, data=`, featureData);
         if (isNaN(rpm) || rpm <= 0) {
           throw new Error('Invalid rate limit configuration. RPM must be a positive number.');
         }
@@ -49,7 +60,7 @@
         const probes = [];
         for (let i = 0; i < load; i++) {
           probes.push(
-            fetch(siteUrl + '?vaptm_test_spike=' + i, { cache: 'no-store' })
+            fetch(siteUrl + '?vaptc_test_spike=' + i, { cache: 'no-store' })
               .then(r => ({ status: r.status, headers: r.headers }))
               .catch(err => {
                 console.warn(`[VAPTM] Request ${i} failed:`, err);
@@ -61,29 +72,58 @@
         const responses = await Promise.all(probes);
         let debugInfo = '';
         let lastCount = -1;
+        let traceInfo = '';
 
         const stats = responses.reduce((acc, r) => {
           acc[r.status] = (acc[r.status] || 0) + 1;
 
           // Capture debug info from the last successful response
-          if (r.headers.has('x-vaptm-debug')) debugInfo = r.headers.get('x-vaptm-debug');
-          if (r.headers.has('x-vaptm-count')) lastCount = r.headers.get('x-vaptm-count');
+          if (r.headers.has('x-vaptc-debug')) debugInfo = r.headers.get('x-vaptc-debug');
+          if (r.headers.has('x-vaptc-count')) lastCount = r.headers.get('x-vaptc-count');
+          if (r.headers.has('x-vaptc-trace')) traceInfo = r.headers.get('x-vaptc-trace');
 
           return acc;
         }, {});
 
+        const errorCount = stats[500] || 0;
         const blocked = stats[429] || 0;
-        const debugMsg = `(Debug: ${debugInfo || 'None'}, LastCount: ${lastCount})`;
+        const total = load;
         const successCount = stats[200] || 0;
+        const debugMsg = `(Debug: ${debugInfo || 'None'}, Count: ${lastCount}, Trace: ${traceInfo || 'None'})`;
+
+        const resultMeta = {
+          total: total,
+          accepted: successCount,
+          blocked: blocked,
+          errors: errorCount,
+          details: debugMsg
+        };
 
         if (blocked > 0) {
-          return { success: true, message: `PASS: Out of ${load} Requests sent, ${successCount} successfully sent, ${blocked} Blocked for excessive rate. ${debugMsg}` };
+          return {
+            success: true,
+            message: `Rate limiter is ACTIVE. Security measures are working correctly.`,
+            meta: resultMeta
+          };
         }
-        return { success: false, message: `FAIL: Sent ${load} requests, all accepted. ${JSON.stringify(stats)}. ${debugMsg}. Rate limiting NOT active.` };
+
+        if (errorCount > 0) {
+          return {
+            success: false,
+            message: `Server Error (500). Internal configuration or logic error detected.`,
+            meta: resultMeta
+          };
+        }
+
+        return {
+          success: false,
+          message: `Rate Limiter is NOT active. Traffic was not restricted.`,
+          meta: resultMeta
+        };
       } catch (err) {
         return {
           success: false,
-          message: `❌ Test Error: ${err.message}. Rate limit test could not complete.`,
+          message: `Test Error: ${err.message}. Rate limit test could not complete.`,
           raw: { error: err.message, stack: err.stack }
         };
       }
@@ -92,14 +132,14 @@
     // 3. Status Probe: Verifies specific file block (e.g., XML-RPC)
     block_xmlrpc: async (siteUrl, control, featureData) => {
       const resp = await fetch(siteUrl + '/xmlrpc.php', { method: 'POST', body: '<?xml version="1.0"?><methodCall><methodName>system.listMethods</methodName><params></params></methodCall>' });
-      const vaptmEnforced = resp.headers.get('x-vaptm-enforced');
+      const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
 
-      if (vaptmEnforced === 'php-xmlrpc') {
-        return { success: true, message: `PASS: Plugin is actively blocking XML-RPC (${vaptmEnforced}).` };
+      if (vaptcEnforced === 'php-xmlrpc') {
+        return { success: true, message: `Plugin is actively blocking XML-RPC (${vaptcEnforced}).` };
       }
 
       if ([403, 404, 401].includes(resp.status)) {
-        return { success: true, message: `INFO: XML-RPC is blocked (HTTP ${resp.status}), but NOT by this plugin.` };
+        return { success: true, message: `XML-RPC is blocked (HTTP ${resp.status}), but NOT by this plugin.` };
       }
       return { success: false, message: `CRITICAL: Server returned HTTP ${resp.status} (Exposed).` };
     },
@@ -110,12 +150,12 @@
       const resp = await fetch(target, { cache: 'no-store' });
       const text = await resp.text();
       const snippet = text.substring(0, 500); // Take first 500 chars for proof
-      const vaptmEnforced = resp.headers.get('x-vaptm-enforced');
+      const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
 
       const isListing = snippet.toLowerCase().includes('index of /') || snippet.includes('parent directory');
 
-      if (vaptmEnforced === 'php-dir') {
-        return { success: true, message: `PASS: Plugin is actively blocking directory listing (${vaptmEnforced}).`, raw: snippet };
+      if (vaptcEnforced === 'php-dir') {
+        return { success: true, message: `PASS: Plugin is actively blocking directory listing (${vaptcEnforced}).`, raw: snippet };
       }
 
       if (resp.status === 403) {
@@ -136,10 +176,10 @@
     block_null_byte_injection: async (siteUrl, control, featureData) => {
       const target = siteUrl + '/?vaptm_test_param=safe&vaptm_attack=test%00payload';
       const resp = await fetch(target, { cache: 'no-store' });
-      const vaptmEnforced = resp.headers.get('x-vaptm-enforced');
+      const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
 
-      if (vaptmEnforced === 'php-null-byte' || resp.status === 400) {
-        return { success: true, message: `PASS: Null Byte Injection Blocked (HTTP ${resp.status}). Enforcer: ${vaptmEnforced || 'Server'}` };
+      if (vaptcEnforced === 'php-null-byte' || resp.status === 400) {
+        return { success: true, message: `PASS: Null Byte Injection Blocked (HTTP ${resp.status}). Enforcer: ${vaptcEnforced || 'Server'}` };
       }
 
       return { success: false, message: `FAIL: Null Byte Payload Accepted (HTTP ${resp.status}).` };
@@ -149,7 +189,7 @@
     hide_wp_version: async (siteUrl, control, featureData) => {
       const resp = await fetch(siteUrl + '?vaptm_version_check=1', { method: 'GET', cache: 'no-store' });
       const text = await resp.text();
-      const vaptmEnforced = resp.headers.get('x-vaptm-enforced');
+      const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
 
       // Check for generator tag
       const hasGenerator = text.toLowerCase().includes('name="generator" content="wordpress');
@@ -265,31 +305,23 @@
       let message = '';
       if (isSecure) {
         if (hasHeaderCheck && headerMatches) {
-          message = `🛡️ SECURE: Protection Headers Present (HTTP ${code}). All expected headers verified.`;
+          message = `Protection Headers Present (HTTP ${code}). All expected headers verified.`;
         } else if (expectsBlock && statusMatches) {
-          message = `🛡️ SECURE: Attack Blocked (HTTP ${code}). Expected block code (${expectedStatus}).`;
+          message = `Attack Blocked (HTTP ${code}). Expected block code (${expectedStatus}).`;
         } else if (expectsAllow && code === 200) {
-          message = `🛡️ SECURE: Normal Response (HTTP ${code}) with protection indicators.`;
+          message = `Normal Response (HTTP ${code}) with protection indicators.`;
         } else {
-          message = `🛡️ SECURE: Expected Response Received (HTTP ${code}).`;
+          message = `Expected Response Received (HTTP ${code}).`;
         }
       } else {
         if (code === 200 && expectsBlock) {
-          message = `⚠️ VULNERABLE: Attack Accepted (HTTP 200). Expected Block (${expectedStatus}).`;
+          message = `Attack Accepted (HTTP 200). Expected Block (${expectedStatus}).`;
         } else if (hasHeaderCheck && !headerMatches) {
-          const missing = [];
-          const responseHeaders = {};
-          resp.headers.forEach((v, k) => { responseHeaders[k.toLowerCase()] = v; });
-          for (const [key, expectedValue] of Object.entries(expectedHeaders)) {
-            if (!responseHeaders[key.toLowerCase()]) {
-              missing.push(key);
-            }
-          }
-          message = `⚠️ VULNERABLE: Missing Protection Headers (HTTP ${code}). Missing: ${missing.join(', ')}.`;
+          message = `Missing Protection Headers (HTTP ${code}).`;
         } else if (statusMatches === false && expectedStatus) {
-          message = `❌ MISMATCH: Got HTTP ${code}, expected ${expectedStatus}. Security state unclear.`;
+          message = `Mismatch: Got HTTP ${code}, expected ${expectedStatus}.`;
         } else {
-          message = `❌ FAILED: Unexpected Response (HTTP ${code}). Could not verify security.`;
+          message = `Unexpected Response (HTTP ${code}). Could not verify security.`;
         }
       }
 
@@ -321,55 +353,35 @@
       const handler = PROBE_REGISTRY[test_logic] || PROBE_REGISTRY['default'];
 
       try {
-        // Add timeout protection (30 seconds max)
         const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Test timeout after 30 seconds')), 30000)
         );
-
         const handlerPromise = handler(siteUrl, control, featureData);
+        const res = await Promise.race([handlerPromise, timeoutPromise]);
 
-        const result = await Promise.race([handlerPromise, timeoutPromise]);
-
-        if (result && typeof result === 'object') {
-          const { success, message, raw } = result;
-          setStatus(success ? 'success' : 'error');
-          setResult(message || 'Test completed without message');
-
-          if (raw) {
-            console.log(`[VAPTM Probe Raw Data]:`, raw);
-          }
+        if (res && typeof res === 'object') {
+          setStatus(res.success ? 'success' : 'error');
+          setResult(res);
         } else {
           throw new Error('Invalid test result format');
         }
       } catch (err) {
         setStatus('error');
-        const errorMsg = err.message || 'Unknown error occurred';
-
-        // Provide user-friendly error messages
-        let userMessage = `❌ Test Error: ${errorMsg}`;
-        if (errorMsg.includes('timeout')) {
-          userMessage = '⏱️ Test Timeout: The verification test took too long (>30s). Server may be slow or unresponsive.';
-        } else if (errorMsg.includes('CORS') || errorMsg.includes('fetch')) {
-          userMessage = '🌐 Network Error: Could not connect to server. Check CORS settings or server availability.';
-        } else if (errorMsg.includes('network') || errorMsg.includes('Failed to fetch')) {
-          userMessage = '📡 Network Error: Failed to reach server. Check your internet connection and server status.';
-        }
-
-        setResult(userMessage);
-        console.error('[VAPTM Probe Error]', {
-          test_logic,
-          error: err,
-          control: control.key,
-          stack: err.stack
-        });
+        setResult({ success: false, message: `Error: ${err.message}` });
       }
     };
 
     // Dynamic Label replacement
-    const rpmValue = parseInt(featureData['rpm'] || featureData['rate_limit'] || '60', 10);
+    let rpmValue = parseInt(featureData['rpm'] || featureData['rate_limit'], 10);
+    if (isNaN(rpmValue)) {
+      const limitKey = Object.keys(featureData).find(k => k.includes('limit') || k.includes('max') || k.includes('rpm'));
+      if (limitKey) rpmValue = parseInt(featureData[limitKey], 10);
+    }
+    if (isNaN(rpmValue)) rpmValue = 5;
+
     const loadValue = Math.ceil(rpmValue * 1.25);
     const displayLabel = control.test_logic === 'spam_requests'
-      ? control.label.replace(/\(\d+.*\)/g, `(${loadValue} req/min)`)
+      ? control.label.replace(/\(\s*\d+.*\)/g, '').trim() + ` (${loadValue} requests)`
       : control.label;
 
     return el('div', { className: 'vaptm-test-runner', style: { padding: '15px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', marginBottom: '10px' } }, [
@@ -380,18 +392,29 @@
       el('p', { style: { margin: 0, fontSize: '12px', color: '#64748b' } }, control.help),
 
       // Result Display
-      status !== 'idle' && status !== 'running' && el('div', {
+      status !== 'idle' && status !== 'running' && result && el('div', {
         style: {
           marginTop: '10px',
-          padding: '8px 12px',
+          padding: '12px',
           background: status === 'success' ? '#f0fdf4' : '#fef2f2',
-          borderLeft: `4px solid ${status === 'success' ? '#22c55e' : '#ef4444'}`,
-          fontSize: '12px',
-          color: status === 'success' ? '#15803d' : '#b91c1c'
+          border: `1px solid ${status === 'success' ? '#bbf7d0' : '#fecaca'}`,
+          borderRadius: '6px',
+          fontSize: '13px',
+          color: status === 'success' ? '#166534' : '#991b1b'
         }
       }, [
-        el('strong', null, status === 'success' ? 'PASS: ' : 'FAIL: '),
-        result
+        el('div', { style: { fontWeight: '700', marginBottom: '8px' } }, status === 'success' ? '✅ SUCCESS' : '❌ FAILURE'),
+        el('div', { style: { marginBottom: '8px' } }, result.message),
+
+        result.meta && el('div', { style: { background: 'rgba(255,255,255,0.5)', padding: '10px', borderRadius: '4px', border: '1px solid rgba(0,0,0,0.05)' } }, [
+          el('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' } }, [
+            el('div', { style: { color: '#059669' } }, [__('Accepted: '), el('strong', null, result.meta.accepted)]),
+            el('div', { style: { color: '#dc2626' } }, [__('Blocked (429): '), el('strong', null, result.meta.blocked)]),
+            el('div', { style: { color: '#4b5563' } }, [__('Errors: '), el('strong', null, result.meta.errors)]),
+            el('div', { style: { color: '#4b5563' } }, [__('Total: '), el('strong', null, result.meta.total)])
+          ]),
+          el('div', { style: { marginTop: '8px', fontSize: '10px', opacity: 0.7, fontFamily: 'monospace' } }, result.meta.details)
+        ])
       ])
     ]);
   };
@@ -408,77 +431,66 @@
 
     const handleChange = (key, value) => {
       const updated = { ...currentData, [key]: value };
-      if (onUpdate) {
-        onUpdate(updated);
-      }
+      if (onUpdate) onUpdate(updated);
     };
 
     const renderControl = (control, index) => {
-      try {
-        const { type, label, key, help, options, rows, action } = control;
-        const value = currentData[key] !== undefined ? currentData[key] : (control.default || '');
-        const uniqueKey = key || `ctrl-${index}`;
+      const { type, label, key, help, options, rows, action } = control;
+      const value = currentData[key] !== undefined ? currentData[key] : (control.default || '');
+      const uniqueKey = key || `ctrl-${index}`;
 
-        switch (type) {
-          case 'test_action':
-            return el(TestRunnerControl, { key: uniqueKey, control, featureData: currentData });
+      switch (type) {
+        case 'test_action':
+          return el(TestRunnerControl, { key: uniqueKey, control, featureData: currentData });
 
-          case 'button':
-            return el('div', { key: uniqueKey, style: { marginBottom: '15px' } }, [
-              el(Button, {
-                isSecondary: true,
-                onClick: () => {
-                  if (action === 'reset_validation_logs') {
-                    // TODO: Implement actual backend reset
-                    alert('Reset signal sent to backend.');
-                  } else {
-                    console.log('Button clicked:', action);
-                  }
-                }
-              }, label),
-              help && el('p', { style: { margin: '5px 0 0', fontSize: '12px', color: '#666' } }, help)
-            ]);
+        case 'button':
+          return el('div', { key: uniqueKey, style: { marginBottom: '15px' } }, [
+            el(Button, {
+              isSecondary: true,
+              onClick: () => {
+                if (action === 'reset_validation_logs') alert('Reset signal sent.');
+              }
+            }, label),
+            help && el('p', { style: { margin: '5px 0 0', fontSize: '12px', color: '#666' } }, help)
+          ]);
 
-          case 'toggle':
-            return el(ToggleControl, {
-              key: uniqueKey, label, help,
-              checked: !!value,
+        case 'toggle':
+          return el(ToggleControl, {
+            key: uniqueKey, label, help,
+            checked: !!value,
+            onChange: (val) => handleChange(key, val)
+          });
+
+        case 'input':
+          return el('div', { key: uniqueKey, style: { marginBottom: '15px', padding: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' } }, [
+            el(TextControl, {
+              label: el('strong', null, label),
+              help: help,
+              value: value ? value.toString() : '',
               onChange: (val) => handleChange(key, val)
-            });
+            })
+          ]);
 
-          case 'input':
-            return el(TextControl, {
-              key: uniqueKey, label, help,
-              value: value,
-              onChange: (val) => handleChange(key, val)
-            });
+        case 'select':
+          return el(SelectControl, {
+            key: uniqueKey, label, help,
+            value: value,
+            options: options || [],
+            onChange: (val) => handleChange(key, val)
+          });
 
-          case 'select':
-            return el(SelectControl, {
-              key: uniqueKey, label, help,
-              value: value,
-              options: options || [],
-              onChange: (val) => handleChange(key, val)
-            });
+        case 'textarea':
+        case 'code':
+          return el(TextareaControl, {
+            key: uniqueKey, label, help,
+            value: value,
+            rows: rows || 6,
+            onChange: (val) => handleChange(key, val),
+            style: type === 'code' ? { fontFamily: 'monospace', fontSize: '12px', background: '#f0f0f1' } : {}
+          });
 
-          case 'textarea':
-          case 'code':
-            return wp.components.TextareaControl ? el(wp.components.TextareaControl, {
-              key: uniqueKey, label, help,
-              value: value,
-              rows: rows || 6,
-              onChange: (val) => handleChange(key, val),
-              style: type === 'code' ? { fontFamily: 'monospace', fontSize: '12px', background: '#f0f0f1' } : {}
-            }) : null;
-
-          default:
-            return el('div', { key: uniqueKey, style: { marginBottom: '10px', color: '#d63638' } },
-              sprintf(__('Unknown control type: %s', 'vapt-Copilot'), type)
-            );
-        }
-      } catch (err) {
-        console.error('Control Render Error:', err);
-        return el('div', { key: index, style: { color: 'red' } }, 'Render Error');
+        default:
+          return null;
       }
     };
 

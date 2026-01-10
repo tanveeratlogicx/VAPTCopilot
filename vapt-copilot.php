@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 2.1.1
+ * Version: 2.1.3
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin Constants (Copilot-specific)
-define('VAPTC_VERSION', '2.1.1');
+define('VAPTC_VERSION', '2.1.3');
 define('VAPTC_PATH', plugin_dir_path(__FILE__));
 define('VAPTC_URL', plugin_dir_url(__FILE__));
 define('VAPTC_SUPERADMIN_EMAIL', 'tanmalik786@gmail.com');
@@ -102,6 +102,7 @@ function vaptc_copilot_activate_plugin()
         verification_steps TEXT,
         include_test_method TINYINT(1) DEFAULT 0,
         include_verification TINYINT(1) DEFAULT 0,
+        include_verification_engine TINYINT(1) DEFAULT 0,
         is_enforced TINYINT(1) DEFAULT 0,
         wireframe_url TEXT DEFAULT NULL,
         generated_schema LONGTEXT DEFAULT NULL,
@@ -229,6 +230,26 @@ if (! function_exists('vaptc_manual_db_fix')) {
     }
   }
 }
+
+/**
+ * Workbench Action Handler (Ajax-Alternative via GET)
+ */
+add_action('init', function () {
+  if (isset($_GET['vaptc_action']) && current_user_can('manage_options')) {
+    $action = sanitize_text_field($_GET['vaptc_action']);
+    if ($action === 'reset_rate_limits') {
+      $upload_dir = wp_upload_dir();
+      $lock_dir = $upload_dir['basedir'] . '/vaptc-locks';
+      if (is_dir($lock_dir)) {
+        $files = glob("$lock_dir/*");
+        foreach ($files as $file) {
+          if (is_file($file)) @unlink($file);
+        }
+      }
+      wp_die("Rate limits reset successfully.", "VAPT Copilot Reset", array('response' => 200, 'back_link' => true));
+    }
+  }
+});
 
 /**
  * Detect Localhost Environment

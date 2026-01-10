@@ -1,0 +1,303 @@
+{
+    "metadata": {
+        "version": "2.1.0",
+        "focus": "Inclusive WordPress VAPT coverage with populated references",
+        "intended_use": "Feed into WordPress Copilot for AI prompt generation and schema creation",
+        "maintainer": "Tanveer",
+        "last_updated": "2026-01-08"
+    },
+    "schema": {
+        "item_fields": [
+            "id",
+            "category",
+            "title",
+            "severity",
+            "description",
+            "risks",
+            "tests",
+            "assurance",
+            "assurance_against",
+            "evidence",
+            "remediation",
+            "automation_prompts",
+            "schema_hints",
+            "references"
+        ],
+        "reference_format": {
+            "fields": [
+                "name",
+                "section",
+                "url"
+            ]
+        }
+    },
+    "wordpress_vapt": [
+    {
+        "id": "WP-EXPOSED-ADMIN-INTERFACE-OVER-CIDR",
+        "category": "Authentication & Access Control",
+        "title": "Admin interface not restricted by CIDR where feasible",
+        "severity": "Medium",
+        "description": "Lack of network-based restrictions increases exposure to brute-force and scanning.",
+        "risks": [
+        "Attack surface increase"
+        ],
+        "tests": [
+        "Check firewall rules for admin paths",
+        "Verify CIDR restrictions if policy allows"
+        ],
+        "assurance": [
+        "CIDR restrictions applied where feasible"
+        ],
+        "assurance_against": [
+        "Targeted brute-force"
+        ],
+        "evidence": [
+        "Firewall config",
+        "Access logs"
+        ],
+        "remediation": [
+        "Apply CIDR restrictions for admin access",
+        "Use VPN or bastion where possible"
+        ],
+        "automation_prompts": {
+        "ai_check": "Generate CIDR restriction audits",
+        "ai_ui": "Network hardening card",
+        "ai_schema": "cidr_list"
+        },
+        "schema_hints": {
+        "fields": [
+            {
+            "name": "cidr_list",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+            }
+        ]
+        },
+        "references": [
+        {
+            "name": "NIST SP 800-53",
+            "section": "AC-4, SC-7 Boundary Protection",
+            "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+        }
+        ]
+    },
+    {
+        "id": "WP-MIXED-CONTENT",
+        "category": "Caching & Transport",
+        "title": "Mixed content on authenticated pages",
+        "severity": "Medium",
+        "description": "Loading HTTP resources on HTTPS pages can leak session data and degrade security.",
+        "risks": [
+        "Session hijacking",
+        "Downgrade attacks"
+        ],
+        "tests": [
+        "Scan for mixed content on admin and account pages",
+        "Check CSP upgrade-insecure-requests"
+        ],
+        "assurance": [
+        "No mixed content",
+        "CSP mitigations applied"
+        ],
+        "assurance_against": [
+        "Downgrade"
+        ],
+        "evidence": [
+        "Scanner results",
+        "CSP snapshot"
+        ],
+        "remediation": [
+        "Serve all resources over HTTPS",
+        "Use CSP upgrade-insecure-requests"
+        ],
+        "automation_prompts": {
+        "ai_check": "Generate mixed content scans",
+        "ai_ui": "Transport hygiene card",
+        "ai_schema": "mixed_content_found"
+        },
+        "schema_hints": {
+        "fields": [
+            {
+            "name": "mixed_content_found",
+            "type": "boolean"
+            }
+        ]
+        },
+        "references": [
+        {
+            "name": "OWASP ASVS",
+            "section": "V10 Communications Security",
+            "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+        ]
+    },
+    {
+        "id": "WP-MAIL-TRANSPORT",
+        "category": "Caching & Transport",
+        "title": "Insecure mail transport",
+        "severity": "Medium",
+        "description": "Emails sent without TLS or SPF/DKIM/DMARC increase risk of interception and spoofing.",
+        "risks": [
+        "Data leakage",
+        "Phishing"
+        ],
+        "tests": [
+        "Check SMTP TLS enforcement",
+        "Verify SPF/DKIM/DMARC records"
+        ],
+        "assurance": [
+        "TLS enforced",
+        "SPF/DKIM/DMARC configured"
+        ],
+        "assurance_against": [
+        "Spoofing",
+        "Interception"
+        ],
+        "evidence": [
+        "DNS records",
+        "SMTP config snapshot"
+        ],
+        "remediation": [
+        "Enable TLS for mail transport",
+        "Configure SPF/DKIM/DMARC"
+        ],
+        "automation_prompts": {
+        "ai_check": "Generate mail transport audits",
+        "ai_ui": "Mail hygiene card",
+        "ai_schema": "tls_enforced, spf_configured, dkim_configured, dmarc_configured"
+        },
+        "schema_hints": {
+        "fields": [
+            {
+            "name": "tls_enforced",
+            "type": "boolean"
+            },
+            {
+            "name": "spf_configured",
+            "type": "boolean"
+            },
+            {
+            "name": "dkim_configured",
+            "type": "boolean"
+            },
+            {
+            "name": "dmarc_configured",
+            "type": "boolean"
+            }
+        ]
+        },
+        "references": [
+        {
+            "name": "NIST SP 800-177",
+            "section": "Email Security",
+            "url": "https://csrc.nist.gov/publications/detail/sp/800-177/rev-1/final"
+        }
+        ]
+    },
+    {
+        "id": "WP-DEBUG-EXPOSURE",
+        "category": "Compliance & Privacy",
+        "title": "WP_DEBUG and verbose errors in production",
+        "severity": "Medium",
+        "description": "Verbose errors can reveal stack traces, paths, and sensitive data.",
+        "risks": [
+        "Information disclosure"
+        ],
+        "tests": [
+        "Check WP_DEBUG and display_errors flags",
+        "Trigger error paths",
+        "Inspect error responses"
+        ],
+        "assurance": [
+        "Debug disabled in production",
+        "Generic error messages"
+        ],
+        "assurance_against": [
+        "Info leakage"
+        ],
+        "evidence": [
+        "Config flags snapshot",
+        "Error samples"
+        ],
+        "remediation": [
+        "Disable debug in production",
+        "Use generic error handling"
+        ],
+        "automation_prompts": {
+        "ai_check": "Generate error probes",
+        "ai_ui": "Runtime hygiene card",
+        "ai_schema": "WP_DEBUG, display_errors"
+        },
+        "schema_hints": {
+        "fields": [
+            {
+            "name": "WP_DEBUG",
+            "type": "boolean"
+            },
+            {
+            "name": "display_errors",
+            "type": "boolean"
+            }
+        ]
+        },
+        "references": [
+        {
+            "name": "WordPress Debugging",
+            "section": "WP_DEBUG",
+            "url": "https://wordpress.org/documentation/article/debugging-in-wordpress/"
+        }
+        ]
+    },
+    {
+        "id": "WP-EXPOSED-STACK-TRACES",
+        "category": "Compliance & Privacy",
+        "title": "Exposed stack traces in production",
+        "severity": "Medium",
+        "description": "Stack traces reveal internal paths and sensitive details.",
+        "risks": [
+        "Information disclosure"
+        ],
+        "tests": [
+        "Trigger error paths",
+        "Inspect error responses for stack traces"
+        ],
+        "assurance": [
+        "Generic error messages",
+        "Stack traces suppressed"
+        ],
+        "assurance_against": [
+        "Info leakage"
+        ],
+        "evidence": [
+        "Error samples",
+        "Config flags snapshot"
+        ],
+        "remediation": [
+        "Suppress stack traces in production",
+        "Use generic error handling"
+        ],
+        "automation_prompts": {
+        "ai_check": "Generate error path probes",
+        "ai_ui": "Error hygiene card",
+        "ai_schema": "stack_traces_exposed"
+        },
+        "schema_hints": {
+        "fields": [
+            {
+            "name": "stack_traces_exposed",
+            "type": "boolean"
+            }
+        ]
+        },
+        "references": [
+        {
+            "name": "OWASP ASVS",
+            "section": "V7 Error Handling and Logging",
+            "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+        ]
+    }
+  ]
+}

@@ -108,6 +108,12 @@ class VAPTC_REST
       'callback' => array($this, 'upload_media'),
       'permission_callback' => array($this, 'check_permission'),
     ));
+
+    register_rest_route('vaptc/v1', '/data-files/meta', array(
+      'methods'  => 'POST',
+      'callback' => array($this, 'update_file_meta'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
   }
 
   public function check_permission()
@@ -367,7 +373,8 @@ class VAPTC_REST
 
     return new WP_REST_Response(array(
       'features' => $features,
-      'schema' => $schema
+      'schema' => $schema,
+      'design_prompt' => isset($raw_data['design_prompt']) ? $raw_data['design_prompt'] : null
     ), 200);
   }
 
@@ -466,6 +473,46 @@ class VAPTC_REST
     }
 
     return new WP_REST_Response(array('success' => true), 200);
+  }
+
+  public function update_file_meta($request)
+  {
+    $file = $request->get_param('file');
+    $key = $request->get_param('key');
+    $value = $request->get_param('value');
+
+    if (!$file || !$key) {
+      return new WP_REST_Response(array('error' => 'Missing file or key param'), 400);
+    }
+
+    $json_path = VAPTC_PATH . 'data/' . sanitize_file_name($file);
+
+    if (!file_exists($json_path)) {
+      return new WP_REST_Response(array('error' => 'File not found'), 404);
+    }
+
+    $content = file_get_contents($json_path);
+    $data = json_decode($content, true);
+
+    if (!is_array($data)) {
+      return new WP_REST_Response(array('error' => 'Invalid JSON in file'), 500);
+    }
+
+    // Update the root key
+    if ($value === null) {
+      unset($data[$key]);
+    } else {
+      // Decode if it came in as a JSON string mostly for objects, but handle raw too
+      $data[$key] = $value;
+    }
+
+    $saved = file_put_contents($json_path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+    if ($saved === false) {
+      return new WP_REST_Response(array('error' => 'Failed to write to file'), 500);
+    }
+
+    return new WP_REST_Response(array('success' => true, 'updated_key' => $key), 200);
   }
 
   /**

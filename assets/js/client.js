@@ -52,7 +52,7 @@
 
       apiFetch({ path: 'vaptc/v1/features?scope=client' })
         .then(data => {
-          setFeatures(data);
+          setFeatures(data.features || []);
           setLoading(false);
           setIsRefreshing(false);
         })
@@ -121,19 +121,22 @@
     const renderFeatureCard = (f) => {
       return el(Card, { key: f.key, style: { borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: 'none' } }, [
         el(CardHeader, { style: { borderBottom: '1px solid #f3f4f6', padding: '20px 24px' } }, [
-          el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' } }, [
+          el('div', { style: { display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: '30px', width: '100%' } }, [
             el('div', null, [
               el('h3', { style: { margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827' } }, f.label),
               el('p', { style: { margin: '4px 0 0 0', fontSize: '13px', color: '#6b7280' } }, f.description)
             ]),
-            el('div', { style: { textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' } }, [
-              el('span', { className: `vaptm-status-badge status-${f.status.toLowerCase()}`, style: { fontSize: '11px', fontWeight: 700, marginBottom: '0' } }, f.status),
-              el(ToggleControl, {
-                label: __('Enforce Rule', 'vapt-Copilot'),
-                checked: !!f.is_enforced,
-                onChange: (val) => updateFeature(f.key, { is_enforced: val }),
-                style: { marginBottom: 0 }
-              })
+            el('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' } }, [
+              el('span', { className: `vaptm-status-badge status-${f.status.toLowerCase()}`, style: { fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase' } }, f.status),
+              el('div', { style: { display: 'flex', alignItems: 'center', background: '#f8fafc', padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' } }, [
+                el('span', { style: { fontSize: '12px', fontWeight: 600, color: '#334155', marginRight: '12px', whiteSpace: 'nowrap' } }, __('Enforce Rule')),
+                el(ToggleControl, {
+                  checked: !!f.is_enforced,
+                  onChange: (val) => updateFeature(f.key, { is_enforced: val }),
+                  __nextHasNoMarginBottom: true,
+                  style: { margin: 0 }
+                })
+              ])
             ])
           ])
         ]),
@@ -230,7 +233,7 @@
         el('div', { style: { display: 'flex', alignItems: 'center', gap: '15px' } }, [
           el('h2', { style: { margin: 0, fontSize: '18px', fontWeight: 700, color: '#111827', display: 'flex', alignItems: 'baseline', gap: '8px' } }, [
             __('VAPT Implementation Dashboard'),
-            el('span', { style: { fontSize: '11px', color: '#9ca3af', fontWeight: '400' } }, `v${vaptmSettings.pluginVersion}`)
+            el('span', { style: { fontSize: '11px', color: '#9ca3af', fontWeight: '400' } }, `v${settings.pluginVersion}`)
           ]),
           el('span', { style: { fontSize: '10px', background: '#dcfce7', color: '#166534', padding: '1px 6px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' } }, isSuper ? __('Superadmin') : __('Standard')),
           el(Button, {

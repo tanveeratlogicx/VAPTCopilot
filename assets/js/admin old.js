@@ -401,7 +401,6 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
       const [isSaving, setIsSaving] = useState(false);
       const [saveStatus, setSaveStatus] = useState(null);
 
-
       // Handle real-time preview
       const onJsonChange = (val) => {
         setSchemaText(val);
@@ -416,13 +415,8 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
       const handleSave = () => {
         try {
           const parsed = JSON.parse(schemaText);
-          const hasTestActions = parsed.controls && parsed.controls.some(c => c.type === 'test_action');
-
           setIsSaving(true);
-          updateFeature(feature.key, {
-            generated_schema: JSON.stringify(parsed), // Ensure it is sent as string just in case, though apiFetch handles objects
-            include_verification_engine: hasTestActions ? 1 : 0
-          })
+          updateFeature(feature.key, { generated_schema: parsed })
             .then(() => {
               setIsSaving(false);
               onClose();
@@ -434,77 +428,65 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
       };
 
       const copyContext = () => {
-        let contextJson = '';
+        let prompt = '';
 
         if (designPromptConfig) {
-          contextJson = typeof designPromptConfig === 'string'
+          // Dynamic Template Logic
+          let template = typeof designPromptConfig === 'string'
             ? designPromptConfig
             : JSON.stringify(designPromptConfig, null, 2);
+
+          // Replace Placeholders
+          template = template.replace(/{title}/g, feature.label || '');
+          template = template.replace(/{category}/g, feature.category || 'General');
+          template = template.replace(/{description}/g, feature.description || 'None provided');
+          template = template.replace(/{severity}/g, feature.severity || 'Medium');
+          // Simple placeholders for now, can be expanded
+          template = template.replace(/{automation_prompts\.ai_ui}/g, 'Generate a React component for this feature using standard WordPress UI components.');
+          template = template.replace(/{automation_prompts\.ai_check}/g, 'Generate PHP verification logic for this feature.');
+          template = template.replace(/{schema_hints}/g, 'Define schema for inputs.');
+
+          // If it's a JSON object string, we might want to wrap it or just use it as is.
+          // User asked for a specific JSON structure output.
+          prompt = template;
         } else {
-          // New Default JSON Template per User Request
-          const defaultTemplate = {
-            "design_prompt": {
-              "interface_type": "{automation_prompts.ai_ui}",
-              "schema_definition": "{schema_hints}",
-              "title": "{title}",
-              "description": "{description}",
-              "severity": "{severity}",
-              "validation_rules": "{automation_prompts.ai_check}",
-              "context": "{category}"
-            }
-          };
-          contextJson = JSON.stringify(defaultTemplate, null, 2);
+          // Default Hardcoded Prompt
+          prompt = `Please generate an interactive security interface JSON for the following feature:
+Feature: ${feature.label}
+Category: ${feature.category || 'General'}
+Description: ${feature.description || 'None provided'}
+Test Method: ${feature.test_method || 'None provided'}
+Design Prompt Config: Not Found (Using Default)
+Remediation (Core Logic): ${feature.remediation || 'None provided'}
+Additional Instructions: ${feature.devInstruct || 'None provided'}
+
+I need a JSON schema in this format:
+{
+  "controls": [
+    { "type": "toggle", "label": "Enable Protection", "key": "status" },
+    { "type": "input", "label": "Setting Name", "key": "setting_val", "default": "config_value" },
+    { "type": "test_action", "label": "Verify Feature", "key": "verify_action", "test_logic": "custom_logic" }
+  ]
+}
+
+CRITICAL RULES:
+1. **Binding**: If there is a functional control (like a Rate Limit threshold), the Verification Engine test logic MUST use that value dynamically. For example, if the limit is set to 10, the test should generate load > 10 (e.g. 125%).
+2. **Reset**: Include a configuration or test action to "Reset" state if applicable (e.g. clear rate limit counters).
+3. **Attribution**: The test output message MUST explicitly state if "The Plugin" is providing the protection or if it's strictly "Server/Other".
+4. **Binding Syntax**: Use the 'key' of the input control as a variable in your reasoning.
+5. **Test Logic Keys**: Use one of the following for 'test_logic' if applicable:
+    - 'check_headers' (Security Headers)
+    - 'spam_requests' (Rate Limiting - requires 'rpm' or 'rate_limit' setting)
+    - 'block_xmlrpc' (XML-RPC Blocking)
+    - 'disable_directory_browsing' (Directory Listing)
+            - 'block_null_byte_injection' (Null Byte / Input Validation)
+            - 'hide_wp_version' (WordPress Version Disclosure)
+            - 'default' (Generic Ping)
+
+Please provide ONLY the JSON block.`;
         }
 
-        // Replace Placeholders in the JSON portion
-        contextJson = contextJson.replace(/{title}/g, feature.label || feature.title || '');
-        contextJson = contextJson.replace(/{category}/g, feature.category || 'General');
-        contextJson = contextJson.replace(/{description}/g, feature.description || 'None provided');
-        contextJson = contextJson.replace(/{severity}/g, feature.severity || 'Medium');
-        contextJson = contextJson.replace(/{automation_prompts\.ai_ui}/g, `Interactive JSON Schema for VAPT Workbench.`);
-        contextJson = contextJson.replace(/{automation_prompts\.ai_check}/g, `PHP verification logic for ${feature.label || 'this feature'}.`);
-        contextJson = contextJson.replace(/{schema_hints}/g, "Standard VAPT schema with 'controls' array.");
-        contextJson = contextJson.replace(/{remediation}/g, feature.remediation || 'None provided');
-        contextJson = contextJson.replace(/{test_method}/g, feature.test_method || 'None provided');
-
-        // Assemble HYBRID PROMPT (Context + Instructions)
-        const finalPrompt = `Please generate an interactive security interface JSON based on the following context:
-
---- DESIGN CONTEXT ---
-${contextJson}
---- 
-
-INSTRUCTIONS & CRITICAL RULES:
-1. **Response Format**: Provide ONLY a JSON block. No preamble or conversation.
-2. **Schema Structure**: You MUST include both 'controls' and 'enforcement' blocks.
-3. **Default Values**: Every input/toggle control MUST have a 'default' property (e.g. "5", true, "off"). This is CRITICAL for backend baseline enforcement.
-4. **Enforcement Mappings**: You MUST map control keys to backend methods in the 'enforcement' block.
-   - Available Methods: 'limit_login_attempts', 'block_xmlrpc', 'disable_directory_browsing', 'enable_security_headers', 'block_null_byte_injection', 'hide_wp_version'.
-   - Driver: Always use "driver": "hook" for these methods.
-5. **Reset Logic**: For ANY rate-limiting feature, a reset 'test_action' is MANDATORY.
-   - Logic: "test_logic": "universal_probe"
-   - Config: {"method": "GET", "path": "/", "params": {"vaptc_action": "reset_rate_limits"}, "expected_status": 200}
-6. **Dynamic Testing**: For 'spam_requests', ensure the RPM is resolved from the 'rate_limit' or 'limit' key in sibling controls.
-7. **Attribution**: Test outcomes must explicitly state if "The Plugin" is enforcing based on headers like X-VAPTC-Enforced.
-8. **Reference JSON Structure**:
-   {
-     "controls": [
-       { "type": "toggle", "label": "Enable Feature", "key": "status", "default": true },
-       { "type": "input", "label": "Max Attempts", "key": "rate_limit", "default": "5" },
-       { "type": "test_action", "label": "Verify", "key": "v1", "test_logic": "spam_requests" },
-       { "type": "test_action", "label": "Reset", "key": "reset", "test_logic": "universal_probe", "test_config": {"method": "GET", "path": "/", "params": {"vaptc_action": "reset_rate_limits"}, "expected_status": 200} }
-     ],
-     "enforcement": {
-       "driver": "hook",
-       "mappings": { "status": "limit_login_attempts", "rate_limit": "limit_login_attempts" }
-     }
-   }
-
-Feature Name: ${feature.label || feature.title}
-Remediation (Core Logic): ${feature.remediation || 'None provided'}
-Test Method: ${feature.test_method || 'None provided'}`;
-
-        // Robust Copy Function
+        // Robust Copy Function with Fallback
         const copyToClipboard = (text) => {
           if (navigator.clipboard && window.isSecureContext) {
             return navigator.clipboard.writeText(text);
@@ -512,30 +494,52 @@ Test Method: ${feature.test_method || 'None provided'}`;
             // Fallback for older browsers or non-secure contexts
             let textArea = document.createElement("textarea");
             textArea.value = text;
+
+            // Ensure strictly invisible but IN VIEWPORT to prevent scroll jumps
             textArea.style.position = "fixed";
-            textArea.style.left = "0";
+            textArea.style.left = "0"; // Keep at (0,0) to avoid "jump to -9999px"
             textArea.style.top = "0";
+            textArea.style.width = "1px";
+            textArea.style.height = "1px";
             textArea.style.opacity = "0";
+            textArea.style.zIndex = "-1";
+            textArea.style.padding = "0";
+            textArea.style.border = "none";
+            textArea.style.outline = "none";
+            textArea.style.boxShadow = "none";
+            textArea.style.background = "transparent";
+            textArea.setAttribute("readonly", ""); // Prevent keyboard flash
+
             document.body.appendChild(textArea);
-            textArea.focus();
+
+            // Focus without scrolling
+            if (textArea.focus) {
+              textArea.focus({ preventScroll: true });
+            } else {
+              textArea.focus();
+            }
             textArea.select();
+
             return new Promise((resolve, reject) => {
               try {
-                document.execCommand('copy') ? resolve() : reject(new Error('Copy failed'));
-              } catch (e) { reject(e); }
-              document.body.removeChild(textArea);
+                document.execCommand('copy') ? resolve() : reject();
+              } catch (e) {
+                reject(e);
+              } finally {
+                textArea.remove();
+              }
             });
           }
         };
 
-        copyToClipboard(finalPrompt)
+        copyToClipboard(prompt)
           .then(() => {
-            setSaveStatus({ message: __('Design Prompt copied!', 'vapt-Copilot'), type: 'success' });
+            setSaveStatus({ message: __('AI Prompt copied to clipboard!', 'vapt-Copilot'), type: 'success' });
             setTimeout(() => setSaveStatus(null), 3000);
           })
           .catch((err) => {
             console.error('Copy failed', err);
-            alert(__('Failed to copy to clipboard.', 'vapt-Copilot'));
+            alert(__('Failed to copy to clipboard. Please manually copy the prompt from the console or try again.', 'vapt-Copilot'));
           });
       };
 
@@ -564,17 +568,17 @@ Test Method: ${feature.test_method || 'None provided'}`;
           // Left Side: The Editor
           el('div', { style: { display: 'flex', flexDirection: 'column', height: '100%', paddingRight: '10px' } }, [
             el('p', { style: { margin: '0 0 10px 0', fontSize: '13px', color: '#666' } }, __('Paste the JSON schema generated via Antigravity (the AI Proxy) below.', 'vapt-Copilot')),
-            el('div', { style: { flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 } }, [
+            el('div', { style: { flexGrow: 1, display: 'flex', flexDirection: 'column' } }, [
               el(wp.components.TextareaControl, {
                 label: __('Interface JSON Schema', 'vapt-Copilot'),
                 value: schemaText,
                 onChange: onJsonChange,
-                rows: 20,
+                rows: 16, // Reduced rows to fit new height
                 help: __('The sidebar workbench will render this instantly.', 'vapt-Copilot'),
-                style: { fontFamily: 'monospace', fontSize: '12px', background: '#fcfcfc', lineHeight: '1.4', flex: 1, resize: 'none' }
+                style: { fontFamily: 'monospace', fontSize: '12px', background: '#fcfcfc', lineHeight: '1.4', height: '100%' }
               })
             ]),
-            el('div', { style: { display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '15px' } }, [
+            el('div', { style: { display: 'flex', gap: '10px', marginTop: '15px' } }, [
               el(Button, {
                 isSecondary: true,
                 icon: designPromptConfig ? 'yes' : 'admin-settings',
@@ -584,7 +588,7 @@ Test Method: ${feature.test_method || 'None provided'}`;
               }),
               el(Button, { isSecondary: true, onClick: copyContext, icon: 'clipboard' }, __('Copy Design Prompt', 'vapt-Copilot')),
               el(Button, {
-                isDestructive: true,
+                isDestructive: true, // Red/Warning color for reset
                 icon: 'trash',
                 onClick: () => {
                   if (confirm(__('Are you sure you want to reset the schema? This will wash away any changes.', 'vapt-Copilot'))) {
