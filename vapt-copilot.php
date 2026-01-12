@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 2.1.3
+ * Version: 2.1.4
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin Constants (Copilot-specific)
-define('VAPTC_VERSION', '2.1.3');
+define('VAPTC_VERSION', '2.1.4');
 define('VAPTC_PATH', plugin_dir_path(__FILE__));
 define('VAPTC_URL', plugin_dir_url(__FILE__));
 define('VAPTC_SUPERADMIN_EMAIL', 'tanmalik786@gmail.com');
@@ -238,14 +238,8 @@ add_action('init', function () {
   if (isset($_GET['vaptc_action']) && current_user_can('manage_options')) {
     $action = sanitize_text_field($_GET['vaptc_action']);
     if ($action === 'reset_rate_limits') {
-      $upload_dir = wp_upload_dir();
-      $lock_dir = $upload_dir['basedir'] . '/vaptc-locks';
-      if (is_dir($lock_dir)) {
-        $files = glob("$lock_dir/*");
-        foreach ($files as $file) {
-          if (is_file($file)) @unlink($file);
-        }
-      }
+      require_once VAPTC_PATH . 'includes/enforcers/class-vaptc-hook-driver.php';
+      VAPTC_Hook_Driver::reset_limit();
       wp_die("Rate limits reset successfully.", "VAPT Copilot Reset", array('response' => 200, 'back_link' => true));
     }
   }
@@ -304,7 +298,7 @@ if (! function_exists('vaptc_force_fix_ratelimit')) {
         $wpdb->update($table, array('implementation_data' => json_encode($impl)), array('feature_key' => $key));
       }
 
-      die("<h1>VAPTM: Rate Limit Force Fix Applied! 🛡️</h1><p>Schema Updated. Enforcement Forced = 1. Cache Cleared.</p><a href='/wp-admin/admin.php?page=vapt-Copilot'>Return to Dashboard</a>");
+      die("<h1>VAPTM: Rate Limit Force Fix Applied! 🛡️</h1><p>Schema Updated. Enforcement Forced = 1. Cache Cleared.</p><a href='/wp-admin/admin.php?page=vapt-copilot'>Return to Dashboard</a>");
     }
   }
 }
@@ -396,7 +390,118 @@ if (! function_exists('vaptc_force_fix_wp_version_disclosure')) {
           "<li>Verification: test_action using hide_wp_version probe</li>" .
           "</ul>" .
           "<p>You can now open the VAPT dashboard, enable <em>Hide WordPress Version</em>, and run the verification test to see real results.</p>" .
-          "<a href='/wp-admin/admin.php?page=vapt-Copilot'>Return to Dashboard</a>"
+          "<a href='/wp-admin/admin.php?page=vapt-copilot'>Return to Dashboard</a>"
+      );
+    }
+  }
+}
+
+/**
+ * 🚨 FORCE FIX: Debug Exposure Feature
+ * Ensures the feature is fully wired to block debug info and supports verification engine.
+ * Trigger via URL: ?vaptc_force_fix_wp_debug=1
+ */
+add_action('init', 'vaptc_force_fix_wp_debug_exposure');
+if (! function_exists('vaptc_force_fix_wp_debug_exposure')) {
+  function vaptc_force_fix_wp_debug_exposure()
+  {
+    if (isset($_GET['vaptc_force_fix_wp_debug']) && current_user_can('manage_options')) {
+      global $wpdb;
+
+      $key = 'WP-DEBUG-EXPOSURE';
+      $table = $wpdb->prefix . 'vaptc_feature_meta';
+
+      // 1. Define schema: Functional toggle + Verification test_action
+      $schema = array(
+        'controls' => array(
+          array(
+            'type' => 'toggle',
+            'label' => 'Standardize Debug Output',
+            'key' => 'block_debug_exposure',
+            'help' => 'Suppresses verbose PHP errors and signals enforcement via headers.'
+          ),
+          array(
+            'type' => 'test_action',
+            'label' => 'Verify: Debug Exposure Blocked',
+            'key' => 'verif_debug_block',
+            'test_logic' => 'universal_probe',
+            'test_config' => array(
+              'method' => 'GET',
+              'path' => '/',
+              'params' => array('vaptc_test_debug' => '1'),
+              'expected_headers' => array('X-VAPTC-Enforced' => 'php-debug-exposure')
+            ),
+            'help' => 'Checks for the plugin enforcement header in the home page response.'
+          ),
+          array(
+            'type' => 'test_action',
+            'label' => 'Verify: debug.log access',
+            'key' => 'verif_debug_log',
+            'test_logic' => 'universal_probe',
+            'test_config' => array(
+              'method' => 'GET',
+              'path' => '/wp-content/debug.log',
+              'expected_status' => 403
+            ),
+            'help' => 'Checks that access to debug.log returns HTTP 403.'
+          )
+        ),
+        'enforcement' => array(
+          'driver' => 'hook',
+          'mappings' => array(
+            'block_debug_exposure' => 'block_debug_exposure'
+          )
+        )
+      );
+
+      // 2. Ensure row exists
+      $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE feature_key = %s", $key));
+      if (!$exists) {
+        $wpdb->insert($table, array(
+          'feature_key' => $key,
+          'category' => 'Compliance & Privacy',
+          'include_test_method' => 1,
+          'include_verification' => 1,
+          'include_verification_engine' => 1,
+          'is_enforced' => 1
+        ));
+      }
+
+      // 3. Update schema + flags
+      $wpdb->update(
+        $table,
+        array(
+          'generated_schema' => json_encode($schema),
+          'include_verification_engine' => 1,
+          'is_enforced' => 1
+        ),
+        array('feature_key' => $key)
+      );
+
+      // 4. Ensure implementation_data enables the toggle
+      $meta = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE feature_key = %s", $key), ARRAY_A);
+      if (empty($meta['implementation_data'])) {
+        $impl = array('block_debug_exposure' => true);
+        $wpdb->update(
+          $table,
+          array('implementation_data' => json_encode($impl)),
+          array('feature_key' => $key)
+        );
+      }
+
+      // 5. Clear runtime enforcement cache
+      delete_transient('vaptc_active_enforcements');
+
+      wp_die(
+        "<h1>VAPTM: Debug Exposure Fix Applied 🛡️</h1>" .
+          "<p>The feature <strong>WP-DEBUG-EXPOSURE</strong> is now fully wired:</p>" .
+          "<ul>" .
+          "<li>Functional toggle: Standardize Debug Output</li>" .
+          "<li>Enforcement driver: hook → block_debug_exposure()</li>" .
+          "<li>Verification 1: Header check for php-debug-exposure</li>" .
+          "<li>Verification 2: 403 Block for debug.log</li>" .
+          "</ul>" .
+          "<a href='/wp-admin/admin.php?page=vapt-copilot'>Return to Dashboard</a>"
       );
     }
   }
@@ -464,7 +569,7 @@ if (! function_exists('vaptc_add_admin_menu')) {
       __('VAPT Copilot', 'vapt-Copilot'),
       __('VAPT Copilot', 'vapt-Copilot'),
       'manage_options',
-      'vapt-Copilot',
+      'vapt-copilot',
       'vaptc_render_client_status_page',
       'dashicons-shield',
       80
@@ -472,18 +577,18 @@ if (! function_exists('vaptc_add_admin_menu')) {
 
     // 2. Sub-menu 1: Status
     add_submenu_page(
-      'vapt-Copilot',
+      'vapt-copilot',
       __('VAPT Copilot', 'vapt-Copilot'),
       __('VAPT Copilot', 'vapt-Copilot'),
       'manage_options',
-      'vapt-Copilot',
+      'vapt-copilot',
       'vaptc_render_client_status_page'
     );
 
     // 3. Sub-menu 2: Domain Admin (Superadmin Only)
     if ($is_superadmin) {
       add_submenu_page(
-        'vapt-Copilot',
+        'vapt-copilot',
         __('VAPT Domain Admin', 'vapt-Copilot'),
         __('VAPT Domain Admin', 'vapt-Copilot'),
         'manage_options',
@@ -503,9 +608,9 @@ if (! function_exists('vaptc_handle_legacy_redirects')) {
   {
     if (!isset($_GET['page'])) return;
 
-    $legacy_slugs = array('vapt-Copilot-main', 'vapt-Copilot-status', 'vapt-Copilot-domain-build', 'vapt-client');
+    $legacy_slugs = array('vapt-Copilot', 'vapt-Copilot-main', 'vapt-Copilot-status', 'vapt-Copilot-domain-build', 'vapt-client');
     if (in_array($_GET['page'], $legacy_slugs)) {
-      wp_safe_redirect(admin_url('admin.php?page=vapt-Copilot'));
+      wp_safe_redirect(admin_url('admin.php?page=vapt-copilot'));
       exit;
     }
   }
@@ -629,7 +734,7 @@ function vaptc_enqueue_admin_assets($hook)
   wp_enqueue_style('vaptc-admin-css', VAPTC_URL . 'assets/css/admin.css', array('wp-components'), VAPTC_VERSION);
 
   // 1. Superadmin Dashboard (admin.js)
-  if ($screen->id === 'toplevel_page_vapt-domain-admin' || $screen->id === 'vapt-copilot_page_vapt-domain-admin' || $screen->id === 'vapt-Copilot_page_vapt-domain-admin') {
+  if ($screen->id === 'toplevel_page_vapt-domain-admin' || $screen->id === 'vapt-copilot_page_vapt-domain-admin') {
     error_log('VAPT Admin Assets Enqueued for: ' . $screen->id);
     // Enqueue Auto-Interface Generator (Module)
     wp_enqueue_script(
@@ -666,7 +771,7 @@ function vaptc_enqueue_admin_assets($hook)
   }
 
   // 2. Client Dashboard (client.js) - "VAPT Copilot" page
-  if ($screen->id === 'toplevel_page_vapt-Copilot' || $screen->id === 'vapt-Copilot_page_vapt-Copilot') {
+  if ($screen->id === 'toplevel_page_vapt-copilot' || $screen->id === 'vapt-copilot_page_vapt-copilot') {
 
     // Enqueue Generated Interface UI Component (Shared)
     wp_enqueue_script(
@@ -683,6 +788,7 @@ function vaptc_enqueue_admin_assets($hook)
       'root' => esc_url_raw(rest_url()),
       'nonce' => wp_create_nonce('wp_rest'),
       'isSuper' => $is_superadmin,
+      'currentDomain' => $_SERVER['HTTP_HOST'],
       'pluginVersion' => VAPTC_VERSION // Version Info
     ));
 

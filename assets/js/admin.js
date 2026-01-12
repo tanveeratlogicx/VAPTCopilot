@@ -67,22 +67,31 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
     return;
   }
 
-  const FeatureList = ({ features, schema, updateFeature, loading, dataFiles, selectedFile, onSelectFile, onUpload, allFiles, hiddenFiles, onUpdateHiddenFiles, isManageModalOpen, setIsManageModalOpen, designPromptConfig, setDesignPromptConfig, isPromptConfigModalOpen, setIsPromptConfigModalOpen }) => {
+  const FeatureList = ({ features, schema, updateFeature, loading, dataFiles, selectedFile, onSelectFile, onUpload, allFiles, hiddenFiles, onUpdateHiddenFiles, manageSourcesStatus, isManageModalOpen, setIsManageModalOpen, designPromptConfig, setDesignPromptConfig, isPromptConfigModalOpen, setIsPromptConfigModalOpen }) => {
     const [columnOrder, setColumnOrder] = useState(() => {
       const saved = localStorage.getItem(`vaptm_col_order_${selectedFile}`);
-      return saved ? JSON.parse(saved) : (schema?.item_fields || ['id', 'category', 'title', 'severity', 'description']);
+      return saved ? JSON.parse(saved) : ['title', 'category', 'severity', 'description'];
     });
 
     const [visibleCols, setVisibleCols] = useState(() => {
       const saved = localStorage.getItem(`vaptm_visible_cols_${selectedFile}`);
-      return saved ? JSON.parse(saved) : (schema?.item_fields || ['id', 'category', 'title', 'severity', 'description']);
+      return saved ? JSON.parse(saved) : ['title', 'category', 'severity', 'description'];
     });
 
     // Update column defaults when schema changes if not already set
     useEffect(() => {
-      if (!localStorage.getItem(`vaptm_col_order_${selectedFile}`) && schema?.item_fields) {
-        setColumnOrder(schema.item_fields);
-        setVisibleCols(schema.item_fields);
+      const savedOrder = localStorage.getItem(`vaptm_col_order_${selectedFile}`);
+      const savedVisible = localStorage.getItem(`vaptm_visible_cols_${selectedFile}`);
+
+      console.log('[VAPTM] Init Check:', { selectedFile, savedOrder: !!savedOrder, savedVisible: !!savedVisible });
+
+      if (!savedOrder && schema?.item_fields) {
+        console.log('[VAPTM] Applying default order');
+        setColumnOrder(['title', 'category', 'severity', 'description']);
+      }
+      if (!savedVisible && schema?.item_fields) {
+        console.log('[VAPTM] Applying default visibility');
+        setVisibleCols(['title', 'category', 'severity', 'description']);
       }
     }, [schema, selectedFile]);
 
@@ -99,6 +108,52 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
       const saved = localStorage.getItem('vaptm_selected_categories');
       return saved ? JSON.parse(saved) : [];
     });
+
+    // Local Save Status for Columns
+    const [colSaveStatus, setColSaveStatus] = useState(null);
+    const isFirstMount = wp.element.useRef(true);
+
+    useEffect(() => {
+      if (isFirstMount.current) {
+        isFirstMount.current = false;
+        return;
+      }
+      localStorage.setItem(`vaptm_col_order_${selectedFile}`, JSON.stringify(columnOrder));
+      localStorage.setItem(`vaptm_visible_cols_${selectedFile}`, JSON.stringify(visibleCols));
+      setColSaveStatus('Saved');
+      const timer = setTimeout(() => setColSaveStatus(null), 2000);
+      return () => clearTimeout(timer);
+    }, [columnOrder, visibleCols, selectedFile]);
+
+    // Drag and Drop State
+    const [draggedCol, setDraggedCol] = useState(null);
+
+    const handleDragStart = (e, col) => {
+      setDraggedCol(col);
+      e.dataTransfer.effectAllowed = 'move';
+      // e.target.style.opacity = '0.5'; 
+    };
+
+    const handleDragOver = (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e, targetCol) => {
+      e.preventDefault();
+      if (draggedCol === targetCol) return;
+
+      const newOrder = [...columnOrder];
+      const draggedIdx = newOrder.indexOf(draggedCol);
+      const targetIdx = newOrder.indexOf(targetCol);
+
+      newOrder.splice(draggedIdx, 1);
+      newOrder.splice(targetIdx, 0, draggedCol);
+
+      setColumnOrder(newOrder);
+      setDraggedCol(null);
+    };
+
     const [selectedSeverities, setSelectedSeverities] = useState(() => {
       const saved = localStorage.getItem('vaptm_selected_severities');
       return saved ? JSON.parse(saved) : [];
@@ -398,6 +453,9 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
       const defaultValue = JSON.stringify(feature.generated_schema || defaultState, null, 2);
       const [schemaText, setSchemaText] = useState(defaultValue);
       const [parsedSchema, setParsedSchema] = useState(feature.generated_schema || { controls: [] });
+      const [localImplData, setLocalImplData] = useState(
+        feature.implementation_data ? (typeof feature.implementation_data === 'string' ? JSON.parse(feature.implementation_data) : feature.implementation_data) : {}
+      );
       const [isSaving, setIsSaving] = useState(false);
       const [saveStatus, setSaveStatus] = useState(null);
 
@@ -421,7 +479,8 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
           setIsSaving(true);
           updateFeature(feature.key, {
             generated_schema: JSON.stringify(parsed), // Ensure it is sent as string just in case, though apiFetch handles objects
-            include_verification_engine: hasTestActions ? 1 : 0
+            include_verification_engine: hasTestActions ? 1 : 0,
+            implementation_data: JSON.stringify(localImplData)
           })
             .then(() => {
               setIsSaving(false);
@@ -442,33 +501,71 @@ console.log('VAPT Copilot: Admin JS bundle loaded and executing...');
             : JSON.stringify(designPromptConfig, null, 2);
         } else {
           // New Default JSON Template per User Request
+          // const defaultTemplate = {
+          //   "design_prompt": {
+          //     "interface_type": "{automation_prompts.ai_ui}",
+          //     "schema_definition": "{schema_hints}",
+          //     "title": "{title}",
+          //     "description": "{description}",
+          //     "severity": "{severity}",
+          //     "validation_rules": "{automation_prompts.ai_check}",
+          //     "context": "{category}"
+          //   }
           const defaultTemplate = {
             "design_prompt": {
-              "interface_type": "{automation_prompts.ai_ui}",
-              "schema_definition": "{schema_hints}",
-              "title": "{title}",
-              "description": "{description}",
-              "severity": "{severity}",
-              "validation_rules": "{automation_prompts.ai_check}",
-              "context": "{category}"
+              "interface_type": "Interactive Security Assessment Interface",
+              "schema_definition": "WordPress VAPT schema with standardized control fields",
+              // "control_id": "{{id}}",
+              "title": "{{title}}",
+              "description": "{{description}}",
+              "severity": "{{severity}}",
+              "category": "{{category}}",
+              "validation_rules": "PHP verification logic for {{title}}",
+              "context": "{{category}}",
+              "ui_components": {
+                "primary_card": "{{automation_prompts.ai_ui}}",
+                "test_checklist": "{{tests}}",
+                "risk_indicators": "{{risks}}",
+                "assurance_badges": "{{assurance}}",
+                "evidence_uploader": "{{evidence}}",
+                "remediation_steps": "{{remediation}}"
+              },
+              "schema_fields": "{{schema_hints.fields}}",
+              "automation_context": {
+                "ai_check_prompt": "{{automation_prompts.ai_check}}",
+                "ai_schema_fields": "{{automation_prompts.ai_schema}}"
+              },
+              "compliance_references": "{{references}}",
+              "threat_model": {
+                "risks": "{{risks}}",
+                "assurance_against": "{{assurance_against}}"
+              },
+              "interaction_model": {
+                "test_execution": "Manual and automated test execution interface",
+                "evidence_collection": "File upload and screenshot capture",
+                "status_tracking": "Pass/Fail/In Progress/Not Applicable",
+                "remediation_tracking": "Action items with assignment and due dates"
+              }
             }
           };
+
           contextJson = JSON.stringify(defaultTemplate, null, 2);
         }
 
-        // Replace Placeholders in the JSON portion
-        contextJson = contextJson.replace(/{title}/g, feature.label || feature.title || '');
-        contextJson = contextJson.replace(/{category}/g, feature.category || 'General');
-        contextJson = contextJson.replace(/{description}/g, feature.description || 'None provided');
-        contextJson = contextJson.replace(/{severity}/g, feature.severity || 'Medium');
-        contextJson = contextJson.replace(/{automation_prompts\.ai_ui}/g, `Interactive JSON Schema for VAPT Workbench.`);
-        contextJson = contextJson.replace(/{automation_prompts\.ai_check}/g, `PHP verification logic for ${feature.label || 'this feature'}.`);
-        contextJson = contextJson.replace(/{schema_hints}/g, "Standard VAPT schema with 'controls' array.");
-        contextJson = contextJson.replace(/{remediation}/g, feature.remediation || 'None provided');
-        contextJson = contextJson.replace(/{test_method}/g, feature.test_method || 'None provided');
+        // // Replace Placeholders in the JSON portion
+        // contextJson = contextJson.replace(/{title}/g, feature.label || feature.title || '');
+        // contextJson = contextJson.replace(/{category}/g, feature.category || 'General');
+        // contextJson = contextJson.replace(/{description}/g, feature.description || 'None provided');
+        // contextJson = contextJson.replace(/{severity}/g, feature.severity || 'Medium');
+        // contextJson = contextJson.replace(/{automation_prompts\.ai_ui}/g, `Interactive JSON Schema for VAPT Workbench.`);
+        // contextJson = contextJson.replace(/{automation_prompts\.ai_check}/g, `PHP verification logic for ${feature.label || 'this feature'}.`);
+        // contextJson = contextJson.replace(/{schema_hints}/g, "Standard VAPT schema with 'controls' array.");
+        // contextJson = contextJson.replace(/{remediation}/g, feature.remediation || 'None provided');
+        // contextJson = contextJson.replace(/{test_method}/g, feature.test_method || 'None provided');
 
         // Assemble HYBRID PROMPT (Context + Instructions)
-        const finalPrompt = `Please generate an interactive security interface JSON based on the following context:
+        // const finalPrompt = `Please generate an interactive security interface JSON based on the following context:
+        const finalPrompt = `Assume yourself as a WordPress security expert, you are desired to design an interactive WordPress security configuration interface for this feature:
 
 --- DESIGN CONTEXT ---
 ${contextJson}
@@ -478,7 +575,7 @@ INSTRUCTIONS & CRITICAL RULES:
 1. **Response Format**: Provide ONLY a JSON block. No preamble or conversation.
 2. **Schema Structure**: You MUST include both 'controls' and 'enforcement' blocks.
 3. **Default Values**: Every input/toggle control MUST have a 'default' property (e.g. "5", true, "off"). This is CRITICAL for backend baseline enforcement.
-4. **Enforcement Mappings**: You MUST map control keys to backend methods in the 'enforcement' block.
+4. **Enforcement Mappings**: You MUST map control keys to backend methods in the 'enforcement' block, keeping all the variables and constants local to this implementation.
    - Available Methods: 'limit_login_attempts', 'block_xmlrpc', 'disable_directory_browsing', 'enable_security_headers', 'block_null_byte_injection', 'hide_wp_version'.
    - Driver: Always use "driver": "hook" for these methods.
 5. **Reset Logic**: For ANY rate-limiting feature, a reset 'test_action' is MANDATORY.
@@ -607,7 +704,10 @@ Test Method: ${feature.test_method || 'None provided'}`;
               el('div', { style: { background: '#fff', padding: '15px', borderRadius: '8px', border: '1px solid #eee', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' } }, [
                 el('h4', { style: { margin: '0 0 10px 0', fontSize: '13px', fontWeight: 700, color: '#111827' } }, __('Functional Workbench')),
                 GeneratedInterface
-                  ? el(GeneratedInterface, { feature: { ...feature, generated_schema: parsedSchema } })
+                  ? el(GeneratedInterface, {
+                    feature: { ...feature, generated_schema: parsedSchema, implementation_data: localImplData },
+                    onUpdate: (newData) => setLocalImplData(newData)
+                  })
                   : el('p', null, __('Loading Preview Interface...', 'vapt-Copilot'))
               ])
             ]),
@@ -952,330 +1052,338 @@ Test Method: ${feature.test_method || 'None provided'}`;
       ]);
     };
 
-    return el(PanelBody, { title: __('Exhaustive Feature List', 'vapt-Copilot'), initialOpen: true }, [
-      // Top Controls & Unified Header
-      el('div', { key: 'controls', style: { marginBottom: '10px' } }, [
-        // Unified Header Block (Source, Columns, Manage, Upload)
-        el('div', {
-          style: {
-            display: 'flex',
-            gap: '12px',
-            background: '#f6f7f7',
-            padding: '10px 15px',
-            borderRadius: '4px',
-            border: '1px solid #dcdcde',
-            marginBottom: '10px',
-            alignItems: 'center'
-          }
-        }, [
-          // Branded Icon with Configure Columns Dropdown
-          el(Dropdown, {
-            renderToggle: ({ isOpen, onToggle }) => el('div', {
-              onClick: onToggle,
-              style: {
-                cursor: 'pointer',
-                background: '#2271b1',
-                color: '#fff',
-                borderRadius: '3px',
-                width: '30px',
-                height: '30px',
-                minHeight: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                boxSizing: 'border-box'
-              },
-              'aria-expanded': isOpen,
-              title: __('Configure Table Columns', 'vapt-Copilot')
-            }, el(Icon, { icon: 'layout', size: 18 })),
-            renderContent: () => {
-              const activeFields = columnOrder.filter(c => visibleCols.includes(c));
-              const availableFields = columnOrder.filter(c => !visibleCols.includes(c));
-              const half = Math.ceil(availableFields.length / 2);
-              const availableCol1 = availableFields.slice(0, half);
-              const availableCol2 = availableFields.slice(half);
+    return el(Fragment, null, [
+      el(PanelBody, { title: __('Exhaustive Feature List', 'vapt-Copilot'), initialOpen: true }, [
+        // Top Controls & Unified Header
+        el('div', { key: 'controls', style: { marginBottom: '10px' } }, [
+          // Unified Header Block (Source, Columns, Manage, Upload)
+          el('div', {
+            style: {
+              display: 'flex',
+              gap: '12px',
+              background: '#f6f7f7',
+              padding: '10px 15px',
+              borderRadius: '4px',
+              border: '1px solid #dcdcde',
+              marginBottom: '10px',
+              alignItems: 'center'
+            }
+          }, [
+            // Branded Icon with Configure Columns Dropdown
+            el(Dropdown, {
+              renderToggle: ({ isOpen, onToggle }) => el('div', {
+                onClick: onToggle,
+                style: {
+                  cursor: 'pointer',
+                  background: '#2271b1',
+                  color: '#fff',
+                  borderRadius: '3px',
+                  width: '30px',
+                  height: '30px',
+                  minHeight: '30px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                  boxSizing: 'border-box'
+                },
+                'aria-expanded': isOpen,
+                title: __('Configure Table Columns', 'vapt-Copilot')
+              }, el(Icon, { icon: 'layout', size: 18 })),
+              renderContent: ({ onClose }) => {
+                const activeFields = columnOrder.filter(c => visibleCols.includes(c) && allKeys.includes(c));
+                const availableFields = allKeys.filter(c => !visibleCols.includes(c));
+                const half = Math.ceil(availableFields.length / 2);
+                const availableCol1 = availableFields.slice(0, half);
+                const availableCol2 = availableFields.slice(half);
 
-              return el('div', { style: { padding: '20px', width: '850px' } }, [
-                el('h4', { style: { marginTop: 0, marginBottom: '5px' } }, __('Configure Table Columns', 'vapt-Copilot')),
-                el('p', { style: { fontSize: '12px', color: '#666', marginBottom: '20px' } }, __('Confirm the table sequence and add/remove fields.', 'vapt-Copilot')),
-                el('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(280px, 1.2fr) 1fr 1fr', gap: '25px' } }, [
-                  el('div', null, [
-                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#2271b1', fontWeight: 'bold' } }, __('Active Table Sequence', 'vapt-Copilot')),
-                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                      activeFields.map((field, activeIdx) => {
-                        const masterIdx = columnOrder.indexOf(field);
-                        return el('div', { key: field, style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#f0f6fb', borderRadius: '4px', border: '1px solid #c8d7e1' } }, [
-                          el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
-                            el('span', { style: { fontSize: '10px', fontWeight: 'bold', color: '#72777c', minWidth: '20px' } }, `#${activeIdx + 1}`),
+                return el('div', { style: { padding: '20px', width: '850px' } }, [
+                  el('h4', { style: { marginTop: 0, marginBottom: '5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }, [
+                    sprintf(__('Configure Table Columns: %s', 'vapt-Copilot'), selectedFile),
+                    el('div', { style: { display: 'flex', alignItems: 'center', gap: '15px' } }, [
+                      colSaveStatus && el('span', { style: { fontSize: '11px', color: '#00a32a', fontWeight: 'bold' } }, __('Saved to Browser', 'vapt-Copilot')),
+                      el(Button, {
+                        isSecondary: true,
+                        isSmall: true,
+                        onClick: onClose,
+                        style: { height: '24px', lineHeight: '1' }
+                      }, __('Close', 'vapt-Copilot'))
+                    ])
+                  ]),
+                  el('p', { style: { fontSize: '12px', color: '#666', marginBottom: '20px' } }, __('Confirm the table sequence and add/remove fields.', 'vapt-Copilot')),
+                  el('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(280px, 1.2fr) 1fr 1fr', gap: '25px' } }, [
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#2271b1', fontWeight: 'bold' } }, __('Active Table Sequence', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        activeFields.map((field, activeIdx) => {
+                          const masterIdx = columnOrder.indexOf(field);
+                          return el('div', {
+                            key: field,
+                            draggable: true,
+                            onDragStart: (e) => handleDragStart(e, field),
+                            onDragOver: handleDragOver,
+                            onDrop: (e) => handleDrop(e, field),
+                            style: {
+                              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                              padding: '6px 10px',
+                              background: draggedCol === field ? '#eef' : '#f0f6fb',
+                              borderRadius: '4px',
+                              border: '1px solid #c8d7e1',
+                              cursor: 'grab',
+                              opacity: draggedCol === field ? 0.5 : 1,
+                              transition: 'all 0.2s'
+                            }
+                          }, [
+                            el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+                              el('span', { className: 'dashicons dashicons-menu', style: { color: '#aaa', cursor: 'grab', fontSize: '16px' } }),
+                              el('span', { style: { fontSize: '10px', fontWeight: 'bold', color: '#72777c', minWidth: '20px' } }, `#${activeIdx + 1}`),
+                              el(CheckboxControl, {
+                                label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                                checked: true,
+                                onChange: () => setVisibleCols(visibleCols.filter(c => c !== field)),
+                                __nextHasNoMarginBottom: true,
+                                __next40pxDefaultSize: true,
+                                style: { margin: 0 }
+                              })
+                            ])
+                          ]);
+                        })
+                      )]),
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        availableCol1.map((field) => (
+                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
                             el(CheckboxControl, {
                               label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                              checked: true,
-                              onChange: () => setVisibleCols(visibleCols.filter(c => c !== field)),
+                              checked: false,
+                              onChange: () => setVisibleCols([...visibleCols, field]),
                               style: { margin: 0 }
                             })
-                          ]),
-                          el('div', { style: { display: 'flex', gap: '2px' } }, [
-                            el(Button, {
-                              isSmall: true, icon: 'arrow-up-alt2', disabled: masterIdx === 0,
-                              onClick: (e) => {
-                                e.stopPropagation();
-                                const next = [...columnOrder];
-                                [next[masterIdx], next[masterIdx - 1]] = [next[masterIdx - 1], next[masterIdx]];
-                                setColumnOrder(next);
-                              }
-                            }),
-                            el(Button, {
-                              isSmall: true, icon: 'arrow-down-alt2', disabled: masterIdx === columnOrder.length - 1,
-                              onClick: (e) => {
-                                e.stopPropagation();
-                                const next = [...columnOrder];
-                                [next[masterIdx], next[masterIdx + 1]] = [next[masterIdx + 1], next[masterIdx]];
-                                setColumnOrder(next);
-                              }
+                          ])
+                        ))
+                      )
+                    ]),
+                    el('div', null, [
+                      el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields', 'vapt-Copilot')),
+                      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
+                        availableCol2.map((field) => (
+                          el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
+                            el(CheckboxControl, {
+                              label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
+                              checked: false,
+                              onChange: () => setVisibleCols([...visibleCols, field]),
+                              style: { margin: 0 }
                             })
                           ])
-                        ]);
-                      })
-                    )
+                        ))
+                      )
+                    ])
                   ]),
-                  el('div', null, [
-                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields I', 'vapt-Copilot')),
-                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                      availableCol1.map((field) => (
-                        el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
-                          el(CheckboxControl, {
-                            label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                            checked: false,
-                            onChange: () => setVisibleCols([...visibleCols, field]),
-                            style: { margin: 0 }
-                          })
-                        ])
-                      ))
-                    )
-                  ]),
-                  el('div', null, [
-                    el('h5', { style: { margin: '0 0 10px 0', fontSize: '11px', textTransform: 'uppercase', color: '#666', fontWeight: 'bold' } }, __('Available Fields II', 'vapt-Copilot')),
-                    el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } },
-                      availableCol2.map((field) => (
-                        el('div', { key: field, style: { display: 'flex', alignItems: 'center', padding: '6px 10px', background: '#fff', borderRadius: '4px', border: '1px solid #e1e1e1' } }, [
-                          el(CheckboxControl, {
-                            label: field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' '),
-                            checked: false,
-                            onChange: () => setVisibleCols([...visibleCols, field]),
-                            style: { margin: 0 }
-                          })
-                        ])
-                      ))
-                    )
+                  el('div', { style: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
+                    el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
+                    el(Button, {
+                      isLink: true, isDestructive: true,
+                      onClick: () => {
+                        const defaultFields = ['title', 'category', 'severity', 'description'];
+                        setColumnOrder(defaultFields);
+                        setVisibleCols(defaultFields);
+                      }
+                    }, __('Reset to Default', 'vapt-Copilot'))
                   ])
-                ]),
-                el('div', { style: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
-                  el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
-                  el(Button, {
-                    isLink: true, isDestructive: true,
-                    onClick: () => {
-                      const defaultFields = schema?.item_fields || ['id', 'category', 'title', 'severity', 'description'];
-                      setColumnOrder(defaultFields);
-                      setVisibleCols(defaultFields);
-                    }
-                  }, __('Reset to Factory Defaults', 'vapt-Copilot'))
-                ])
-              ]);
-            }
-          }),
+                ]);
+              }
+            }),
 
-          // Map Include Fields Button
-          el(Button, {
-            isSecondary: true,
-            isSmall: true,
-            icon: 'networking', // Using networking to represent mapping
-            onClick: () => setIsMappingModalOpen(true),
-            onClick: () => setIsMappingModalOpen(true),
-            style: { marginLeft: '5px', fontSize: '11px', height: '30px', minHeight: '30px', boxSizing: 'border-box', lineHeight: '1' }
-          }, __('Map Include Fields', 'vapt-Copilot')),
-
-          // Feature Source Selection
-          el('div', { style: { flexGrow: 1, paddingLeft: '12px' } }, el(SelectControl, {
-            // Label removed per user request
-            value: selectedFile,
-            options: dataFiles,
-            onChange: (val) => onSelectFile(val),
-            onChange: (val) => onSelectFile(val),
-            style: { margin: 0, height: '30px', minHeight: '30px', fontSize: '13px', boxSizing: 'border-box' }
-          })),
-
-          // Manage Sources Trigger
-          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
+            // Map Include Fields Button
             el(Button, {
               isSecondary: true,
-              icon: 'admin-settings',
-              onClick: () => setIsManageModalOpen(true),
-              label: __('Manage Sources', 'vapt-Copilot'),
-              label: __('Manage Sources', 'vapt-Copilot'),
-              style: { height: '30px', minHeight: '30px', width: '30px', border: '1px solid #2271b1', color: '#2271b1', boxSizing: 'border-box', padding: 0 }
-            })
+              isSmall: true,
+              icon: 'networking', // Using networking to represent mapping
+              onClick: () => setIsMappingModalOpen(true),
+              style: { marginLeft: '5px', fontSize: '11px', height: '30px', minHeight: '30px', boxSizing: 'border-box', lineHeight: '1' }
+            }, __('Map Include Fields', 'vapt-Copilot')),
+
+            // Feature Source Selection
+            el('div', { style: { flexGrow: 1, paddingLeft: '12px' } }, el(SelectControl, {
+              // Label removed per user request
+              value: selectedFile,
+              options: dataFiles,
+              onChange: (val) => onSelectFile(val),
+              style: { margin: 0, height: '30px', minHeight: '30px', fontSize: '13px', boxSizing: 'border-box' }
+            })),
+
+            // Manage Sources Trigger
+            el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', alignItems: 'center' } }, [
+              el(Button, {
+                isSecondary: true,
+                icon: 'admin-settings',
+                onClick: () => setIsManageModalOpen(true),
+                label: __('Manage Sources', 'vapt-Copilot'),
+                style: { height: '30px', minHeight: '30px', width: '30px', border: '1px solid #2271b1', color: '#2271b1', boxSizing: 'border-box', padding: 0 }
+              })
+            ]),
+
+            // Upload Section
+            el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', flexDirection: 'column' } }, [
+              // Label removed per user request
+              el('input', {
+                type: 'file',
+                accept: '.json',
+                onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]),
+                style: { fontSize: '11px', color: '#555', height: '30px', padding: '4px 0', boxSizing: 'border-box' }
+              })
+            ])
           ]),
 
-          // Upload Section
-          el('div', { style: { borderLeft: '1px solid #dcdcde', paddingLeft: '12px', display: 'flex', flexDirection: 'column' } }, [
-            // Label removed per user request
-            el('input', {
-              type: 'file',
-              accept: '.json',
-              onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]),
-              accept: '.json',
-              onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]),
-              style: { fontSize: '11px', color: '#555', height: '30px', padding: '4px 0', boxSizing: 'border-box' }
-            })
-          ])
-        ]),
-
-        // Manage Sources Modal
-        isManageModalOpen && el(Modal, {
-          title: __('Manage JSON Sources', 'vapt-Copilot'),
-          onRequestClose: () => setIsManageModalOpen(false)
-        }, [
-          el('p', null, __('Deselect files to hide them from the Feature Source dropdown. The active file cannot be hidden.', 'vapt-Copilot')),
-          el('div', { style: { maxHeight: '400px', overflowY: 'auto' } }, [
-            allFiles.map(file => el(CheckboxControl, {
-              key: file.filename,
-              label: file.display_name || file.filename.replace(/_/g, ' '),
-              checked: !hiddenFiles.includes(file.filename),
-              disabled: file.filename === selectedFile,
-              onChange: (val) => {
-                const newHidden = val
-                  ? hiddenFiles.filter(h => h !== file.filename)
-                  : [...hiddenFiles, file.filename];
-                onUpdateHiddenFiles(newHidden);
-              }
-            }))
-          ]),
-          el('div', { style: { marginTop: '20px', textAlign: 'right' } }, [
-            el(Button, { isPrimary: true, onClick: () => setIsManageModalOpen(false) }, __('Close', 'vapt-Copilot'))
-          ])
-        ]),
-
-        // Summary Pill Row
-        el('div', {
-          style: {
-            display: 'flex',
-            gap: '15px',
-            padding: '6px 15px',
-            background: '#fff',
-            border: '1px solid #dcdcde',
-            borderRadius: '4px',
-            marginBottom: '10px',
-            alignItems: 'center',
-            fontSize: '11px',
-            color: '#333'
-          }
-        }, [
-          el('span', { style: { fontWeight: '700', textTransform: 'uppercase', fontSize: '10px', color: '#666' } }, __('Summary:', 'vapt-Copilot')),
-          el('span', { style: { fontWeight: '500' } }, sprintf(__('Total: %d', 'vapt-Copilot'), stats.total)),
-          el('span', { style: { opacity: 0.7 } }, sprintf(__('Draft: %d', 'vapt-Copilot'), stats.draft)),
-          el('span', { style: { color: '#d63638', fontWeight: '600' } }, sprintf(__('Develop: %d', 'vapt-Copilot'), stats.develop)),
-          el('span', { style: { color: '#dba617', fontWeight: '600' } }, sprintf(__('Test: %d', 'vapt-Copilot'), stats.test)),
-          el('span', { style: { color: '#46b450', fontWeight: '700' } }, sprintf(__('Release: %d', 'vapt-Copilot'), stats.release)),
-        ])
-      ]),
-      // Filters Row (Ultra-Slim)
-      el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'nowrap', alignItems: 'stretch', marginBottom: '15px' } }, [
-        // Search Box
-        el('div', { style: { flex: '1 1 180px', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
-          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Search Features', 'vapt-Copilot')),
-          el(TextControl, {
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: __('Search...', 'vapt-Copilot'),
-            hideLabelFromVision: true,
-            style: { margin: 0, height: '28px', minHeight: '28px', fontSize: '12px' }
-          })
-        ]),
-
-        // Category Unit
-        el('div', { style: { flex: '0 0 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '150px' } }, [
-          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Category', 'vapt-Copilot')),
-          el(Dropdown, {
-            renderToggle: ({ isOpen, onToggle }) => el(Button, {
-              isSecondary: true,
-              onClick: onToggle,
-              'aria-expanded': isOpen,
-              icon: 'filter',
-              style: {
-                height: '28px',
-                minHeight: '28px',
-                width: '100%',
-                justifyContent: 'flex-start',
-                gap: '6px',
-                borderColor: '#2271b1',
-                color: '#2271b1',
-                background: '#fff',
-                fontSize: '11px',
-                padding: '0 8px'
-              }
-            }, selectedCategories.length === 0 ? __('All Categories', 'vapt-Copilot') : sprintf(__('%d Selected', 'vapt-Copilot'), selectedCategories.length)),
-            renderContent: () => el('div', { style: { padding: '15px', minWidth: '250px', maxHeight: '300px', overflowY: 'auto' } }, [
-              el(CheckboxControl, {
-                label: __('All Categories', 'vapt-Copilot'),
-                checked: selectedCategories.length === 0,
-                onChange: () => setSelectedCategories([])
-              }),
-              el('hr', { style: { margin: '10px 0' } }),
-              ...categories.map(cat => el(CheckboxControl, {
-                key: cat,
-                label: cat,
-                checked: selectedCategories.includes(cat),
-                onChange: (isChecked) => {
-                  if (isChecked) setSelectedCategories([...selectedCategories, cat]);
-                  else setSelectedCategories(selectedCategories.filter(c => c !== cat));
+          // Manage Sources Modal
+          isManageModalOpen && el(Modal, {
+            title: __('Manage JSON Sources', 'vapt-Copilot'),
+            onRequestClose: () => setIsManageModalOpen(false)
+          }, [
+            el('p', null, __('Deselect files to hide them from the Feature Source dropdown. The active file cannot be hidden.', 'vapt-Copilot')),
+            el('div', { style: { maxHeight: '400px', overflowY: 'auto' } }, [
+              allFiles.map(file => el(CheckboxControl, {
+                key: file.filename,
+                label: file.display_name || file.filename.replace(/_/g, ' '),
+                checked: !hiddenFiles.includes(file.filename),
+                disabled: file.filename === selectedFile,
+                onChange: (val) => {
+                  const newHidden = val
+                    ? hiddenFiles.filter(h => h !== file.filename)
+                    : [...hiddenFiles, file.filename];
+                  onUpdateHiddenFiles(newHidden);
                 }
               }))
+            ]),
+            el('div', { style: { marginTop: '20px', textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' } }, [
+              manageSourcesStatus === 'saving' && el(Spinner),
+              manageSourcesStatus === 'saved' && el('span', { style: { color: '#00a32a', fontWeight: 'bold' } }, __('Saved', 'vapt-Copilot')),
+              el(Button, { isPrimary: true, onClick: () => setIsManageModalOpen(false) }, __('Close', 'vapt-Copilot'))
             ])
-          })
-        ]),
+          ]),
 
-        // Severity Unit
-        el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
-          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Severity', 'vapt-Copilot')),
-          el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
-            uniqueSeverities.map(sev => el(CheckboxControl, {
-              key: sev,
-              label: sev,
-              checked: selectedSeverities.some(s => s.toLowerCase() === sev.toLowerCase()),
-              onChange: (val) => {
-                const lowSev = sev.toLowerCase();
-                if (val) setSelectedSeverities([...selectedSeverities, sev]);
-                else setSelectedSeverities(selectedSeverities.filter(s => s.toLowerCase() !== lowSev));
-              },
-              style: { margin: 0, fontSize: '11px' }
-            }))
-          )
+          // Summary Pill Row
+          el('div', {
+            style: {
+              display: 'flex',
+              gap: '15px',
+              padding: '6px 15px',
+              background: '#fff',
+              border: '1px solid #dcdcde',
+              borderRadius: '4px',
+              marginBottom: '10px',
+              alignItems: 'center',
+              fontSize: '11px',
+              color: '#333'
+            }
+          }, [
+            el('span', { style: { fontWeight: '700', textTransform: 'uppercase', fontSize: '10px', color: '#666' } }, __('Summary:', 'vapt-Copilot')),
+            el('span', { style: { fontWeight: '500' } }, sprintf(__('Total: %d', 'vapt-Copilot'), stats.total)),
+            el('span', { style: { opacity: 0.7 } }, sprintf(__('Draft: %d', 'vapt-Copilot'), stats.draft)),
+            el('span', { style: { color: '#d63638', fontWeight: '600' } }, sprintf(__('Develop: %d', 'vapt-Copilot'), stats.develop)),
+            el('span', { style: { color: '#dba617', fontWeight: '600' } }, sprintf(__('Test: %d', 'vapt-Copilot'), stats.test)),
+            el('span', { style: { color: '#46b450', fontWeight: '700' } }, sprintf(__('Release: %d', 'vapt-Copilot'), stats.release)),
+          ])
         ]),
+        // Filters Row (Ultra-Slim)
+        el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'nowrap', alignItems: 'stretch', marginBottom: '15px' } }, [
+          // Search Box
+          el('div', { style: { flex: '1 1 180px', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Search Features', 'vapt-Copilot')),
+            el(TextControl, {
+              value: searchQuery,
+              onChange: setSearchQuery,
+              placeholder: __('Search...', 'vapt-Copilot'),
+              hideLabelFromVision: true,
+              style: { margin: 0, height: '28px', minHeight: '28px', fontSize: '12px' }
+            })
+          ]),
 
-        // Lifecycle Unit
-        el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
-          el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Lifecycle Status', 'vapt-Copilot')),
-          el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
-            [
-              { label: __('All', 'vapt-Copilot'), value: 'all' },
-              { label: __('Draft', 'vapt-Copilot'), value: 'draft' },
-              { label: __('Develop', 'vapt-Copilot'), value: 'develop' },
-              { label: __('Test', 'vapt-Copilot'), value: 'test' },
-              { label: __('Release', 'vapt-Copilot'), value: 'release' },
-            ].map(opt => el('label', { key: opt.value, style: { display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '11px' } }, [
-              el('input', {
-                type: 'radio',
-                name: 'vaptm_filter_status',
-                value: opt.value,
-                checked: filterStatus === opt.value,
-                onChange: (e) => setFilterStatus(e.target.value),
-                style: { margin: 0, width: '14px', height: '14px' }
-              }),
-              opt.label
-            ])))
-        ])
-      ]),
+          // Category Unit
+          el('div', { style: { flex: '0 0 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '150px' } }, [
+            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Category', 'vapt-Copilot')),
+            el(Dropdown, {
+              renderToggle: ({ isOpen, onToggle }) => el(Button, {
+                isSecondary: true,
+                onClick: onToggle,
+                'aria-expanded': isOpen,
+                icon: 'filter',
+                style: {
+                  height: '28px',
+                  minHeight: '28px',
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                  gap: '6px',
+                  borderColor: '#2271b1',
+                  color: '#2271b1',
+                  background: '#fff',
+                  fontSize: '11px',
+                  padding: '0 8px'
+                }
+              }, selectedCategories.length === 0 ? __('All Categories', 'vapt-Copilot') : sprintf(__('%d Selected', 'vapt-Copilot'), selectedCategories.length)),
+              renderContent: () => el('div', { style: { padding: '15px', minWidth: '250px', maxHeight: '300px', overflowY: 'auto' } }, [
+                el(CheckboxControl, {
+                  label: __('All Categories', 'vapt-Copilot'),
+                  checked: selectedCategories.length === 0,
+                  onChange: () => setSelectedCategories([])
+                }),
+                el('hr', { style: { margin: '10px 0' } }),
+                ...categories.map(cat => el(CheckboxControl, {
+                  key: cat,
+                  label: cat,
+                  checked: selectedCategories.includes(cat),
+                  onChange: (isChecked) => {
+                    if (isChecked) setSelectedCategories([...selectedCategories, cat]);
+                    else setSelectedCategories(selectedCategories.filter(c => c !== cat));
+                  }
+                }))
+              ])
+            })
+          ]),
+
+          // Severity Unit
+          el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Severity', 'vapt-Copilot')),
+            el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
+              uniqueSeverities.map(sev => el(CheckboxControl, {
+                key: sev,
+                label: sev,
+                checked: selectedSeverities.some(s => s.toLowerCase() === sev.toLowerCase()),
+                onChange: (val) => {
+                  const lowSev = sev.toLowerCase();
+                  if (val) setSelectedSeverities([...selectedSeverities, sev]);
+                  else setSelectedSeverities(selectedSeverities.filter(s => s.toLowerCase() !== lowSev));
+                },
+                style: { margin: 0, fontSize: '11px' }
+              }))
+            )
+          ]),
+
+          // Lifecycle Unit
+          el('div', { style: { flex: '1 1 auto', background: '#f6f7f7', padding: '4px 10px', borderRadius: '4px', border: '1px solid #dcdcde', display: 'flex', flexDirection: 'column', justifyContent: 'center' } }, [
+            el('label', { className: 'components-base-control__label', style: { display: 'block', marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase', fontSize: '9px', color: '#666', letterSpacing: '0.02em' } }, __('Filter by Lifecycle Status', 'vapt-Copilot')),
+            el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } },
+              [
+                { label: __('All', 'vapt-Copilot'), value: 'all' },
+                { label: __('Draft', 'vapt-Copilot'), value: 'draft' },
+                { label: __('Develop', 'vapt-Copilot'), value: 'develop' },
+                { label: __('Test', 'vapt-Copilot'), value: 'test' },
+                { label: __('Release', 'vapt-Copilot'), value: 'release' },
+              ].map(opt => el('label', { key: opt.value, style: { display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '11px' } }, [
+                el('input', {
+                  type: 'radio',
+                  name: 'vaptm_filter_status',
+                  value: opt.value,
+                  checked: filterStatus === opt.value,
+                  onChange: (e) => setFilterStatus(e.target.value),
+                  style: { margin: 0, width: '14px', height: '14px' }
+                }),
+                opt.label
+              ])))
+          ])
+        ]),
+      ]), // End Header PanelBody
 
       loading ? el(Spinner, { key: 'loader' }) : el('table', { key: 'table', className: 'wp-list-table widefat fixed striped vaptm-feature-table' }, [
         el('thead', null, el('tr', null, [
@@ -1467,7 +1575,7 @@ Test Method: ${feature.test_method || 'None provided'}`;
     const [schema, setSchema] = useState({ item_fields: [] });
     const [domains, setDomains] = useState([]);
     const [dataFiles, setDataFiles] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(() => localStorage.getItem('vaptm_selected_file') || 'features-with-test-methods.json');
+    const [selectedFile, setSelectedFile] = useState('features-with-test-methods.json');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isDomainModalOpen, setDomainModalOpen] = useState(false);
@@ -1523,12 +1631,30 @@ Test Method: ${feature.test_method || 'None provided'}`;
     };
 
     useEffect(() => {
-      fetchData();
+      // First fetch the active file from backend setup
+      apiFetch({ path: 'vaptc/v1/active-file' }).then(res => {
+        if (res.active_file) {
+          setSelectedFile(res.active_file);
+          fetchData(res.active_file);
+        } else {
+          fetchData();
+        }
+      }).catch(() => fetchData());
     }, []);
 
-    useEffect(() => {
-      localStorage.setItem('vaptm_selected_file', selectedFile);
-    }, [selectedFile]);
+    const onSelectFile = (file) => {
+      if (!window.confirm(__('Changing the feature source will override the current list. Previously implemented features with matching keys will retain their status. Proceed?', 'vapt-Copilot'))) {
+        return;
+      }
+      setSelectedFile(file);
+      fetchData(file);
+      // Persist to backend
+      apiFetch({
+        path: 'vaptc/v1/active-file',
+        method: 'POST',
+        data: { file }
+      }).catch(err => console.error('Failed to sync active file:', err));
+    };
 
     const updateFeature = (key, data) => {
       // Optimistic Update
@@ -1613,15 +1739,20 @@ Test Method: ${feature.test_method || 'None provided'}`;
       }
     }, [isManageModalOpen]);
 
+    const [manageSourcesStatus, setManageSourcesStatus] = useState(null);
+
     const updateHiddenFiles = (newHidden) => {
       setHiddenFiles(newHidden);
+      setManageSourcesStatus('saving');
       apiFetch({
         path: 'vaptc/v1/update-hidden-files',
         method: 'POST',
         data: { hidden_files: newHidden }
       }).then(() => {
         fetchData(); // Refresh dropdown list
-      });
+        setManageSourcesStatus('saved');
+        setTimeout(() => setManageSourcesStatus(null), 2000);
+      }).catch(() => setManageSourcesStatus('error'));
     };
 
 
@@ -1663,8 +1794,8 @@ Test Method: ${feature.test_method || 'None provided'}`;
           title: sprintf(__('Features for %s', 'vapt-Copilot'), selectedDomain.domain),
           onRequestClose: () => setDomainModalOpen(false)
         }, [
-          el('p', null, __('Select features to enable for this domain. Only "Implemented" features are available.', 'vapt-Copilot')),
-          el('div', { className: 'vaptm-feature-grid' }, features.filter(f => f.status === 'implemented').map(f => el(ToggleControl, {
+          el('p', null, __('Select features to enable for this domain. Only "Published" features are available.', 'vapt-Copilot')),
+          el('div', { className: 'vaptm-feature-grid' }, features.filter(f => ['implemented', 'release'].includes(f.status.toLowerCase())).map(f => el(ToggleControl, {
             key: f.key,
             label: f.label,
             help: f.description,
@@ -1854,6 +1985,7 @@ Test Method: ${feature.test_method || 'None provided'}`;
       }, (tab) => {
         switch (tab.name) {
           case 'features': return el(FeatureList, {
+            key: selectedFile, // Force remount on file change to fix persistence
             features,
             schema,
             updateFeature,
@@ -1863,12 +1995,8 @@ Test Method: ${feature.test_method || 'None provided'}`;
             allFiles,
             hiddenFiles,
             onUpdateHiddenFiles: updateHiddenFiles,
-            onSelectFile: (val) => {
-              if (window.confirm(__('Changing the feature source will override the current list. Previously implemented features with matching keys will retain their status. Proceed?', 'vapt-Copilot'))) {
-                setSelectedFile(val);
-                fetchData(val);
-              }
-            },
+            manageSourcesStatus: manageSourcesStatus,
+            onSelectFile: onSelectFile,
             onUpload: uploadJSON,
             isManageModalOpen,
             setIsManageModalOpen,
