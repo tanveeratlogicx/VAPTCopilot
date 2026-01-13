@@ -1,0 +1,112 @@
+You are designing an interactive WordPress security configuration interface for this feature.
+
+Feature: WordPress Version Disclosure
+Category: Information Disclosure
+Goal / Description: Checks if the WordPress version is publicly visible via generator tags, readme files, or error messages, which can help attackers target known vulnerabilities.
+
+Remediation Guidelines (core implementation logic):
+Add to wp-config.php: `remove_action('wp_head', 'wp_generator');`. Delete readme.html. Configure server to not reveal version in errors.
+
+Using ONLY this information, design a JSON schema for the VAPT Builder workbench with:
+
+1) Functional Implementation controls:
+   - A small set of toggles / inputs that directly implement the remediation.
+   - Each control MUST have: "type", "label", "key", and optional "help" and "default".
+
+2) Verification Engine tests:
+   - For every important functional control, define at least one "test_action" control.
+   - Each test MUST be clearly bound to the configuration it verifies (same feature, same behavior).
+   - Use concrete HTTP-level tests or probes (no vague/manual steps).
+
+3) Enforcement configuration:
+   - Use an "enforcement" object that wires functional controls to enforcement methods:
+     {
+       "enforcement": {
+         "driver": "hook" | "htaccess",
+         "target": "root" | "uploads" (for htaccess only),
+         "mappings": {
+           "<control_key>": "<enforcement_method>"
+         }
+       }
+     }
+   - Valid enforcement methods are implemented in PHP (e.g. hide_wp_version, block_xmlrpc, disable_directory_browsing, limit_login_attempts, add_security_headers).
+
+IMPORTANT RULES:
+- Controls and tests MUST be tightly aligned with the remediation text above.
+- "test_action" controls MUST use appropriate test_logic values (e.g. hide_wp_version, check_headers, spam_requests, block_xmlrpc, disable_directory_browsing, universal_probe for custom HTTP attacks).
+- For custom HTTP attacks with "universal_probe", define "test_config" (method, path, params, expected_status and/or expected_headers).
+- Do NOT invent new drivers. Use only "hook" or "htaccess".
+- Do NOT output any explanatory text, comments, or markdown. Output only a single JSON object.
+
+Output format (example structure, not literal content):
+{
+  "controls": [
+    { "type": "toggle", "label": "Enable Protection", "key": "status" },
+    { "type": "input", "label": "Setting Name", "key": "setting_val", "default": "config_value" },
+    { 
+      "type": "test_action", 
+      "label": "Verify Feature", 
+      "key": "verify_action", 
+      "test_logic": "universal_probe",
+      "test_config": {
+        "method": "GET",
+        "path": "/",
+        "params": { "test_param": "<SIMULATED_ATTACK_PAYLOAD>" },
+        "expected_status": 403
+      }
+    }
+  ]
+}
+
+CRITICAL RULES:
+
+1. **Test Logic Selection**:
+   - Use specialized probes when available for better accuracy:
+     * "check_headers" - For verifying HTTP security headers (automatically checks X-Frame-Options, X-Content-Type-Options, etc.)
+     * "spam_requests" - For rate limiting tests (automatically sends 125% of configured limit, e.g. if limit is 60 RPM, sends 75 requests)
+     * "block_xmlrpc" - For XML-RPC blocking verification
+     * "disable_directory_browsing" - For directory listing checks (probes /wp-content/uploads/)
+     * "block_null_byte_injection" - For null byte injection tests (checks for %00 and null bytes)
+     * "hide_wp_version" - For WordPress version disclosure checks
+   - Use "universal_probe" ONLY for custom attacks requiring specific HTTP method/path/params not covered by specialized probes above.
+
+2. **Define the Attack**: In "test_config" (for universal_probe), define the exact HTTP Method, Path, and Params representing the attack.
+   - Example: { "method": "GET", "path": "/", "params": { "test": "<script>alert(1)</script>" }, "expected_status": 403 }
+
+3. **Define Success Criteria**:
+   - For BLOCKING features: Set "expected_status" to the HTTP code indicating a SUCCESSFUL BLOCK (typically 403, 400, or 429 for rate limits).
+   - For HEADER features: Set "expected_headers" to check for security headers (e.g. {"X-Frame-Options": "SAMEORIGIN"}).
+   - IMPORTANT: If expected_status is 200, the test expects a normal response but will check headers/content for protection indicators.
+
+4. **Binding & Alignment**:
+   - Test configurations MUST reference values from functional controls.
+   - Example: If toggle "enable_rate_limit" with input "rpm: 60" exists, spam_requests automatically uses Math.ceil(60 * 1.25) = 75 requests.
+   - The test must validate the SPECIFIC configuration enabled by the functional controls (e.g. if rate limit is set to 10, test exceeds it).
+
+5. **No Mocks**: Do not use generic pings. The test must attempt the ACTUAL exploit path (e.g. null byte injection payload: test%00param, SQLi: ' OR 1=1--, XSS: <script>alert(1)</script>).
+
+6. **ENFORCEMENT CONFIGURATION** (REQUIRED):
+   The schema MUST include an "enforcement" object defining how the feature is enforced at runtime:
+   
+   {
+     "enforcement": {
+       "driver": "hook" | "htaccess",
+       "target": "root" | "uploads" (REQUIRED for htaccess driver only),
+       "mappings": {
+         "control_key": "enforcement_method"
+       }
+     }
+   }
+   
+   **Driver Selection**:
+   - Use "hook" for PHP-based enforcement (works on all servers - Apache, Nginx, etc.)
+     Example mappings: { "enable_rate_limit": "limit_login_attempts", "block_xmlrpc": "block_xmlrpc" }
+   - Use "htaccess" for Apache .htaccess rules (faster, Apache-only)
+     Example mappings: { 
+       "disable_directory_browsing": "Options -Indexes",
+       "enable_security_headers": "<IfModule mod_headers.c>\n  Header set X-Frame-Options "SAMEORIGIN"\n</IfModule>"
+     }
+   
+   **Critical**: Each functional control (toggle, input) that enables enforcement MUST have a corresponding mapping in enforcement.mappings.
+
+Please provide ONLY the JSON block.

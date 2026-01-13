@@ -1,0 +1,45 @@
+Please generate an interactive security interface JSON based on the following context:
+
+--- DESIGN CONTEXT ---
+{
+  "design_prompt": {
+    "interface_type": "Interactive JSON Schema for VAPT Workbench.",
+    "schema_definition": "Standard VAPT schema with 'controls' array.",
+    "title": "Brute-force login without rate limiting",
+    "description": "Lack of throttling and CAPTCHA enables automated credential attacks.",
+    "severity": "Critical",
+    "validation_rules": "PHP verification logic for Brute-force login without rate limiting.",
+    "context": "Authentication & Access Control"
+  }
+}
+--- 
+
+INSTRUCTIONS & CRITICAL RULES:
+1. **Response Format**: Provide ONLY a JSON block. No preamble or conversation.
+2. **Schema Structure**: You MUST include both 'controls' and 'enforcement' blocks.
+3. **Default Values**: Every input/toggle control MUST have a 'default' property (e.g. "5", true, "off"). This is CRITICAL for backend baseline enforcement.
+4. **Enforcement Mappings**: You MUST map control keys to backend methods in the 'enforcement' block.
+   - Available Methods: 'limit_login_attempts', 'block_xmlrpc', 'disable_directory_browsing', 'enable_security_headers', 'block_null_byte_injection', 'hide_wp_version'.
+   - Driver: Always use "driver": "hook" for these methods.
+5. **Reset Logic**: For ANY rate-limiting feature, a reset 'test_action' is MANDATORY.
+   - Logic: "test_logic": "universal_probe"
+   - Config: {"method": "GET", "path": "/", "params": {"vaptc_action": "reset_rate_limits"}, "expected_status": 200}
+6. **Dynamic Testing**: For 'spam_requests', ensure the RPM is resolved from the 'rate_limit' or 'limit' key in sibling controls.
+7. **Attribution**: Test outcomes must explicitly state if "The Plugin" is enforcing based on headers like X-VAPTC-Enforced.
+8. **Reference JSON Structure**:
+   {
+     "controls": [
+       { "type": "toggle", "label": "Enable Feature", "key": "status", "default": true },
+       { "type": "input", "label": "Max Attempts", "key": "rate_limit", "default": "5" },
+       { "type": "test_action", "label": "Verify", "key": "v1", "test_logic": "spam_requests" },
+       { "type": "test_action", "label": "Reset", "key": "reset", "test_logic": "universal_probe", "test_config": {"method": "GET", "path": "/", "params": {"vaptc_action": "reset_rate_limits"}, "expected_status": 200} }
+     ],
+     "enforcement": {
+       "driver": "hook",
+       "mappings": { "status": "limit_login_attempts", "rate_limit": "limit_login_attempts" }
+     }
+   }
+
+Feature Name: Brute-force login without rate limiting
+Remediation (Core Logic): Enable rate limiting and CAPTCHA,Set lockout thresholds,Alert on repeated failures
+Test Method: None provided

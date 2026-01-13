@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+	<description>Apply WordPress Coding Standards</description>
+
+	<!-- Scan all files in current directory -->
+	<file>.</file>
+
+	<!-- Exclude third-party assets -->
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+
+	<!-- Show progress and sniff codes -->
+	<arg value="p"/>
+	<arg value="s"/>
+	<arg name="colors"/>
+
+	<!-- Use WordPress Standards -->
+	<rule ref="WordPress">
+		<!-- Allow short array syntax [] instead of array() -->
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<!-- Allow loose types for now -->
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+	</rule>
+
+	<!-- Verify PHP version compatibility -->
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="PHPCompatibility"/>
+
+	<!-- Allow specific file directives -->
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="strict_class_file_names" value="false"/>
+		</properties>
+	</rule>
+</ruleset>

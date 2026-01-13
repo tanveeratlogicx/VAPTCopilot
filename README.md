@@ -91,7 +91,7 @@ Your Features List.json should follow this structure:
 ```json
 {
   "metadata": {
-    "version": "2.1.0",
+    "version": "2.2.0",
     "focus": "Description",
     "maintainer": "Name",
     "last_updated": "YYYY-MM-DD"
@@ -153,7 +153,7 @@ This plugin uses Semantic Versioning (Major.Minor.Patch):
 - **Minor**: New features that are backward compatible
 - **Patch**: Bug fixes and minor updates
 
-Current version: 2.1.0
+Current version: 2.2.0
 
 ## License
 
@@ -169,6 +169,13 @@ Email: tanmalik786@gmail.com
 For support, issues, or feature requests, please contact the author.
 
 ## Changelog
+
+### Version 2.2.0
+- **Workbench Layout Refinement**: Redesigned Block 2 with a full-width header and 2-column grid for Manual Verification and Assurance.
+- **Design Hub Optimization**: Consolidated preview into a single-column vertical stack for better modal usability.
+- **Visual Harmonization**: Updated structural header colors (Slate #334155) and background colors (#f8fafc) for better aesthetics.
+- **Stability Fixes**: Implemented robust JSON parsing for schema data to prevent dashboard loading crashes.
+- **Hybrid Data Sourcing**: Unified manual verification steps from both metadata and AI-generated schemas.
 
 ### Version 2.1.0
 - **Sleek UI Overhaul**: Unified header with branded icons and systematic aesthetics.

@@ -1,0 +1,5187 @@
+{
+  "metadata": {
+    "version": "2.1.0",
+    "focus": "Inclusive WordPress VAPT coverage with populated references",
+    "intended_use": "Feed into WordPress Copilot for AI prompt generation and schema creation",
+    "maintainer": "Tanveer",
+    "last_updated": "2026-01-08"
+  },
+  "schema": {
+    "item_fields": [
+      "id",
+      "title",
+      "category",
+      "severity",
+      "description",
+      "risks",
+      "tests",
+      "assurance",
+      "assurance_against",
+      "evidence",
+      "remediation",
+      "automation_prompts",
+      "schema_hints",
+      "references"
+    ],
+    "reference_format": { "fields": ["name", "section", "url"] }
+  },
+  "wordpress_vapt": [
+    {
+      "id": "WP-WEAK-PASSWORD-POLICY",
+      "category": "Authentication & Access Control",
+      "title": "Weak password policy enforcement",
+      "severity": "Critical",
+      "description": "Weak or absent password policies allow trivial brute-force attacks and compromise accounts.",
+      "risks": ["Account compromise", "Privilege escalation"],
+      "tests": [
+        "Attempt weak password creation",
+        "Simulate controlled brute-force login attempts",
+        "Check password reuse prevention"
+      ],
+      "assurance": [
+        "Strong password policy enforced",
+        "Rate limiting enabled",
+        "Password reuse blocked"
+      ],
+      "assurance_against": ["Brute-force", "Credential stuffing"],
+      "evidence": [
+        "Password policy snapshot",
+        "Auth logs showing throttling",
+        "Failed attempt counters"
+      ],
+      "remediation": [
+        "Enforce strong password rules (min length, complexity)",
+        "Enable CAPTCHA and throttling",
+        "Block common passwords"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate brute-force simulations and policy audit",
+        "ai_ui": "Password policy dashboard",
+        "ai_schema": "min_length, complexity_rules, disallow_common"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "min_length", "type": "integer" },
+          {
+            "name": "complexity_rules",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "disallow_common", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V2 Authentication",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        },
+        {
+          "name": "WordPress Security Handbook",
+          "section": "Passwords",
+          "url": "https://developer.wordpress.org/apis/security/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DEFAULT-ADMIN-USERNAME",
+      "category": "Authentication & Access Control",
+      "title": "Default admin username present",
+      "severity": "High",
+      "description": "Predictable usernames increase brute-force success and targeted attacks.",
+      "risks": ["Account compromise"],
+      "tests": [
+        "Check for 'admin' username",
+        "Enumerate users via REST/author archives"
+      ],
+      "assurance": ["No default admin username", "Enumeration blocked"],
+      "assurance_against": ["Targeted brute-force"],
+      "evidence": [
+        "User inventory",
+        "REST responses",
+        "Author archive behavior"
+      ],
+      "remediation": [
+        "Rename default admin",
+        "Disable enumeration endpoints",
+        "Apply throttling/CAPTCHA"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate user inventory and enumeration probes",
+        "ai_ui": "Admin exposure card",
+        "ai_schema": "enumeration_blocked, captcha_provider"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "enumeration_blocked", "type": "boolean" },
+          { "name": "captcha_provider", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A07 Identification and Authentication Failures",
+          "url": "https://owasp.org/Top10/"
+        },
+        {
+          "name": "WordPress REST API Handbook",
+          "section": "Authentication & Permissions",
+          "url": "https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/"
+        }
+      ]
+    },
+    {
+      "id": "WP-MFA-ENFORCEMENT",
+      "category": "Authentication & Access Control",
+      "title": "Missing MFA/2FA for privileged accounts",
+      "severity": "Critical",
+      "description": "Without MFA, compromised credentials lead directly to admin access.",
+      "risks": ["Account takeover", "Privilege escalation"],
+      "tests": [
+        "Check MFA availability",
+        "Verify enforcement for admin roles",
+        "Attempt login without MFA"
+      ],
+      "assurance": [
+        "MFA enforced for admin accounts",
+        "Recovery codes stored securely"
+      ],
+      "assurance_against": ["Credential theft"],
+      "evidence": [
+        "MFA policy snapshot",
+        "Login flow captures",
+        "Role-based enforcement logs"
+      ],
+      "remediation": [
+        "Enable MFA for privileged roles",
+        "Require MFA enrollment",
+        "Secure recovery flows"
+      ],
+      "automation_prompts": {
+        "ai_check": "Audit MFA enforcement by role",
+        "ai_ui": "MFA policy dashboard",
+        "ai_schema": "mfa_required_roles, recovery_policy"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "mfa_required_roles",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "recovery_policy", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V2 Authentication—Multi-factor",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-AUTH-BRUTE-FORCE",
+      "category": "Authentication & Access Control",
+      "title": "Brute-force login without rate limiting",
+      "severity": "Critical",
+      "description": "Lack of throttling and CAPTCHA enables automated credential attacks.",
+      "risks": ["Account compromise"],
+      "tests": [
+        "Simulate controlled brute-force attempts",
+        "Check lockout thresholds",
+        "Verify CAPTCHA presence"
+      ],
+      "assurance": [
+        "Rate limiting or lockout enabled",
+        "CAPTCHA enforced",
+        "Alerting on repeated failures"
+      ],
+      "assurance_against": ["Credential stuffing"],
+      "evidence": [
+        "Auth logs showing throttling/lockouts",
+        "CAPTCHA configuration",
+        "Alerting setup"
+      ],
+      "remediation": [
+        "Enable rate limiting and CAPTCHA",
+        "Set lockout thresholds",
+        "Alert on repeated failures"
+      ],
+      "automation_prompts": {
+        "ai_check": "Create controlled brute-force tests",
+        "ai_ui": "Auth hardening dashboard",
+        "ai_schema": "rate_limit, lockout_threshold, captcha_provider"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "rate_limit", "type": "integer" },
+          { "name": "lockout_threshold", "type": "integer" },
+          { "name": "captcha_provider", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Authentication",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-ROLE-CAP-ESCALATION",
+      "category": "Authentication & Access Control",
+      "title": "Privilege escalation via misconfigured roles/capabilities",
+      "severity": "Critical",
+      "description": "Over-permissive capabilities allow lower roles to perform admin actions.",
+      "risks": ["Privilege escalation", "Configuration tampering"],
+      "tests": [
+        "Audit role capabilities",
+        "Attempt sensitive actions with lower roles",
+        "Check custom roles added by plugins"
+      ],
+      "assurance": [
+        "Least privilege enforced",
+        "Sensitive capabilities restricted"
+      ],
+      "assurance_against": ["Privilege misuse"],
+      "evidence": ["Role capability matrix", "Denied action logs"],
+      "remediation": [
+        "Harden capabilities",
+        "Review custom roles",
+        "Add server-side checks"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate capability audits",
+        "ai_ui": "Role matrix dashboard",
+        "ai_schema": "role, capability, allowed"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "role", "type": "string" },
+          { "name": "capability", "type": "string" },
+          { "name": "allowed", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Roles & Capabilities",
+          "section": "Core Concepts",
+          "url": "https://wordpress.org/documentation/article/roles-and-capabilities/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SESSION-COOKIE-FLAGS",
+      "category": "Session",
+      "title": "Missing secure cookie flags",
+      "severity": "High",
+      "description": "Cookies without Secure/HttpOnly/SameSite increase hijacking and CSRF risk.",
+      "risks": ["Session hijacking", "CSRF impact"],
+      "tests": [
+        "Capture cookie attributes on login",
+        "Verify SameSite policy",
+        "Check HTTPS enforcement"
+      ],
+      "assurance": [
+        "Secure and HttpOnly set",
+        "SameSite=Lax/Strict",
+        "HTTPS enforced"
+      ],
+      "assurance_against": ["Session theft", "CSRF"],
+      "evidence": ["Header captures", "Policy snapshot", "Probe results"],
+      "remediation": [
+        "Set secure cookie flags",
+        "Enforce HTTPS",
+        "Adjust SameSite policy"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cookie audits",
+        "ai_ui": "Cookie policy dashboard",
+        "ai_schema": "Secure, HttpOnly, SameSite"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "Secure", "type": "boolean" },
+          { "name": "HttpOnly", "type": "boolean" },
+          { "name": "SameSite", "type": "string", "enum": ["Lax", "Strict"] }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Session Management",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-SESSION-FIXATION",
+      "category": "Session",
+      "title": "Session fixation (no rotation on privilege change)",
+      "severity": "High",
+      "description": "Failure to rotate session IDs on login or role change enables fixation attacks.",
+      "risks": ["Session hijacking", "Privilege misuse"],
+      "tests": [
+        "Check session rotation on login",
+        "Verify rotation on role change",
+        "Inspect TTLs for admin sessions"
+      ],
+      "assurance": [
+        "Rotation on login/privilege change",
+        "Short TTLs for admin sessions"
+      ],
+      "assurance_against": ["Fixation", "Hijacking"],
+      "evidence": ["Rotation logs", "TTL configuration", "Cookie captures"],
+      "remediation": [
+        "Implement rotation on privilege changes",
+        "Reduce session TTLs",
+        "Invalidate old sessions"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate rotation tests",
+        "ai_ui": "Session policy dashboard",
+        "ai_schema": "rotation_events, ttl_minutes"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "rotation_events",
+            "type": "array",
+            "items": { "type": "string", "enum": ["login", "role_change"] }
+          },
+          { "name": "ttl_minutes", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V3 Session Management",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SQL-INJECTION",
+      "category": "Database & Input Validation",
+      "title": "SQL injection in custom queries",
+      "severity": "Critical",
+      "description": "Untrusted input reaching queries without prepared statements enables data compromise.",
+      "risks": ["Data theft", "Privilege escalation", "Integrity loss"],
+      "tests": [
+        "Fuzz inputs with SQL payloads",
+        "Scan for $wpdb->prepare() usage",
+        "Check dynamic query construction paths"
+      ],
+      "assurance": [
+        "All queries use prepared statements",
+        "Inputs sanitized and validated"
+      ],
+      "assurance_against": ["SQLi"],
+      "evidence": [
+        "Code scan results",
+        "Payload behavior screenshots",
+        "Sanitization matrix"
+      ],
+      "remediation": [
+        "Use prepared statements",
+        "Sanitize inputs",
+        "Refactor dynamic queries"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate SQL payload sets and map sinks",
+        "ai_ui": "Sanitization/escaping matrix",
+        "ai_schema": "query_path, sanitizer, prepared_statement"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "query_path", "type": "string" },
+          { "name": "sanitizer", "type": "string" },
+          { "name": "prepared_statement", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A03 Injection",
+          "url": "https://owasp.org/Top10/"
+        },
+        {
+          "name": "WordPress Developer Handbook",
+          "section": "Database—$wpdb->prepare()",
+          "url": "https://developer.wordpress.org/reference/classes/wpdb/prepare/"
+        }
+      ]
+    },
+    {
+      "id": "WP-XSS-STORED",
+      "category": "Database & Input Validation",
+      "title": "Stored XSS in comments/forms/meta",
+      "severity": "Critical",
+      "description": "Persistent scripts execute in user contexts, enabling account takeover and malware delivery.",
+      "risks": ["Account takeover", "Session theft", "Malware distribution"],
+      "tests": [
+        "Inject stored XSS payloads in comments and custom fields",
+        "Verify output escaping per context",
+        "Check wp_kses() usage for HTML inputs"
+      ],
+      "assurance": [
+        "Context-aware escaping applied",
+        "Sanitization enforced on input"
+      ],
+      "assurance_against": ["Stored XSS"],
+      "evidence": [
+        "Payload execution screenshots",
+        "Code references to esc_* and wp_kses",
+        "Sanitization logs"
+      ],
+      "remediation": [
+        "Escape outputs per context",
+        "Sanitize inputs",
+        "Restrict HTML to safe tags via kses"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate XSS payloads and verify escaping",
+        "ai_ui": "Escaping matrix per field",
+        "ai_schema": "field_name, escaper, sanitizer"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "field_name", "type": "string" },
+          {
+            "name": "escaper",
+            "type": "string",
+            "enum": ["esc_html", "esc_attr", "esc_url"]
+          },
+          { "name": "sanitizer", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A03 Injection / XSS",
+          "url": "https://owasp.org/Top10/"
+        },
+        {
+          "name": "WordPress Security Handbook",
+          "section": "Data Validation—Escaping",
+          "url": "https://developer.wordpress.org/apis/security/data-sanitization-escaping/"
+        }
+      ]
+    },
+    {
+      "id": "WP-XSS-REFLECTED",
+      "category": "Database & Input Validation",
+      "title": "Reflected XSS in query parameters and search forms",
+      "severity": "High",
+      "description": "Unescaped reflected input allows script execution in victims’ browsers.",
+      "risks": ["Phishing", "Session theft"],
+      "tests": [
+        "Inject reflected XSS payloads",
+        "Scan templates for esc_* usage",
+        "Verify wp_kses for HTML fields"
+      ],
+      "assurance": ["Context-aware escaping applied", "Sanitization enforced"],
+      "assurance_against": ["Reflected XSS"],
+      "evidence": [
+        "Template scan results",
+        "Payload execution screenshots",
+        "Sanitization matrix"
+      ],
+      "remediation": [
+        "Apply esc_* functions per context",
+        "Sanitize inputs",
+        "Restrict HTML via kses"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate template scans and reflected XSS probes",
+        "ai_ui": "Escaping compliance matrix",
+        "ai_schema": "template_path, escaper, sanitizer"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "template_path", "type": "string" },
+          { "name": "escaper", "type": "string" },
+          { "name": "sanitizer", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "XSS Prevention",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-CSRF-SENSITIVE-ACTIONS",
+      "category": "Database & Input Validation",
+      "title": "CSRF on sensitive actions",
+      "severity": "Critical",
+      "description": "Missing nonce validation enables attackers to trigger privileged actions via crafted requests.",
+      "risks": [
+        "Account takeover",
+        "Privilege abuse",
+        "Configuration tampering"
+      ],
+      "tests": [
+        "Attempt CSRF on password reset, plugin install, settings changes",
+        "Verify nonce presence and server-side verification",
+        "Check referer/origin validation where applicable"
+      ],
+      "assurance": [
+        "Nonces required and verified for state changes",
+        "No state changes via GET"
+      ],
+      "assurance_against": ["CSRF"],
+      "evidence": [
+        "Request/response pairs showing CSRF blocking",
+        "Nonce verification logs",
+        "UI flows enforcing tokens"
+      ],
+      "remediation": [
+        "Add nonces to all state-changing actions",
+        "Enforce POST-only for mutations",
+        "Validate origin/referer for high-risk endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CSRF probes for sensitive actions",
+        "ai_ui": "CSRF protection checklist",
+        "ai_schema": "action_key, nonce_required, method, token_ttl"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "action_key", "type": "string" },
+          { "name": "nonce_required", "type": "boolean", "default": true },
+          { "name": "method", "type": "string", "enum": ["POST"] },
+          { "name": "token_ttl", "type": "integer", "default": 15 }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "CSRF Prevention",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+        },
+        {
+          "name": "WordPress Nonces",
+          "section": "Security Tokens",
+          "url": "https://developer.wordpress.org/plugins/security/nonces/"
+        }
+      ]
+    },
+    {
+      "id": "WP-UNVALIDATED-REDIRECTS",
+      "category": "Database & Input Validation",
+      "title": "Unvalidated redirects and phishing vectors",
+      "severity": "High",
+      "description": "Open redirects enable phishing and session hijacking via crafted links.",
+      "risks": ["Phishing", "Session theft", "Brand abuse"],
+      "tests": [
+        "Probe wp_redirect and custom redirect handlers",
+        "Check allowlists for redirect targets",
+        "Validate URL parsing and normalization"
+      ],
+      "assurance": [
+        "Redirects validated against allowlists",
+        "Safe default destinations"
+      ],
+      "assurance_against": ["Open redirect"],
+      "evidence": [
+        "Redirect handler code references",
+        "Allowlist configuration",
+        "Probe results"
+      ],
+      "remediation": [
+        "Implement strict allowlists",
+        "Normalize and validate URLs",
+        "Use safe defaults"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate redirect probes and verify allowlists",
+        "ai_ui": "Redirect policy editor",
+        "ai_schema": "redirect_param, allowlist, default_target"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "redirect_param", "type": "string" },
+          {
+            "name": "allowlist",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "default_target", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control (open redirect impact)",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-FILE-UPLOADS-UNRESTRICTED",
+      "category": "File Handling & Uploads",
+      "title": "Unrestricted file uploads and executable handling",
+      "severity": "Critical",
+      "description": "Insufficient validation allows webshells or malware to be uploaded and executed.",
+      "risks": ["Remote code execution", "Defacement", "Data exfiltration"],
+      "tests": [
+        "Attempt polyglot and MIME-bypass uploads",
+        "Check server-side MIME and extension validation",
+        "Verify PHP execution disabled in uploads"
+      ],
+      "assurance": [
+        "Strict MIME and extension allowlists",
+        "No executable handling in uploads",
+        "Size/type limits enforced"
+      ],
+      "assurance_against": ["RCE via uploads"],
+      "evidence": [
+        "Upload attempt logs",
+        "Server config showing non-executable storage",
+        "Validation code references"
+      ],
+      "remediation": [
+        "Implement server-side validation",
+        "Disable PHP execution in uploads",
+        "Sanitize filenames and enforce limits"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate upload payloads to test validation and execution blocking",
+        "ai_ui": "Upload policy editor with live tests",
+        "ai_schema": "allowed_types, max_size_mb, block_php_execution, filename_sanitizer"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "allowed_types",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "max_size_mb", "type": "number" },
+          { "name": "block_php_execution", "type": "boolean", "default": true },
+          { "name": "filename_sanitizer", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "File Upload",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-FILE-PERMISSIONS",
+      "category": "File Handling & Uploads",
+      "title": "Insecure file permissions",
+      "severity": "High",
+      "description": "World-readable or writable sensitive files (e.g., wp-config.php) enable compromise.",
+      "risks": ["Credential leakage", "Config tampering"],
+      "tests": [
+        "Audit permissions for wp-config.php and key directories",
+        "Check ownership and group settings"
+      ],
+      "assurance": [
+        "Secure permissions and restricted access",
+        "No world-writable files"
+      ],
+      "assurance_against": ["Config exposure"],
+      "evidence": ["Permission report", "Ownership snapshot"],
+      "remediation": [
+        "Harden permissions",
+        "Restrict access to sensitive files",
+        "Move secrets to secure storage"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate permission audits",
+        "ai_ui": "Filesystem health card",
+        "ai_schema": "path, owner, group, mode"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "path", "type": "string" },
+          { "name": "owner", "type": "string" },
+          { "name": "group", "type": "string" },
+          { "name": "mode", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "File Permissions",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-PUBLIC-BACKUPS",
+      "category": "File Handling & Uploads",
+      "title": "Publicly accessible backups and exports",
+      "severity": "Critical",
+      "description": "Exposed archives or DB dumps leak credentials and PII.",
+      "risks": ["Data breach", "Credential compromise"],
+      "tests": [
+        "Probe common backup paths",
+        "Check directory indexing",
+        "Scan for .sql/.zip/.tar files"
+      ],
+      "assurance": [
+        "Backups stored securely and offsite",
+        "No public access to archives"
+      ],
+      "assurance_against": ["Data exposure"],
+      "evidence": ["Probe results", "Backup policy snapshot"],
+      "remediation": [
+        "Move backups offsite/private",
+        "Disable indexing",
+        "Restrict access via auth"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate backup path probes",
+        "ai_ui": "Backup exposure card",
+        "ai_schema": "backup_locations, indexing_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "backup_locations",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "indexing_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "NIST SP 800-53",
+          "section": "CP-9 Information System Backup",
+          "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+        }
+      ]
+    },
+    {
+      "id": "WP-REST-AUTHZ",
+      "category": "API & Integrations",
+      "title": "REST API authorization failures",
+      "severity": "Critical",
+      "description": "Missing or incorrect permission checks allow unauthorized data access or state changes.",
+      "risks": [
+        "Data exposure",
+        "Unauthorized actions",
+        "Privilege escalation"
+      ],
+      "tests": [
+        "Probe custom routes with unauthenticated and low-privilege roles",
+        "Verify permission_callback presence and correctness",
+        "Check nonce and capability enforcement for write operations"
+      ],
+      "assurance": [
+        "All custom routes implement permission_callback",
+        "Nonces required for state changes",
+        "Least privilege enforced"
+      ],
+      "assurance_against": ["Unauthorized access"],
+      "evidence": [
+        "Route registry dump",
+        "Denied request logs",
+        "Nonce verification traces"
+      ],
+      "remediation": [
+        "Add permission_callback to all routes",
+        "Require nonces and capability checks",
+        "Reduce fields for public endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate role-based probes for REST routes",
+        "ai_ui": "Route authorization matrix",
+        "ai_schema": "route, method, permission_callback, nonce_required, capability"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "route", "type": "string" },
+          {
+            "name": "method",
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE"]
+          },
+          { "name": "permission_callback", "type": "string" },
+          { "name": "nonce_required", "type": "boolean" },
+          { "name": "capability", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress REST API Handbook",
+          "section": "Permissions & Authorization",
+          "url": "https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/"
+        }
+      ]
+    },
+    {
+      "id": "WP-REST-DATA-EXPOSURE",
+      "category": "API & Integrations",
+      "title": "REST API data exposure",
+      "severity": "High",
+      "description": "Excessive fields or user enumeration via REST leak sensitive data.",
+      "risks": ["Privacy violations", "Targeted attacks"],
+      "tests": [
+        "Enumerate users via REST",
+        "Inspect fields returned by public endpoints",
+        "Check field reduction"
+      ],
+      "assurance": [
+        "No sensitive fields in public endpoints",
+        "Enumeration blocked"
+      ],
+      "assurance_against": ["Data exposure"],
+      "evidence": ["REST responses", "Endpoint configs"],
+      "remediation": [
+        "Reduce fields",
+        "Block enumeration",
+        "Require auth for sensitive data"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate enumeration probes",
+        "ai_ui": "REST exposure card",
+        "ai_schema": "endpoint, public_fields, auth_required"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "endpoint", "type": "string" },
+          {
+            "name": "public_fields",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "auth_required", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V4 Access Control",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-XMLRPC-ABUSE",
+      "category": "API & Integrations",
+      "title": "XML-RPC abuse and exposure",
+      "severity": "High",
+      "description": "Unrestricted XML-RPC enables brute force, pingback DDoS, and unintended actions.",
+      "risks": [
+        "Account compromise",
+        "DDoS amplification",
+        "Unauthorized actions"
+      ],
+      "tests": [
+        "Probe xmlrpc.php for enabled methods",
+        "Test rate limiting and blocking",
+        "Check for pingback disablement"
+      ],
+      "assurance": [
+        "XML-RPC disabled or restricted",
+        "Rate limiting applied",
+        "Pingback disabled"
+      ],
+      "assurance_against": ["Brute-force", "DDoS"],
+      "evidence": ["Method listing", "Rate limit logs", "Config snapshots"],
+      "remediation": [
+        "Disable XML-RPC or restrict methods",
+        "Apply rate limiting",
+        "Disable pingback"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate XML-RPC probes and rate-limit tests",
+        "ai_ui": "XML-RPC risk card",
+        "ai_schema": "enabled_methods, rate_limit, pingback_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "enabled_methods",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "rate_limit", "type": "integer" },
+          { "name": "pingback_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Codex",
+          "section": "XML-RPC",
+          "url": "https://wordpress.org/documentation/article/xml-rpc/"
+        }
+      ]
+    },
+    {
+      "id": "WP-API-TOKEN-LEAKAGE",
+      "category": "API & Integrations",
+      "title": "API token leakage and improper storage",
+      "severity": "Critical",
+      "description": "Tokens stored in plaintext or exposed via REST, logs, or client-side code enable unauthorized access.",
+      "risks": ["Account takeover", "Data exfiltration", "Service abuse"],
+      "tests": [
+        "Scan codebase and options table for tokens/keys",
+        "Check REST responses for secrets",
+        "Inspect logs and debug output for sensitive values"
+      ],
+      "assurance": [
+        "Tokens stored server-side with restricted access",
+        "No secrets in client-side code or REST responses",
+        "Rotation and expiry policies enforced"
+      ],
+      "assurance_against": ["Secret exposure"],
+      "evidence": [
+        "Search results for token patterns",
+        "REST response samples",
+        "Rotation policy configuration"
+      ],
+      "remediation": [
+        "Move tokens to secure storage (env/vault)",
+        "Mask tokens in logs and responses",
+        "Implement rotation and short TTLs"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate secret pattern scans across code, DB, and REST",
+        "ai_ui": "Secrets audit dashboard",
+        "ai_schema": "secret_name, storage_location, rotation_ttl, masked_in_logs"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "secret_name", "type": "string" },
+          { "name": "storage_location", "type": "string" },
+          { "name": "rotation_ttl", "type": "integer" },
+          { "name": "masked_in_logs", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ],
+      "lifecycle_status": "build",
+      "interface_schema": {
+        "controls": [
+          {
+            "type": "toggle",
+            "label": "Enable Token Encryption",
+            "key": "enable_token_encryption",
+            "help_text": "Ensure all API tokens are encrypted before storage to prevent plaintext exposure."
+          },
+          {
+            "type": "text",
+            "label": "Encryption Key Reference",
+            "key": "encryption_key_reference",
+            "help_text": "Specify the key identifier or reference used for token encryption."
+          },
+          {
+            "type": "select",
+            "label": "Secure Storage Method",
+            "key": "secure_storage_method",
+            "help_text": "Select the secure storage mechanism for tokens.",
+            "options": [
+              "Environment Variables",
+              "Secrets Manager",
+              "Encrypted Database",
+              "Hardware Security Module"
+            ]
+          },
+          {
+            "type": "toggle",
+            "label": "Disable Token Logging",
+            "key": "disable_token_logging",
+            "help_text": "Prevent tokens from being written to logs or console output."
+          },
+          {
+            "type": "toggle",
+            "label": "Restrict Client-Side Token Exposure",
+            "key": "restrict_client_side_token_exposure",
+            "help_text": "Block tokens from being exposed in client-side code or browser storage."
+          },
+          {
+            "type": "test_action",
+            "label": "Scan Application Logs for Tokens",
+            "key": "scan_logs_for_tokens",
+            "help_text": "Run a test to detect if tokens are present in application logs."
+          },
+          {
+            "type": "test_action",
+            "label": "Intercept REST API Responses",
+            "key": "intercept_rest_responses",
+            "help_text": "Verify if tokens are exposed in REST API responses or request payloads."
+          },
+          {
+            "type": "test_action",
+            "label": "Analyze Client-Side Code",
+            "key": "analyze_client_side_code",
+            "help_text": "Check client-side scripts and storage for hardcoded or leaked tokens."
+          },
+          {
+            "type": "test_action",
+            "label": "Validate Token Encryption",
+            "key": "validate_token_encryption",
+            "help_text": "Confirm that stored tokens are encrypted and not retrievable in plaintext."
+          },
+          {
+            "type": "test_action",
+            "label": "Simulate Unauthorized Access Attempt",
+            "key": "simulate_unauthorized_access",
+            "help_text": "Attempt to use exposed tokens to confirm that leakage leads to unauthorized access."
+          }
+        ]
+      }
+    },
+    {
+      "id": "WP-WEBHOOK-REPLAY",
+      "category": "API & Integrations",
+      "title": "Webhook replay protection missing",
+      "severity": "High",
+      "description": "Absent timestamps, signatures, or idempotency keys allow replay attacks.",
+      "risks": ["Unauthorized actions", "Data tampering"],
+      "tests": [
+        "Replay webhook requests",
+        "Check signature validation",
+        "Verify idempotency keys"
+      ],
+      "assurance": [
+        "Signed webhooks validated",
+        "Replay blocked via timestamps/nonce",
+        "Idempotency enforced"
+      ],
+      "assurance_against": ["Replay attacks"],
+      "evidence": [
+        "Signature verification logs",
+        "Replay attempt results",
+        "Idempotency records"
+      ],
+      "remediation": [
+        "Enforce signatures and timestamps",
+        "Validate nonces",
+        "Implement idempotency"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate webhook replay tests",
+        "ai_ui": "Webhook security card",
+        "ai_schema": "signature_required, timestamp_window, idempotency_key"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "signature_required", "type": "boolean" },
+          { "name": "timestamp_window", "type": "integer" },
+          { "name": "idempotency_key", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V10 Communications Security",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-OAUTH-MISCONFIG",
+      "category": "API & Integrations",
+      "title": "OAuth/SSO misconfigurations",
+      "severity": "Critical",
+      "description": "Missing state/nonce, token replay, or excessive scopes enable account compromise.",
+      "risks": ["Account takeover", "Privilege escalation"],
+      "tests": [
+        "Check state/nonce usage",
+        "Attempt token replay",
+        "Audit scopes and callback allowlists"
+      ],
+      "assurance": [
+        "State/nonce enforced",
+        "Replay blocked",
+        "Least privilege scopes"
+      ],
+      "assurance_against": ["SSO abuse"],
+      "evidence": [
+        "OAuth flow captures",
+        "Scope inventory",
+        "Callback allowlist"
+      ],
+      "remediation": [
+        "Enforce state/nonce",
+        "Validate tokens and expiry",
+        "Reduce scopes and restrict callbacks"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate OAuth flow audits",
+        "ai_ui": "SSO policy dashboard",
+        "ai_schema": "state_required, nonce_required, scopes"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "state_required", "type": "boolean" },
+          { "name": "nonce_required", "type": "boolean" },
+          { "name": "scopes", "type": "array", "items": { "type": "string" } }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "OAuth 2.0 Security",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Security_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-CACHING",
+      "category": "Caching & Transport",
+      "title": "Insecure caching of authenticated or sensitive content",
+      "severity": "Critical",
+      "description": "Misconfigured caches can serve private data to unauthorized users or leak session state.",
+      "risks": [
+        "Sensitive data exposure",
+        "Session fixation",
+        "Privilege leakage"
+      ],
+      "tests": [
+        "Check cache headers for authenticated pages",
+        "Probe CDN/edge cache behavior with role changes",
+        "Validate cache key segmentation by auth state"
+      ],
+      "assurance": [
+        "Authenticated content is never publicly cached",
+        "Cache keys segregate by user/session",
+        "Sensitive endpoints set no-store/no-cache appropriately"
+      ],
+      "assurance_against": ["Private data leakage"],
+      "evidence": [
+        "Header captures (Cache-Control, Vary, Set-Cookie)",
+        "CDN rule snapshots",
+        "Cache key configuration"
+      ],
+      "remediation": [
+        "Set strict cache headers for sensitive routes",
+        "Segment cache keys by auth/session",
+        "Disable caching for state-changing endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cache probes across roles and endpoints",
+        "ai_ui": "Cache policy inspector",
+        "ai_schema": "route, cache_policy, vary_headers, auth_sensitive"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "route", "type": "string" },
+          {
+            "name": "cache_policy",
+            "type": "string",
+            "enum": ["no-store", "private", "public"]
+          },
+          {
+            "name": "vary_headers",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "auth_sensitive", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "HTTP Security Response Headers",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Response_Headers.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-CDN-MISCONFIG",
+      "category": "Caching & Transport",
+      "title": "CDN/edge misconfiguration leaking private content",
+      "severity": "High",
+      "description": "Improper CDN rules can cache and serve authenticated content publicly.",
+      "risks": ["Sensitive data exposure"],
+      "tests": [
+        "Probe CDN cache behavior for authenticated pages",
+        "Check cache key segmentation by cookies/headers",
+        "Validate purge/invalidation policies"
+      ],
+      "assurance": [
+        "No public caching of authenticated content",
+        "Cache keys segregate by auth state",
+        "Reliable purge policies"
+      ],
+      "assurance_against": ["Private content leakage"],
+      "evidence": ["Header captures", "CDN rule snapshots", "Purge logs"],
+      "remediation": [
+        "Adjust CDN rules and vary headers",
+        "Segment cache keys",
+        "Disable caching for sensitive routes"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CDN cache probes and header audits",
+        "ai_ui": "CDN policy inspector",
+        "ai_schema": "route, cache_key, vary_headers"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "route", "type": "string" },
+          { "name": "cache_key", "type": "string" },
+          {
+            "name": "vary_headers",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V10 Communications Security",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-CACHE-POISONING",
+      "category": "Caching & Transport",
+      "title": "Cache poisoning via unkeyed parameters",
+      "severity": "High",
+      "description": "Unkeyed query parameters allow attackers to poison shared cache entries.",
+      "risks": ["Data exposure", "Defacement"],
+      "tests": [
+        "Inject cache-buster params",
+        "Verify Vary headers include auth/cookies",
+        "Check cache key normalization"
+      ],
+      "assurance": [
+        "Keyed by relevant headers/params",
+        "Poisoning attempts blocked"
+      ],
+      "assurance_against": ["Cache poisoning"],
+      "evidence": ["Header captures", "Cache key config", "Probe results"],
+      "remediation": [
+        "Normalize cache keys",
+        "Include Vary headers",
+        "Disable caching for sensitive routes"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate poisoning probes",
+        "ai_ui": "Cache key matrix",
+        "ai_schema": "route, keyed_params, vary_headers"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "route", "type": "string" },
+          {
+            "name": "keyed_params",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "vary_headers",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Caching",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Web_Cache_Poisoning_Prevention_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-SECURE-HEADERS",
+      "category": "Caching & Transport",
+      "title": "Missing critical security headers",
+      "severity": "High",
+      "description": "Absent CSP, HSTS, X-Frame-Options, and other headers increase exploitability.",
+      "risks": [
+        "Clickjacking",
+        "XSS impact amplification",
+        "Downgrade attacks"
+      ],
+      "tests": [
+        "Capture response headers for key routes",
+        "Validate CSP presence and directives",
+        "Check HSTS and frame options"
+      ],
+      "assurance": [
+        "CSP applied to sensitive pages",
+        "HSTS enabled on HTTPS",
+        "X-Frame-Options or frame-ancestors set"
+      ],
+      "assurance_against": ["Clickjacking", "XSS amplification"],
+      "evidence": [
+        "Header captures",
+        "CSP policy snapshot",
+        "HSTS configuration"
+      ],
+      "remediation": [
+        "Add CSP with strict directives",
+        "Enable HSTS with preload if appropriate",
+        "Set frame protections"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate header audits across routes",
+        "ai_ui": "Header compliance dashboard",
+        "ai_schema": "header_name, expected_value, route_scope"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "header_name", "type": "string" },
+          { "name": "expected_value", "type": "string" },
+          { "name": "route_scope", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "HTTP Response Headers",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Response_Headers.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-CSP-POLICY",
+      "category": "Caching & Transport",
+      "title": "Weak or missing Content Security Policy",
+      "severity": "High",
+      "description": "Absent or permissive CSP increases XSS impact and data exfiltration risk.",
+      "risks": ["XSS amplification", "Data exfiltration"],
+      "tests": [
+        "Check CSP presence and directives",
+        "Probe inline script execution",
+        "Validate reporting endpoints"
+      ],
+      "assurance": [
+        "Strict CSP applied to sensitive pages",
+        "Inline scripts controlled via nonce/hash",
+        "Report-only used during rollout"
+      ],
+      "assurance_against": ["XSS impact"],
+      "evidence": [
+        "CSP header captures",
+        "Probe results",
+        "Report endpoint configuration"
+      ],
+      "remediation": [
+        "Implement strict CSP",
+        "Use nonces/hashes for inline scripts",
+        "Enable reporting"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CSP audits and inline script probes",
+        "ai_ui": "CSP policy Copilot",
+        "ai_schema": "directives, report_uri, rollout_mode"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "directives",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "report_uri", "type": "string" },
+          {
+            "name": "rollout_mode",
+            "type": "string",
+            "enum": ["report-only", "enforce"]
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "CSP Level 3",
+          "section": "Spec",
+          "url": "https://www.w3.org/TR/CSP3/"
+        }
+      ]
+    },
+    {
+      "id": "WP-ADMIN-OVER-HTTP",
+      "category": "Caching & Transport",
+      "title": "Admin interface accessible over HTTP",
+      "severity": "Critical",
+      "description": "Plaintext transport enables credential theft and downgrade attacks.",
+      "risks": ["Credential compromise", "Session hijacking"],
+      "tests": [
+        "Attempt admin access over HTTP",
+        "Check HSTS and HTTPS redirects",
+        "Probe mixed content"
+      ],
+      "assurance": [
+        "HTTPS enforced site-wide",
+        "HSTS enabled",
+        "No mixed content"
+      ],
+      "assurance_against": ["Downgrade", "MITM"],
+      "evidence": ["Redirect captures", "HSTS config", "Mixed content scan"],
+      "remediation": ["Force HTTPS", "Enable HSTS", "Fix mixed content"],
+      "automation_prompts": {
+        "ai_check": "Generate HTTP downgrade probes",
+        "ai_ui": "Transport security card",
+        "ai_schema": "https_enforced, hsts_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "https_enforced", "type": "boolean" },
+          { "name": "hsts_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V10 Communications Security",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-MALWARE-BACKDOORS",
+      "category": "Malware & Persistence",
+      "title": "Malware and backdoor persistence",
+      "severity": "Critical",
+      "description": "Obfuscated code, rogue accounts, and unauthorized cron jobs enable persistent compromise.",
+      "risks": ["Persistent access", "Data theft", "Service disruption"],
+      "tests": [
+        "Scan for obfuscated PHP and eval/base64_decode patterns",
+        "Audit admin accounts and roles",
+        "Monitor file integrity and unauthorized changes"
+      ],
+      "assurance": [
+        "No malicious signatures detected",
+        "Admin accounts verified",
+        "Integrity monitoring active"
+      ],
+      "assurance_against": ["Backdoor persistence"],
+      "evidence": [
+        "Signature scan reports",
+        "User/role audit logs",
+        "File integrity diffs"
+      ],
+      "remediation": [
+        "Remove malicious code and rotate credentials",
+        "Disable rogue accounts and cron tasks",
+        "Enable continuous integrity monitoring"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate signature scans and account audits",
+        "ai_ui": "Threat dashboard",
+        "ai_schema": "signature_rules, integrity_baseline_hashes, admin_user_list"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "signature_rules",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "integrity_baseline_hashes",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "admin_user_list",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V14 Malicious Code",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-CRON-ABUSE",
+      "category": "Malware & Persistence",
+      "title": "Insecure cron jobs and scheduled tasks",
+      "severity": "High",
+      "description": "Rogue or misconfigured cron tasks can execute malicious code or exfiltrate data.",
+      "risks": ["Persistent compromise", "Data theft"],
+      "tests": [
+        "Inventory cron tasks and sources",
+        "Check for unauthorized or obfuscated callbacks",
+        "Verify capability checks for task triggers"
+      ],
+      "assurance": [
+        "Cron tasks audited and authorized",
+        "No obfuscated callbacks",
+        "Capability checks enforced"
+      ],
+      "assurance_against": ["Rogue tasks"],
+      "evidence": [
+        "Cron inventory",
+        "Callback code references",
+        "Authorization logs"
+      ],
+      "remediation": [
+        "Remove rogue tasks",
+        "Add capability checks",
+        "Monitor cron activity"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cron inventory and callback audits",
+        "ai_ui": "Cron risk dashboard",
+        "ai_schema": "task_name, callback, authorized, schedule"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "task_name", "type": "string" },
+          { "name": "callback", "type": "string" },
+          { "name": "authorized", "type": "boolean" },
+          { "name": "schedule", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Cron",
+          "section": "WP-Cron API",
+          "url": "https://developer.wordpress.org/plugins/cron/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SUPPLY-CHAIN-CVE",
+      "category": "Malware & Persistence",
+      "title": "Supply chain risks in plugins/themes",
+      "severity": "Critical",
+      "description": "Abandoned or vulnerable extensions introduce exploitable CVEs.",
+      "risks": ["RCE", "Data theft"],
+      "tests": [
+        "Check CVE databases for installed extensions",
+        "Verify update cadence and maintainer activity"
+      ],
+      "assurance": ["No critical CVEs present", "Active maintenance"],
+      "assurance_against": ["Known exploits"],
+      "evidence": ["CVE scan results", "Update logs"],
+      "remediation": [
+        "Update or replace vulnerable extensions",
+        "Prefer maintained alternatives"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CVE audit",
+        "ai_ui": "Risk badges per extension",
+        "ai_schema": "slug, version, cve_status"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "slug", "type": "string" },
+          { "name": "version", "type": "string" },
+          { "name": "cve_status", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WPScan Vulnerability DB",
+          "section": "WordPress Plugins/Themes",
+          "url": "https://wpscan.com/"
+        }
+      ]
+    },
+    {
+      "id": "WP-GDPR-DATA-PROTECTION",
+      "category": "Compliance & Privacy",
+      "title": "GDPR/Privacy data protection failures",
+      "severity": "Critical",
+      "description": "Improper handling of personal data, consent, and deletion requests can cause legal and security exposure.",
+      "risks": ["Regulatory penalties", "Data breaches", "User trust loss"],
+      "tests": [
+        "Verify consent capture and purpose limitation",
+        "Check data export/delete workflows",
+        "Audit third-party data sharing and DPA presence"
+      ],
+      "assurance": [
+        "Consent recorded and auditable",
+        "Data subject rights implemented",
+        "Third-party processors documented and secured"
+      ],
+      "assurance_against": ["Privacy violations"],
+      "evidence": [
+        "Consent logs",
+        "Deletion/export workflow traces",
+        "Processor inventory and agreements"
+      ],
+      "remediation": [
+        "Implement consent management and audit trails",
+        "Automate data subject request handling",
+        "Review processors and enforce DPAs"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate privacy workflow audits",
+        "ai_ui": "Privacy compliance dashboard",
+        "ai_schema": "consent_mechanism, dsr_workflows, processor_list"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "consent_mechanism", "type": "string" },
+          {
+            "name": "dsr_workflows",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "processor_list",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "GDPR",
+          "section": "Articles 5, 6, 12–23",
+          "url": "https://gdpr-info.eu/"
+        }
+      ]
+    },
+    {
+      "id": "WP-PRIVACY-DISCLOSURE",
+      "category": "Compliance & Privacy",
+      "title": "Privacy policy and data mapping gaps",
+      "severity": "High",
+      "description": "Missing disclosures and data inventories hinder compliance and incident response.",
+      "risks": ["Regulatory penalties", "Incident mismanagement"],
+      "tests": [
+        "Check presence and completeness of privacy policy",
+        "Map data flows and storage locations",
+        "Verify retention and deletion policies"
+      ],
+      "assurance": [
+        "Policy present and accurate",
+        "Data flows documented",
+        "Retention/deletion enforced"
+      ],
+      "assurance_against": ["Compliance gaps"],
+      "evidence": ["Policy snapshot", "Data map", "Retention logs"],
+      "remediation": [
+        "Publish accurate policy",
+        "Document data flows",
+        "Enforce retention/deletion"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate data mapping and policy audits",
+        "ai_ui": "Privacy readiness dashboard",
+        "ai_schema": "data_categories, storage_locations, retention_days"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "data_categories",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "storage_locations",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "retention_days", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "GDPR",
+          "section": "Articles 12–14, 30",
+          "url": "https://gdpr-info.eu/"
+        }
+      ]
+    },
+    {
+      "id": "WP-LOG-DATA-EXPOSURE",
+      "category": "Compliance & Privacy",
+      "title": "Sensitive data exposure in logs and error output",
+      "severity": "High",
+      "description": "Debug logs and verbose errors can leak credentials, tokens, and personal data.",
+      "risks": ["Credential leakage", "Privacy violations"],
+      "tests": [
+        "Scan logs for sensitive patterns",
+        "Check WP_DEBUG and display_errors in production",
+        "Probe error paths for stack traces"
+      ],
+      "assurance": [
+        "No sensitive data in logs",
+        "Debug disabled in production",
+        "Generic error messages"
+      ],
+      "assurance_against": ["Secret leakage"],
+      "evidence": [
+        "Log scan results",
+        "Config flags snapshot",
+        "Error response samples"
+      ],
+      "remediation": [
+        "Mask sensitive values in logs",
+        "Disable debug in production",
+        "Use generic error handling"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate log scans and error probes",
+        "ai_ui": "Logging hygiene dashboard",
+        "ai_schema": "sensitive_patterns, debug_flags, error_policy"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "sensitive_patterns",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "debug_flags",
+            "type": "object",
+            "properties": {
+              "WP_DEBUG": { "type": "boolean" },
+              "display_errors": { "type": "boolean" }
+            }
+          },
+          { "name": "error_policy", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection—Sensitive Data in Logs",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-AT-REST-ENCRYPTION",
+      "category": "Compliance & Privacy",
+      "title": "Unencrypted at-rest storage of PII",
+      "severity": "Critical",
+      "description": "Storing personal data in plaintext increases breach impact.",
+      "risks": ["Privacy violations", "Regulatory penalties"],
+      "tests": [
+        "Scan DB for sensitive fields",
+        "Check encryption policies",
+        "Verify key management"
+      ],
+      "assurance": [
+        "Sensitive data encrypted at rest",
+        "Keys managed securely"
+      ],
+      "assurance_against": ["Data breach impact"],
+      "evidence": [
+        "Encryption policy",
+        "Key management logs",
+        "DB field audit"
+      ],
+      "remediation": [
+        "Encrypt sensitive fields",
+        "Implement key rotation",
+        "Restrict access to keys"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate at-rest encryption audits",
+        "ai_ui": "Encryption policy card",
+        "ai_schema": "encrypted_fields, key_rotation_days"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "encrypted_fields",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "key_rotation_days", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "NIST SP 800-53",
+          "section": "SC-28 Protection of Information at Rest",
+          "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+        }
+      ]
+    },
+    {
+      "id": "WP-SSRF",
+      "category": "Emerging & Advanced Risks",
+      "title": "Server-side request forgery (SSRF)",
+      "severity": "Critical",
+      "description": "Unvalidated outbound requests can access internal services or metadata endpoints.",
+      "risks": ["Internal service access", "Pivoting", "Data exfiltration"],
+      "tests": [
+        "Submit URLs to private IP ranges and metadata endpoints",
+        "Check wp_remote_get/wp_remote_post validation and allowlists",
+        "Attempt non-http protocols if applicable"
+      ],
+      "assurance": [
+        "Strict URL validation and allowlists",
+        "Private ranges blocked",
+        "Only http/https allowed"
+      ],
+      "assurance_against": ["Internal access"],
+      "evidence": [
+        "Blocked request logs",
+        "Validation code references",
+        "Allowlist configuration"
+      ],
+      "remediation": [
+        "Implement allowlists and strict validation",
+        "Block private ranges and metadata endpoints",
+        "Disable non-http protocols"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate SSRF payloads and verify blocking",
+        "ai_ui": "Allowlist editor",
+        "ai_schema": "allowed_hosts, allowed_protocols, block_private_ranges"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "allowed_hosts",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "allowed_protocols",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "block_private_ranges", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A10 Server-Side Request Forgery",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-CORS-MISCONFIG",
+      "category": "Emerging & Advanced Risks",
+      "title": "Misconfigured CORS policies",
+      "severity": "High",
+      "description": "Overly permissive CORS enables cross-domain data leakage.",
+      "risks": ["Data exposure"],
+      "tests": [
+        "Inspect Access-Control-* headers",
+        "Probe cross-origin requests",
+        "Check credentialed requests policy"
+      ],
+      "assurance": ["Restricted origins", "No wildcard with credentials"],
+      "assurance_against": ["Cross-origin leakage"],
+      "evidence": ["Header captures", "Probe results"],
+      "remediation": [
+        "Restrict allowed origins",
+        "Disallow credentials with wildcard",
+        "Scope endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CORS audits",
+        "ai_ui": "CORS policy card",
+        "ai_schema": "allowed_origins, allow_credentials"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "allowed_origins",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "allow_credentials", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "CORS",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/CORS_Configuration_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-GRAPHQL-EXPOSURE",
+      "category": "Emerging & Advanced Risks",
+      "title": "Insecure GraphQL endpoints",
+      "severity": "Critical",
+      "description": "Introspection and over-fetching expose sensitive data and increase attack surface.",
+      "risks": ["Data exposure", "Privilege misuse"],
+      "tests": [
+        "Probe introspection",
+        "Check auth on mutations",
+        "Rate limit queries"
+      ],
+      "assurance": [
+        "Introspection disabled in production",
+        "Auth enforced on mutations",
+        "Rate limiting applied"
+      ],
+      "assurance_against": ["Over-fetching", "Schema reconnaissance"],
+      "evidence": ["GraphQL responses", "Auth checks", "Rate limit logs"],
+      "remediation": [
+        "Disable introspection",
+        "Enforce auth and field-level rules",
+        "Apply rate limiting"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate GraphQL probes",
+        "ai_ui": "GraphQL security card",
+        "ai_schema": "introspection_disabled, mutation_auth_required"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "introspection_disabled", "type": "boolean" },
+          { "name": "mutation_auth_required", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V4 Access Control—API",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-API-RATE-LIMITING",
+      "category": "Emerging & Advanced Risks",
+      "title": "Insecure API rate limiting",
+      "severity": "High",
+      "description": "Absent or weak rate limiting enables DoS and abuse.",
+      "risks": ["Service disruption", "Abuse"],
+      "tests": [
+        "Flood API endpoints",
+        "Check per-IP/user limits",
+        "Verify burst control"
+      ],
+      "assurance": ["Per-IP and per-user limits", "Burst control applied"],
+      "assurance_against": ["DoS"],
+      "evidence": ["Rate limit logs", "Policy snapshot"],
+      "remediation": [
+        "Implement rate limiting",
+        "Apply burst control",
+        "Monitor abuse patterns"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate rate-limit probes",
+        "ai_ui": "API rate policy card",
+        "ai_schema": "per_ip_limit, per_user_limit, burst_window"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "per_ip_limit", "type": "integer" },
+          { "name": "per_user_limit", "type": "integer" },
+          { "name": "burst_window", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V10 Communications—API Throttling",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-UNSECURE-ANALYTICS-SCRIPTS",
+      "category": "Compliance & Privacy",
+      "title": "Insecure handling of analytics/marketing scripts",
+      "severity": "High",
+      "description": "Third-party scripts can exfiltrate data or inject tracking without consent.",
+      "risks": ["Privacy violations", "Data exfiltration"],
+      "tests": [
+        "Inventory third-party scripts",
+        "Check CSP script-src",
+        "Verify consent gating"
+      ],
+      "assurance": ["Scripts gated by consent", "CSP restricts sources"],
+      "assurance_against": ["Unauthorized tracking"],
+      "evidence": ["Script inventory", "CSP snapshot", "Consent logs"],
+      "remediation": [
+        "Gate scripts behind consent",
+        "Restrict sources via CSP",
+        "Use SRI where possible"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate script inventory and CSP audits",
+        "ai_ui": "Third-party script card",
+        "ai_schema": "script_src_list, consent_required"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "script_src_list",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "consent_required", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "GDPR",
+          "section": "Consent—Articles 6–7",
+          "url": "https://gdpr-info.eu/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WOOCOMMERCE-PCI",
+      "category": "Compliance & Privacy",
+      "title": "PCI-DSS non-compliance for e-commerce",
+      "severity": "Critical",
+      "description": "Improper handling of payment data violates PCI-DSS and increases breach risk.",
+      "risks": ["Regulatory penalties", "Financial fraud"],
+      "tests": [
+        "Verify SAQ applicability",
+        "Check tokenization and no card storage",
+        "Audit payment gateway configuration"
+      ],
+      "assurance": [
+        "No PAN storage",
+        "Tokenization used",
+        "PCI-compliant gateway"
+      ],
+      "assurance_against": ["Payment data exposure"],
+      "evidence": [
+        "Gateway config",
+        "SAQ documentation",
+        "Logs showing no PAN"
+      ],
+      "remediation": [
+        "Use PCI-compliant gateways",
+        "Avoid storing card data",
+        "Document SAQ and controls"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate PCI readiness checklist",
+        "ai_ui": "E-commerce compliance card",
+        "ai_schema": "gateway_name, tokenization_enabled, pan_storage"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "gateway_name", "type": "string" },
+          { "name": "tokenization_enabled", "type": "boolean" },
+          { "name": "pan_storage", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "PCI DSS",
+          "section": "Requirements 3–4",
+          "url": "https://www.pcisecuritystandards.org/document_library"
+        }
+      ]
+    },
+    {
+      "id": "WP-ADMIN-AJAX-MISUSE",
+      "category": "API & Integrations",
+      "title": "admin-ajax misuse without capability checks",
+      "severity": "High",
+      "description": "AJAX actions without nonce/capability checks allow unauthorized state changes.",
+      "risks": ["Unauthorized actions", "Privilege escalation"],
+      "tests": [
+        "Probe AJAX actions unauthenticated",
+        "Verify nonce and capability checks",
+        "Check action registration"
+      ],
+      "assurance": [
+        "Nonces and capabilities enforced",
+        "No sensitive actions unauthenticated"
+      ],
+      "assurance_against": ["Unauthorized AJAX"],
+      "evidence": ["Action registry", "Denied request logs"],
+      "remediation": [
+        "Add nonce and capability checks",
+        "Restrict actions to authenticated users"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate AJAX probes",
+        "ai_ui": "AJAX security card",
+        "ai_schema": "action, nonce_required, capability"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "action", "type": "string" },
+          { "name": "nonce_required", "type": "boolean" },
+          { "name": "capability", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress AJAX",
+          "section": "Admin-AJAX Security",
+          "url": "https://developer.wordpress.org/plugins/javascript/ajax/"
+        }
+      ]
+    },
+    {
+      "id": "WP-IDOR-MEDIA",
+      "category": "Database & Input Validation",
+      "title": "IDOR on media and private resources",
+      "severity": "High",
+      "description": "Predictable IDs or missing authorization allow access to private media.",
+      "risks": ["Data exposure"],
+      "tests": [
+        "Attempt direct access to private media",
+        "Check capability checks on download endpoints",
+        "Probe predictable IDs"
+      ],
+      "assurance": [
+        "Authorization enforced on private media",
+        "Non-predictable identifiers"
+      ],
+      "assurance_against": ["IDOR"],
+      "evidence": ["Denied access logs", "Endpoint code references"],
+      "remediation": [
+        "Add authorization checks",
+        "Use non-guessable IDs",
+        "Restrict direct access"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate IDOR probes",
+        "ai_ui": "Resource access matrix",
+        "ai_schema": "endpoint, auth_required, id_type"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "endpoint", "type": "string" },
+          { "name": "auth_required", "type": "boolean" },
+          { "name": "id_type", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WP-CONFIG-EXPOSURE",
+      "category": "File Handling & Uploads",
+      "title": "wp-config.php exposure via misconfiguration",
+      "severity": "Critical",
+      "description": "Improper server configuration can expose database credentials and salts.",
+      "risks": ["Credential compromise", "Full site takeover"],
+      "tests": [
+        "Attempt direct access to wp-config.php",
+        "Check server rules for deny",
+        "Verify salts/keys rotation"
+      ],
+      "assurance": [
+        "wp-config.php not publicly accessible",
+        "Salts/keys present and rotated"
+      ],
+      "assurance_against": ["Config leakage"],
+      "evidence": ["Server config snapshot", "Access probe results"],
+      "remediation": [
+        "Deny public access to wp-config.php",
+        "Move config above webroot if possible",
+        "Rotate salts/keys"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate config access probes",
+        "ai_ui": "Config hardening card",
+        "ai_schema": "deny_rules_present, salts_rotated"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "deny_rules_present", "type": "boolean" },
+          { "name": "salts_rotated", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "wp-config.php",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DEBUG-EXPOSURE",
+      "category": "Compliance & Privacy",
+      "title": "WP_DEBUG and verbose errors in production",
+      "severity": "Medium",
+      "description": "Verbose errors can reveal stack traces, paths, and sensitive data.",
+      "risks": ["Information disclosure"],
+      "tests": [
+        "Check WP_DEBUG and display_errors flags",
+        "Trigger error paths",
+        "Inspect error responses"
+      ],
+      "assurance": ["Debug disabled in production", "Generic error messages"],
+      "assurance_against": ["Info leakage"],
+      "evidence": ["Config flags snapshot", "Error samples"],
+      "remediation": [
+        "Disable debug in production",
+        "Use generic error handling"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate error probes",
+        "ai_ui": "Runtime hygiene card",
+        "ai_schema": "WP_DEBUG, display_errors"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "WP_DEBUG", "type": "boolean" },
+          { "name": "display_errors", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Debugging",
+          "section": "WP_DEBUG",
+          "url": "https://wordpress.org/documentation/article/debugging-in-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DEFAULT-TABLE-PREFIX",
+      "category": "Database & Input Validation",
+      "title": "Default table prefix",
+      "severity": "Low",
+      "description": "Default prefixes can aid automated attacks and reconnaissance.",
+      "risks": ["Attack surface increase"],
+      "tests": ["Check table prefix in wp-config.php", "Inspect DB schema"],
+      "assurance": ["Non-default prefix used"],
+      "assurance_against": ["Automated exploits"],
+      "evidence": ["Config snapshot", "DB schema sample"],
+      "remediation": ["Use non-default prefix", "Harden DB access"],
+      "automation_prompts": {
+        "ai_check": "Generate prefix audit",
+        "ai_ui": "DB hygiene card",
+        "ai_schema": "table_prefix"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "table_prefix", "type": "string" }]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Database Table Prefix",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-MIXED-CONTENT",
+      "category": "Caching & Transport",
+      "title": "Mixed content on authenticated pages",
+      "severity": "Medium",
+      "description": "Loading HTTP resources on HTTPS pages can leak session data and degrade security.",
+      "risks": ["Session hijacking", "Downgrade attacks"],
+      "tests": [
+        "Scan for mixed content on admin and account pages",
+        "Check CSP upgrade-insecure-requests"
+      ],
+      "assurance": ["No mixed content", "CSP mitigations applied"],
+      "assurance_against": ["Downgrade"],
+      "evidence": ["Scanner results", "CSP snapshot"],
+      "remediation": [
+        "Serve all resources over HTTPS",
+        "Use CSP upgrade-insecure-requests"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate mixed content scans",
+        "ai_ui": "Transport hygiene card",
+        "ai_schema": "mixed_content_found"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "mixed_content_found", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V10 Communications Security",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-PLUGIN-UPDATE-INTEGRITY",
+      "category": "Malware & Persistence",
+      "title": "Plugin/theme update integrity not verified",
+      "severity": "High",
+      "description": "Updates from untrusted sources or without integrity checks can introduce malware.",
+      "risks": ["Supply chain compromise"],
+      "tests": [
+        "Check update sources",
+        "Verify signatures/hashes if available",
+        "Audit auto-update policies"
+      ],
+      "assurance": ["Trusted sources only", "Integrity verified"],
+      "assurance_against": ["Malicious updates"],
+      "evidence": ["Update logs", "Source registry"],
+      "remediation": [
+        "Use official repositories",
+        "Enable integrity checks",
+        "Restrict auto-updates to trusted"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate update source audits",
+        "ai_ui": "Supply chain card",
+        "ai_schema": "source, integrity_verified"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "source", "type": "string" },
+          { "name": "integrity_verified", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V14 Malicious Code—Dependencies",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-JWT-MISCONFIG",
+      "category": "Authentication & Access Control",
+      "title": "Insecure JWT handling",
+      "severity": "Critical",
+      "description": "Improper JWT validation or weak signing algorithms allow token forgery and privilege escalation.",
+      "risks": ["Account takeover", "Privilege escalation"],
+      "tests": [
+        "Check JWT signature algorithm",
+        "Attempt none-alg attacks",
+        "Verify expiry enforcement"
+      ],
+      "assurance": [
+        "Strong algorithms used (HS256/RS256)",
+        "Expiry enforced",
+        "Audience/issuer validated"
+      ],
+      "assurance_against": ["Token forgery"],
+      "evidence": ["JWT samples", "Validation code references"],
+      "remediation": [
+        "Use strong algorithms",
+        "Validate claims",
+        "Rotate keys regularly"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate JWT validation probes",
+        "ai_ui": "JWT policy dashboard",
+        "ai_schema": "algorithms_allowed, expiry_minutes, issuer_validated"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "algorithms_allowed",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "expiry_minutes", "type": "integer" },
+          { "name": "issuer_validated", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "JWT Security",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-GIT-EXPOSURE",
+      "category": "File Handling & Uploads",
+      "title": "Exposed .git directories",
+      "severity": "High",
+      "description": "Publicly accessible .git directories leak source code and secrets.",
+      "risks": ["Source code disclosure", "Secret leakage"],
+      "tests": ["Probe /.git/ paths", "Check server deny rules"],
+      "assurance": [".git directories not publicly accessible"],
+      "assurance_against": ["Source disclosure"],
+      "evidence": ["Probe results", "Server config snapshot"],
+      "remediation": [
+        "Block access to .git directories",
+        "Remove from webroot"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate .git exposure probes",
+        "ai_ui": "Repo hygiene card",
+        "ai_schema": "git_exposed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "git_exposed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V14 Malicious Code—Source Control",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-MAIL-TRANSPORT",
+      "category": "Caching & Transport",
+      "title": "Insecure mail transport",
+      "severity": "Medium",
+      "description": "Emails sent without TLS or SPF/DKIM/DMARC increase risk of interception and spoofing.",
+      "risks": ["Data leakage", "Phishing"],
+      "tests": ["Check SMTP TLS enforcement", "Verify SPF/DKIM/DMARC records"],
+      "assurance": ["TLS enforced", "SPF/DKIM/DMARC configured"],
+      "assurance_against": ["Spoofing", "Interception"],
+      "evidence": ["DNS records", "SMTP config snapshot"],
+      "remediation": [
+        "Enable TLS for mail transport",
+        "Configure SPF/DKIM/DMARC"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate mail transport audits",
+        "ai_ui": "Mail hygiene card",
+        "ai_schema": "tls_enforced, spf_configured, dkim_configured, dmarc_configured"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "tls_enforced", "type": "boolean" },
+          { "name": "spf_configured", "type": "boolean" },
+          { "name": "dkim_configured", "type": "boolean" },
+          { "name": "dmarc_configured", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "NIST SP 800-177",
+          "section": "Email Security",
+          "url": "https://csrc.nist.gov/publications/detail/sp/800-177/rev-1/final"
+        }
+      ]
+    },
+    {
+      "id": "WP-PASSWORD-RESET-FLOWS",
+      "category": "Authentication & Access Control",
+      "title": "Weak password reset flows",
+      "severity": "High",
+      "description": "Predictable or long-lived reset tokens allow account takeover.",
+      "risks": ["Account compromise"],
+      "tests": ["Check token entropy", "Verify expiry", "Attempt reuse"],
+      "assurance": ["Strong entropy", "Short expiry", "Single-use tokens"],
+      "assurance_against": ["Token replay"],
+      "evidence": ["Token samples", "Expiry logs"],
+      "remediation": [
+        "Use cryptographically strong tokens",
+        "Expire quickly",
+        "Invalidate after use"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate reset token entropy tests",
+        "ai_ui": "Reset policy card",
+        "ai_schema": "entropy_bits, expiry_minutes, single_use"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "entropy_bits", "type": "integer" },
+          { "name": "expiry_minutes", "type": "integer" },
+          { "name": "single_use", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Forgot Password",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-DIRECTORY-LISTING",
+      "category": "File Handling & Uploads",
+      "title": "Directory listing enabled",
+      "severity": "Low",
+      "description": "Exposed directory listings leak file names and structure.",
+      "risks": ["Information disclosure"],
+      "tests": ["Probe directories for listing", "Check server config"],
+      "assurance": ["Directory listing disabled"],
+      "assurance_against": ["Info leakage"],
+      "evidence": ["Probe results", "Config snapshot"],
+      "remediation": ["Disable directory listing", "Restrict access"],
+      "automation_prompts": {
+        "ai_check": "Generate directory listing probes",
+        "ai_ui": "Directory hygiene card",
+        "ai_schema": "listing_enabled"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "listing_enabled", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V12 File and Resources",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-ENV-FILE-EXPOSURE",
+      "category": "File Handling & Uploads",
+      "title": "Exposed .env files",
+      "severity": "Critical",
+      "description": "Publicly accessible .env files can leak database credentials, API keys, and secrets.",
+      "risks": ["Credential compromise", "Full site takeover"],
+      "tests": ["Probe /.env path", "Check server deny rules"],
+      "assurance": [".env files not publicly accessible"],
+      "assurance_against": ["Secret leakage"],
+      "evidence": ["Probe results", "Server config snapshot"],
+      "remediation": [
+        "Block access to .env files",
+        "Move secrets to secure vaults"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate .env exposure probes",
+        "ai_ui": "Environment hygiene card",
+        "ai_schema": "env_exposed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "env_exposed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection—Secrets",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-JWT-STORAGE",
+      "category": "Authentication & Access Control",
+      "title": "JWT stored insecurely in localStorage",
+      "severity": "High",
+      "description": "Storing JWTs in localStorage exposes them to XSS attacks.",
+      "risks": ["Token theft", "Account takeover"],
+      "tests": [
+        "Inspect client-side storage",
+        "Check for HttpOnly cookies vs localStorage"
+      ],
+      "assurance": ["JWTs stored in HttpOnly cookies"],
+      "assurance_against": ["XSS token theft"],
+      "evidence": ["Browser storage inspection", "Cookie attributes"],
+      "remediation": [
+        "Store JWTs in HttpOnly cookies",
+        "Avoid localStorage/sessionStorage"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate client storage audits",
+        "ai_ui": "JWT storage card",
+        "ai_schema": "storage_location"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "storage_location",
+            "type": "string",
+            "enum": ["HttpOnlyCookie", "localStorage", "sessionStorage"]
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "JWT Storage",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-CAPTCHA-BYPASS",
+      "category": "Authentication & Access Control",
+      "title": "Weak CAPTCHA implementation",
+      "severity": "High",
+      "description": "CAPTCHA that can be bypassed by bots fails to prevent brute-force attacks.",
+      "risks": ["Automated attacks", "Credential stuffing"],
+      "tests": [
+        "Attempt automated CAPTCHA bypass",
+        "Check complexity and provider reputation"
+      ],
+      "assurance": [
+        "CAPTCHA resistant to automation",
+        "Rate limiting enforced"
+      ],
+      "assurance_against": ["Bot attacks"],
+      "evidence": ["CAPTCHA challenge logs", "Bypass attempt results"],
+      "remediation": [
+        "Use strong CAPTCHA providers",
+        "Combine with rate limiting"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CAPTCHA bypass probes",
+        "ai_ui": "CAPTCHA strength card",
+        "ai_schema": "provider, bypass_resistant"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "provider", "type": "string" },
+          { "name": "bypass_resistant", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Authentication",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-ANALYTICS-SDK-RISKS",
+      "category": "Compliance & Privacy",
+      "title": "Insecure analytics SDKs",
+      "severity": "High",
+      "description": "Third-party SDKs may exfiltrate data or introduce vulnerabilities.",
+      "risks": ["Privacy violations", "Supply chain compromise"],
+      "tests": [
+        "Inventory SDKs",
+        "Check update cadence",
+        "Verify data minimization"
+      ],
+      "assurance": ["Trusted SDKs only", "Data minimization enforced"],
+      "assurance_against": ["Supply chain risks"],
+      "evidence": ["SDK inventory", "Update logs"],
+      "remediation": [
+        "Use vetted SDKs",
+        "Restrict data collection",
+        "Monitor updates"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate SDK inventory audits",
+        "ai_ui": "SDK risk card",
+        "ai_schema": "sdk_name, trusted, data_minimized"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "sdk_name", "type": "string" },
+          { "name": "trusted", "type": "boolean" },
+          { "name": "data_minimized", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V14 Malicious Code—Dependencies",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-CRON-FREQUENCY",
+      "category": "Malware & Persistence",
+      "title": "Excessive cron frequency",
+      "severity": "High",
+      "description": "Overly frequent cron jobs can cause DoS or resource exhaustion.",
+      "risks": ["Service disruption"],
+      "tests": ["Audit cron schedules", "Check frequency vs necessity"],
+      "assurance": ["Reasonable cron frequencies", "Resource usage monitored"],
+      "assurance_against": ["DoS"],
+      "evidence": ["Cron schedule snapshot", "Resource usage logs"],
+      "remediation": ["Reduce frequency", "Monitor resource impact"],
+      "automation_prompts": {
+        "ai_check": "Generate cron frequency audits",
+        "ai_ui": "Cron health card",
+        "ai_schema": "task_name, frequency_minutes"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "task_name", "type": "string" },
+          { "name": "frequency_minutes", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Cron",
+          "section": "Scheduling",
+          "url": "https://developer.wordpress.org/plugins/cron/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-DEBUG-ENDPOINTS",
+      "category": "Compliance & Privacy",
+      "title": "Exposed debug endpoints or tools",
+      "severity": "High",
+      "description": "Publicly accessible debug endpoints (e.g., phpinfo, query monitors) leak environment details and secrets.",
+      "risks": ["Information disclosure", "Credential leakage"],
+      "tests": [
+        "Probe common debug paths",
+        "Check plugin settings for debug exposure",
+        "Scan responses for environment variables"
+      ],
+      "assurance": [
+        "No public debug endpoints",
+        "Debug tools restricted to admins"
+      ],
+      "assurance_against": ["Info leakage"],
+      "evidence": ["Probe results", "Plugin config snapshots"],
+      "remediation": [
+        "Disable public debug endpoints",
+        "Restrict debug tools to authenticated admins"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate debug endpoint probes",
+        "ai_ui": "Debug exposure card",
+        "ai_schema": "endpoint, restricted"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "endpoint", "type": "string" },
+          { "name": "restricted", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V12 API and Endpoints—Debugging",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SRI-MISSING",
+      "category": "Caching & Transport",
+      "title": "Missing Subresource Integrity (SRI) on third-party scripts",
+      "severity": "High",
+      "description": "Without SRI, compromised CDNs or script sources can inject malicious code.",
+      "risks": ["Supply chain compromise", "Malware injection"],
+      "tests": [
+        "Inspect script tags for integrity attributes",
+        "Check CSP and SRI alignment"
+      ],
+      "assurance": [
+        "SRI used for third-party scripts",
+        "CSP restricts sources"
+      ],
+      "assurance_against": ["Malicious script injection"],
+      "evidence": ["HTML captures", "CSP/SRI policy snapshot"],
+      "remediation": [
+        "Add integrity attributes to external scripts",
+        "Restrict sources via CSP"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate SRI audits",
+        "ai_ui": "SRI compliance card",
+        "ai_schema": "script_src, integrity_present"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "script_src", "type": "string" },
+          { "name": "integrity_present", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "W3C",
+          "section": "Subresource Integrity",
+          "url": "https://www.w3.org/TR/SRI/"
+        }
+      ]
+    },
+    {
+      "id": "WP-BACKUP-RETENTION-POLICY",
+      "category": "Compliance & Privacy",
+      "title": "Insecure backup retention and access policies",
+      "severity": "High",
+      "description": "Long retention or broad access to backups increases breach impact and compliance risk.",
+      "risks": ["Data breach", "Regulatory penalties"],
+      "tests": [
+        "Review retention periods",
+        "Check access controls for backups",
+        "Verify encryption at rest"
+      ],
+      "assurance": [
+        "Backups encrypted and access-restricted",
+        "Retention aligned with policy"
+      ],
+      "assurance_against": ["Unauthorized access"],
+      "evidence": [
+        "Retention policy",
+        "Access logs",
+        "Encryption configuration"
+      ],
+      "remediation": ["Reduce retention", "Restrict access", "Encrypt backups"],
+      "automation_prompts": {
+        "ai_check": "Generate backup policy audits",
+        "ai_ui": "Backup governance card",
+        "ai_schema": "retention_days, encrypted, access_roles"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "retention_days", "type": "integer" },
+          { "name": "encrypted", "type": "boolean" },
+          {
+            "name": "access_roles",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "NIST SP 800-53",
+          "section": "CP-9, MP-5",
+          "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-ADMIN-ENDPOINTS",
+      "category": "Authentication & Access Control",
+      "title": "Admin endpoints exposed without additional hardening",
+      "severity": "High",
+      "description": "Predictable admin endpoints increase targeted brute-force and reconnaissance.",
+      "risks": ["Account compromise"],
+      "tests": [
+        "Probe /wp-admin/ and /wp-login.php",
+        "Check rate limiting and CAPTCHA",
+        "Verify IP allowlists if applicable"
+      ],
+      "assurance": [
+        "Rate limiting and CAPTCHA enforced",
+        "Optional IP allowlists"
+      ],
+      "assurance_against": ["Targeted brute-force"],
+      "evidence": ["Auth logs", "Firewall rules"],
+      "remediation": [
+        "Enforce throttling and CAPTCHA",
+        "Consider IP allowlists for admin"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate admin endpoint probes",
+        "ai_ui": "Admin exposure card",
+        "ai_schema": "rate_limit, captcha_enabled, ip_allowlist"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "rate_limit", "type": "integer" },
+          { "name": "captcha_enabled", "type": "boolean" },
+          {
+            "name": "ip_allowlist",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V2 Authentication—Brute Force Protections",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSUFFICIENT-LOGGING-MONITORING",
+      "category": "Malware & Persistence",
+      "title": "Insufficient logging and monitoring",
+      "severity": "High",
+      "description": "Lack of actionable logs and alerts delays detection of attacks and persistence.",
+      "risks": ["Delayed incident response", "Persistent compromise"],
+      "tests": [
+        "Review logging coverage for auth, admin actions, file changes",
+        "Check alerting thresholds and destinations"
+      ],
+      "assurance": [
+        "Comprehensive logs and alerts",
+        "Tamper-resistant storage"
+      ],
+      "assurance_against": ["Undetected attacks"],
+      "evidence": ["Log coverage matrix", "Alerting configuration"],
+      "remediation": [
+        "Expand logging coverage",
+        "Implement alerting and dashboards",
+        "Protect logs from tampering"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate logging coverage audits",
+        "ai_ui": "Monitoring readiness card",
+        "ai_schema": "coverage_areas, alert_destinations"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "coverage_areas",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          {
+            "name": "alert_destinations",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A09 Security Logging and Monitoring Failures",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-ADMIN-INTERFACE-OVER-CIDR",
+      "category": "Authentication & Access Control",
+      "title": "Admin interface not restricted by CIDR where feasible",
+      "severity": "Medium",
+      "description": "Lack of network-based restrictions increases exposure to brute-force and scanning.",
+      "risks": ["Attack surface increase"],
+      "tests": [
+        "Check firewall rules for admin paths",
+        "Verify CIDR restrictions if policy allows"
+      ],
+      "assurance": ["CIDR restrictions applied where feasible"],
+      "assurance_against": ["Targeted brute-force"],
+      "evidence": ["Firewall config", "Access logs"],
+      "remediation": [
+        "Apply CIDR restrictions for admin access",
+        "Use VPN or bastion where possible"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate CIDR restriction audits",
+        "ai_ui": "Network hardening card",
+        "ai_schema": "cidr_list"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "cidr_list",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "NIST SP 800-53",
+          "section": "AC-4, SC-7 Boundary Protection",
+          "url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-DB-DUMPS",
+      "category": "File Handling & Uploads",
+      "title": "Exposed database dumps",
+      "severity": "Critical",
+      "description": "Publicly accessible .sql or DB exports leak credentials and PII.",
+      "risks": ["Data breach", "Credential compromise"],
+      "tests": [
+        "Probe common dump paths",
+        "Check directory indexing",
+        "Scan for .sql files"
+      ],
+      "assurance": ["No public DB dumps", "Indexing disabled"],
+      "assurance_against": ["Data exposure"],
+      "evidence": ["Probe results", "Indexing config"],
+      "remediation": [
+        "Remove public dumps",
+        "Restrict access and disable indexing"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate DB dump probes",
+        "ai_ui": "Dump exposure card",
+        "ai_schema": "dump_paths, indexing_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "dump_paths",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "indexing_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection—Backups",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-ADMIN-NONCE-LEAK",
+      "category": "Database & Input Validation",
+      "title": "Nonce leakage via GET or public pages",
+      "severity": "High",
+      "description": "Exposed nonces can be reused to perform CSRF or unauthorized actions.",
+      "risks": ["CSRF", "Unauthorized actions"],
+      "tests": [
+        "Inspect pages for nonce exposure",
+        "Check GET usage for state changes"
+      ],
+      "assurance": ["Nonces not exposed publicly", "POST-only for mutations"],
+      "assurance_against": ["CSRF"],
+      "evidence": ["Page captures", "Request logs"],
+      "remediation": [
+        "Avoid exposing nonces publicly",
+        "Use POST-only for state changes"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate nonce exposure audits",
+        "ai_ui": "Nonce hygiene card",
+        "ai_schema": "nonce_exposed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "nonce_exposed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "WordPress Nonces",
+          "section": "Security Tokens",
+          "url": "https://developer.wordpress.org/plugins/security/nonces/"
+        }
+      ]
+    },
+    {
+      "id": "WP-UNSANITIZED-META",
+      "category": "Database & Input Validation",
+      "title": "Unsanitized post/user meta",
+      "severity": "High",
+      "description": "Untrusted meta fields can lead to stored XSS or logic manipulation.",
+      "risks": ["Stored XSS", "Privilege misuse"],
+      "tests": [
+        "Inject payloads into meta fields",
+        "Check sanitize_meta and esc_* usage"
+      ],
+      "assurance": ["Sanitization and escaping enforced"],
+      "assurance_against": ["Stored XSS"],
+      "evidence": ["Code references", "Payload execution screenshots"],
+      "remediation": ["Sanitize meta inputs", "Escape outputs per context"],
+      "automation_prompts": {
+        "ai_check": "Generate meta sanitization audits",
+        "ai_ui": "Meta hygiene matrix",
+        "ai_schema": "meta_key, sanitizer, escaper"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "meta_key", "type": "string" },
+          { "name": "sanitizer", "type": "string" },
+          { "name": "escaper", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Security Handbook",
+          "section": "Data Sanitization & Escaping",
+          "url": "https://developer.wordpress.org/apis/security/data-sanitization-escaping/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-CRON-ENDPOINTS",
+      "category": "Malware & Persistence",
+      "title": "Exposed cron endpoints or triggers",
+      "severity": "High",
+      "description": "Publicly accessible cron triggers allow unauthorized task execution.",
+      "risks": ["Unauthorized actions", "Data exfiltration"],
+      "tests": [
+        "Probe cron trigger URLs",
+        "Check capability checks and nonces"
+      ],
+      "assurance": ["Cron triggers protected by auth and nonces"],
+      "assurance_against": ["Unauthorized execution"],
+      "evidence": ["Probe results", "Authorization logs"],
+      "remediation": [
+        "Restrict cron triggers",
+        "Enforce capability checks and nonces"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cron trigger probes",
+        "ai_ui": "Cron protection card",
+        "ai_schema": "trigger_url, auth_required, nonce_required"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "trigger_url", "type": "string" },
+          { "name": "auth_required", "type": "boolean" },
+          { "name": "nonce_required", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Cron",
+          "section": "Security Considerations",
+          "url": "https://developer.wordpress.org/plugins/cron/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-STACK-TRACES",
+      "category": "Compliance & Privacy",
+      "title": "Exposed stack traces in production",
+      "severity": "Medium",
+      "description": "Stack traces reveal internal paths and sensitive details.",
+      "risks": ["Information disclosure"],
+      "tests": [
+        "Trigger error paths",
+        "Inspect error responses for stack traces"
+      ],
+      "assurance": ["Generic error messages", "Stack traces suppressed"],
+      "assurance_against": ["Info leakage"],
+      "evidence": ["Error samples", "Config flags snapshot"],
+      "remediation": [
+        "Suppress stack traces in production",
+        "Use generic error handling"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate error path probes",
+        "ai_ui": "Error hygiene card",
+        "ai_schema": "stack_traces_exposed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "stack_traces_exposed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V7 Error Handling and Logging",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-ADMIN-ACTIONS-GET",
+      "category": "Database & Input Validation",
+      "title": "State-changing admin actions via GET",
+      "severity": "High",
+      "description": "Allowing mutations via GET enables CSRF and unintended actions.",
+      "risks": ["CSRF", "Privilege misuse"],
+      "tests": [
+        "Probe admin actions via GET",
+        "Check nonce and method enforcement"
+      ],
+      "assurance": ["POST-only for mutations", "Nonces enforced"],
+      "assurance_against": ["CSRF"],
+      "evidence": ["Request/response pairs", "Code references"],
+      "remediation": ["Enforce POST-only for state changes", "Require nonces"],
+      "automation_prompts": {
+        "ai_check": "Generate GET mutation probes",
+        "ai_ui": "Method enforcement card",
+        "ai_schema": "action, method_enforced"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "action", "type": "string" },
+          { "name": "method_enforced", "type": "string", "enum": ["POST"] }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "CSRF Prevention",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-PLUGIN-SETTINGS",
+      "category": "Malware & Persistence",
+      "title": "Exposed plugin settings pages to low-privilege roles",
+      "severity": "High",
+      "description": "Misconfigured capabilities allow unauthorized users to change security-sensitive settings.",
+      "risks": ["Privilege escalation", "Configuration tampering"],
+      "tests": [
+        "Attempt access to plugin settings with low roles",
+        "Check capability mapping"
+      ],
+      "assurance": [
+        "Settings restricted to admins",
+        "Capabilities correctly mapped"
+      ],
+      "assurance_against": ["Unauthorized changes"],
+      "evidence": ["Access logs", "Capability matrix"],
+      "remediation": [
+        "Restrict settings to admin capabilities",
+        "Audit capability checks"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate capability mapping audits",
+        "ai_ui": "Settings access card",
+        "ai_schema": "plugin_slug, required_capability"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "plugin_slug", "type": "string" },
+          { "name": "required_capability", "type": "string" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Roles & Capabilities",
+          "section": "Capabilities",
+          "url": "https://wordpress.org/documentation/article/roles-and-capabilities/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-STATIC-SECRETS",
+      "category": "Compliance & Privacy",
+      "title": "Static secrets in code or assets",
+      "severity": "High",
+      "description": "Hardcoded secrets in PHP/JS/CSS or assets can be extracted and abused.",
+      "risks": ["Credential compromise", "Service abuse"],
+      "tests": [
+        "Scan code and assets for secret patterns",
+        "Check build pipelines for secret stripping"
+      ],
+      "assurance": [
+        "No static secrets in code",
+        "Secrets injected at runtime securely"
+      ],
+      "assurance_against": ["Secret leakage"],
+      "evidence": ["Scan results", "Pipeline config"],
+      "remediation": [
+        "Remove hardcoded secrets",
+        "Use secure secret management"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate secret pattern scans",
+        "ai_ui": "Secret hygiene card",
+        "ai_schema": "pattern_list, findings_count"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "pattern_list",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          { "name": "findings_count", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection—Secrets Management",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-ADMIN-SESSION-LIFETIME",
+      "category": "Session",
+      "title": "Excessive admin session lifetime",
+      "severity": "High",
+      "description": "Long-lived admin sessions increase hijacking risk and persistence.",
+      "risks": ["Session hijacking", "Privilege misuse"],
+      "tests": ["Check session TTL for admin roles", "Verify idle timeout"],
+      "assurance": ["Short TTL and idle timeout for admin sessions"],
+      "assurance_against": ["Hijacking"],
+      "evidence": ["TTL configuration", "Idle timeout logs"],
+      "remediation": ["Reduce session TTL", "Implement idle timeout"],
+      "automation_prompts": {
+        "ai_check": "Generate session TTL audits",
+        "ai_ui": "Session policy card",
+        "ai_schema": "ttl_minutes, idle_timeout_minutes"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "ttl_minutes", "type": "integer" },
+          { "name": "idle_timeout_minutes", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V3 Session Management—Timeouts",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-UNSAFE-DESERIALIZATION",
+      "category": "Emerging & Advanced Risks",
+      "title": "Unsafe PHP deserialization",
+      "severity": "Critical",
+      "description": "Untrusted data passed to unserialize or similar functions can lead to RCE.",
+      "risks": ["Remote code execution"],
+      "tests": [
+        "Scan for unserialize usage",
+        "Inject crafted payloads",
+        "Check object injection paths"
+      ],
+      "assurance": ["No unsafe deserialization", "Use safe formats (JSON)"],
+      "assurance_against": ["RCE"],
+      "evidence": ["Code scan results", "Payload behavior"],
+      "remediation": [
+        "Avoid unserialize on untrusted data",
+        "Use JSON and strict validation"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate deserialization audits",
+        "ai_ui": "Serialization hygiene card",
+        "ai_schema": "unsafe_calls_found"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "unsafe_calls_found", "type": "integer" }]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A08 Software and Data Integrity Failures",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-SSO-CALLBACKS",
+      "category": "API & Integrations",
+      "title": "Insecure SSO callback allowlists",
+      "severity": "High",
+      "description": "Overly broad callback URLs enable token theft or account takeover.",
+      "risks": ["Account takeover"],
+      "tests": [
+        "Review callback allowlists",
+        "Attempt redirect to attacker-controlled domain"
+      ],
+      "assurance": ["Strict callback allowlists", "State/nonce enforced"],
+      "assurance_against": ["Token theft"],
+      "evidence": ["SSO config", "Probe results"],
+      "remediation": ["Restrict callbacks", "Enforce state/nonce"],
+      "automation_prompts": {
+        "ai_check": "Generate SSO callback audits",
+        "ai_ui": "SSO hardening card",
+        "ai_schema": "allowed_callbacks"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "allowed_callbacks",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "OAuth 2.0 Security",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/OAuth2_Security_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-UNSAFE-REDIRECTS-AFTER-LOGIN",
+      "category": "Authentication & Access Control",
+      "title": "Unsafe redirects after login",
+      "severity": "High",
+      "description": "Unvalidated post-login redirects enable phishing and session fixation.",
+      "risks": ["Phishing", "Session fixation"],
+      "tests": [
+        "Probe redirect parameters post-login",
+        "Check allowlists and normalization"
+      ],
+      "assurance": ["Redirects validated against allowlists"],
+      "assurance_against": ["Open redirect"],
+      "evidence": ["Redirect handler code", "Allowlist config"],
+      "remediation": [
+        "Implement strict allowlists",
+        "Normalize and validate URLs"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate post-login redirect probes",
+        "ai_ui": "Redirect policy card",
+        "ai_schema": "redirect_param, allowlist"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "redirect_param", "type": "string" },
+          {
+            "name": "allowlist",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control (open redirect impact)",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-UNSAFE-PHP-INCLUDES",
+      "category": "Emerging & Advanced Risks",
+      "title": "Unsafe PHP includes from user input",
+      "severity": "Critical",
+      "description": "Including files based on unsanitized user input can lead to arbitrary code execution.",
+      "risks": ["RCE", "Local File Inclusion"],
+      "tests": [
+        "Scan for include/require using user input",
+        "Attempt LFI payloads"
+      ],
+      "assurance": [
+        "Includes limited to known-safe paths",
+        "No dynamic includes from user input"
+      ],
+      "assurance_against": ["LFI", "RCE"],
+      "evidence": ["Code scan results", "Payload behavior logs"],
+      "remediation": [
+        "Whitelist allowed includes",
+        "Avoid dynamic file inclusion"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate LFI probes",
+        "ai_ui": "Include safety dashboard",
+        "ai_schema": "include_whitelist"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "include_whitelist",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-PLUGIN-UPDATES",
+      "category": "Malware & Persistence",
+      "title": "Plugin updates without signature verification",
+      "severity": "High",
+      "description": "Unsigned plugin updates may introduce malicious modifications or backdoors.",
+      "risks": ["Supply Chain Compromise"],
+      "tests": ["Verify update signatures", "Audit plugin source authenticity"],
+      "assurance": [
+        "Updates signed by trusted authorities",
+        "Verified before installation"
+      ],
+      "assurance_against": ["Malicious Updates"],
+      "evidence": ["Signature logs", "Update process capture"],
+      "remediation": [
+        "Enforce signed updates",
+        "Use official repositories only"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate signature audit",
+        "ai_ui": "Update integrity card",
+        "ai_schema": "signed_updates_enabled"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "signed_updates_enabled", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V14 Malicious Code—Dependencies",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WEAK-PASSWORD-HASHING",
+      "category": "Authentication & Access Control",
+      "title": "Weak password hashing algorithm used",
+      "severity": "Critical",
+      "description": "Using outdated or fast hashing like MD5 increases offline cracking feasibility.",
+      "risks": ["Credential Theft", "Offline Cracking"],
+      "tests": ["Check hash type in database", "Verify use of bcrypt/Argon2"],
+      "assurance": [
+        "Strong hashing (bcrypt, Argon2)",
+        "Salted hashes enforced"
+      ],
+      "assurance_against": ["Offline Brute-force"],
+      "evidence": ["Hash samples", "Algorithm config"],
+      "remediation": ["Upgrade to stronger hashing", "Migrate legacy hashes"],
+      "automation_prompts": {
+        "ai_check": "Generate hash migration plan",
+        "ai_ui": "Password hash policy",
+        "ai_schema": "hash_algorithm_used"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "hash_algorithm_used",
+            "type": "string",
+            "enum": ["bcrypt", "Argon2", "PBKDF2"]
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cheat Sheet",
+          "section": "Password Storage",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-OPEN-REDIRECT-USER-PAGES",
+      "category": "Database & Input Validation",
+      "title": "Open redirect in user profile links",
+      "severity": "Medium",
+      "description": "Redirects in user-editable URLs can be exploited for phishing.",
+      "risks": ["Phishing", "Trust Abuse"],
+      "tests": [
+        "Inject redirect URLs in profile fields",
+        "Check allowlist filtering"
+      ],
+      "assurance": [
+        "Redirects filtered against allowlist",
+        "Safe default destinations"
+      ],
+      "assurance_against": ["Open Redirect"],
+      "evidence": ["Profile edit captures", "Redirect logs"],
+      "remediation": ["Implement strict URL validation", "Use safe defaults"],
+      "automation_prompts": {
+        "ai_check": "Generate open redirect probes",
+        "ai_ui": "Profile redirect policy",
+        "ai_schema": "redirect_allowlist"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "redirect_allowlist",
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control",
+          "url": "https://owasp.org/Top10/"
+        }
+      ]
+    },
+    {
+      "id": "WP-NO-INPUT-SIZE-LIMITS",
+      "category": "Database & Input Validation",
+      "title": "No size limits on form inputs",
+      "severity": "Medium",
+      "description": "Large input fields can facilitate DoS attacks through memory exhaustion.",
+      "risks": ["Denial of Service", "Performance Degradation"],
+      "tests": ["Submit oversized payloads", "Monitor memory usage"],
+      "assurance": [
+        "Input length enforced server-side",
+        "Rate limiting applied"
+      ],
+      "assurance_against": ["Buffer Overflow", "DoS"],
+      "evidence": ["Form submission logs", "Memory usage metrics"],
+      "remediation": ["Set maximum field lengths", "Apply rate limiting"],
+      "automation_prompts": {
+        "ai_check": "Generate oversized input tests",
+        "ai_ui": "Input size policy",
+        "ai_schema": "max_input_lengths"
+      },
+      "schema_hints": {
+        "fields": [
+          {
+            "name": "max_input_lengths",
+            "type": "object",
+            "additionalProperties": { "type": "integer" }
+          }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V5 Validation",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-VERSION-DISCLOSURE",
+      "category": "Installation & Configuration Hardening",
+      "title": "WordPress version disclosure in HTML/meta tags",
+      "severity": "Medium",
+      "description": "Exposed WordPress version enables targeted exploits against known vulnerabilities.",
+      "risks": ["Targeted attacks", "Exploit automation"],
+      "tests": [
+        "Check HTML source for generator meta tag",
+        "Verify RSS/Atom feeds for version info",
+        "Scan HTTP headers for version strings"
+      ],
+      "assurance": [
+        "Version removed from frontend",
+        "No version disclosure in responses"
+      ],
+      "assurance_against": ["Fingerprinting"],
+      "evidence": [
+        "HTML source samples",
+        "RSS feed captures",
+        "Header inspection results"
+      ],
+      "remediation": [
+        "Remove version from generator tag",
+        "Filter version info from feeds",
+        "Strip version from headers"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate version disclosure scans",
+        "ai_ui": "Version hardening card",
+        "ai_schema": "version_removed_from_frontend"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "version_removed_from_frontend", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Information Disclosure",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-READme-DISCLOSURE",
+      "category": "Installation & Configuration Hardening",
+      "title": "Publicly accessible readme.html file",
+      "severity": "Medium",
+      "description": "readme.html reveals WordPress version and installation details to attackers.",
+      "risks": ["Version fingerprinting", "Installation profiling"],
+      "tests": [
+        "Attempt to access /readme.html",
+        "Check for other default files (license.txt, wp-config-sample.php)",
+        "Verify server configuration blocks access"
+      ],
+      "assurance": [
+        "readme.html removed or blocked",
+        "Default files inaccessible"
+      ],
+      "assurance_against": ["Information disclosure"],
+      "evidence": ["Access probe results", "Server config snapshots"],
+      "remediation": [
+        "Delete readme.html",
+        "Block access via .htaccess/nginx rules",
+        "Remove other default documentation files"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate default file access probes",
+        "ai_ui": "File disclosure card",
+        "ai_schema": "readme_accessible"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "readme_accessible", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Removing Default Files",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-ADMIN-URL-DISCLOSURE",
+      "category": "Installation & Configuration Hardening",
+      "title": "Predictable admin URL disclosure",
+      "severity": "Medium",
+      "description": "Standard /wp-admin path increases targeted brute-force and reconnaissance.",
+      "risks": ["Targeted attacks", "Brute-force efficiency"],
+      "tests": [
+        "Check for wp-admin path accessibility",
+        "Probe for common admin path variations",
+        "Verify robots.txt entries"
+      ],
+      "assurance": ["Custom admin URL used", "robots.txt excludes admin paths"],
+      "assurance_against": ["Path discovery"],
+      "evidence": [
+        "robots.txt content",
+        "Admin path probe results",
+        "URL configuration"
+      ],
+      "remediation": [
+        "Change default admin URL",
+        "Exclude admin paths from robots.txt",
+        "Implement additional access controls"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate admin path discovery probes",
+        "ai_ui": "Admin path hardening card",
+        "ai_schema": "custom_admin_path_enabled"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "custom_admin_path_enabled", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Securing wp-config.php",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-PHP-ERROR-REPORTING",
+      "category": "Installation & Configuration Hardening",
+      "title": "PHP error reporting enabled in production",
+      "severity": "High",
+      "description": "Detailed PHP errors expose system paths, variables, and configuration details.",
+      "risks": ["Information disclosure", "System fingerprinting"],
+      "tests": [
+        "Trigger PHP errors and check output",
+        "Verify error_reporting and display_errors settings",
+        "Check server logs for error verbosity"
+      ],
+      "assurance": [
+        "Error reporting disabled in production",
+        "Errors logged but not displayed",
+        "Generic error pages used"
+      ],
+      "assurance_against": ["Info leakage"],
+      "evidence": [
+        "PHP configuration snapshots",
+        "Error page captures",
+        "Log file samples"
+      ],
+      "remediation": [
+        "Set error_reporting to 0 in production",
+        "Disable display_errors",
+        "Implement custom error pages"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate PHP error disclosure tests",
+        "ai_ui": "PHP hardening card",
+        "ai_schema": "error_reporting_disabled"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "error_reporting_disabled", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V7 Error Handling",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-UNNECESSARY-HTTP-HEADERS",
+      "category": "Installation & Configuration Hardening",
+      "title": "Unnecessary HTTP headers revealing server information",
+      "severity": "Medium",
+      "description": "Server headers like X-Powered-By expose technology stack to attackers.",
+      "risks": ["Technology fingerprinting", "Targeted exploitation"],
+      "tests": [
+        "Capture HTTP response headers",
+        "Check for X-Powered-By, Server, X-AspNet-Version",
+        "Verify header removal configuration"
+      ],
+      "assurance": [
+        "Unnecessary headers removed",
+        "Minimal server identification",
+        "Security headers implemented"
+      ],
+      "assurance_against": ["Stack fingerprinting"],
+      "evidence": ["Header capture results", "Server config snapshots"],
+      "remediation": [
+        "Remove identifying headers",
+        "Configure server to suppress version info",
+        "Implement security headers"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate HTTP header audits",
+        "ai_ui": "Header hardening card",
+        "ai_schema": "unnecessary_headers_removed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "unnecessary_headers_removed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP Hardening Guide",
+          "section": "HTTP Headers",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DEFAULT-PLUGIN-SETTINGS",
+      "category": "Installation & Configuration Hardening",
+      "title": "Default plugin settings exposing unnecessary functionality",
+      "severity": "Medium",
+      "description": "Plugins with default configurations may expose APIs, debug features, or verbose logging.",
+      "risks": ["Unintended functionality exposure", "Information disclosure"],
+      "tests": [
+        "Audit plugin settings for defaults",
+        "Check for exposed APIs or debug interfaces",
+        "Verify logging verbosity settings"
+      ],
+      "assurance": [
+        "Plugins hardened with minimal exposure",
+        "Debug features disabled in production",
+        "Verbose logging restricted"
+      ],
+      "assurance_against": ["Feature abuse"],
+      "evidence": [
+        "Plugin configuration snapshots",
+        "API endpoint scans",
+        "Log verbosity settings"
+      ],
+      "remediation": [
+        "Review and harden plugin settings",
+        "Disable debug and verbose features",
+        "Restrict API access where possible"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate plugin configuration audits",
+        "ai_ui": "Plugin hardening dashboard",
+        "ai_schema": "plugin_debug_features_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "plugin_debug_features_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V12 General Security Requirements",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DATABASE-PREFIX-DISCLOSURE",
+      "category": "Installation & Configuration Hardening",
+      "title": "Database table prefix disclosure in error messages",
+      "severity": "Medium",
+      "description": "SQL errors may reveal table structure including custom prefixes, aiding attacks.",
+      "risks": ["Structure disclosure", "Targeted SQL injection"],
+      "tests": [
+        "Trigger database errors and analyze output",
+        "Check error messages for table names",
+        "Verify error suppression configuration"
+      ],
+      "assurance": [
+        "Database errors suppressed in production",
+        "Generic error messages used",
+        "Custom prefixes not disclosed"
+      ],
+      "assurance_against": ["Structure reconnaissance"],
+      "evidence": [
+        "Error message captures",
+        "Database configuration",
+        "Prefix usage analysis"
+      ],
+      "remediation": [
+        "Suppress detailed database errors",
+        "Use generic error responses",
+        "Implement custom error handling"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate database error disclosure tests",
+        "ai_ui": "Database hardening card",
+        "ai_schema": "database_errors_suppressed"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "database_errors_suppressed", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Database Security",
+          "url": "https://wordpress.org/documentation/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSTALL-PATH-DISCLOSURE",
+      "category": "Installation & Configuration Hardening",
+      "title": "WordPress installation path disclosure",
+      "severity": "Medium",
+      "description": "Absolute paths in error messages or configuration reveal server structure.",
+      "risks": ["Path traversal assistance", "Server structure mapping"],
+      "tests": [
+        "Trigger errors that might show paths",
+        "Check wp-config.php for absolute paths",
+        "Analyze error logs for path information"
+      ],
+      "assurance": [
+        "Paths not disclosed in responses",
+        "Relative paths preferred in config",
+        "Error messages sanitized"
+      ],
+      "assurance_against": ["Path reconnaissance"],
+      "evidence": [
+        "Error message samples",
+        "Configuration file reviews",
+        "Log analysis"
+      ],
+      "remediation": [
+        "Sanitize error messages",
+        "Use relative paths where possible",
+        "Configure proper error handling"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate path disclosure tests",
+        "ai_ui": "Path hardening card",
+        "ai_schema": "paths_disclosed_in_errors"
+      },
+      "schema_hints": {
+        "fields": [{ "name": "paths_disclosed_in_errors", "type": "boolean" }]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V7 Error Handling",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-XMLRPC-DDOS-AMPLIFICATION",
+      "category": "API & Integrations",
+      "title": "XML-RPC pingback DDOS amplification vector",
+      "severity": "High",
+      "description": "Pingback functionality can be abused for distributed denial-of-service amplification attacks.",
+      "risks": ["DDoS amplification", "Bandwidth exhaustion"],
+      "tests": [
+        "Test pingback endpoint availability",
+        "Measure response size amplification",
+        "Check rate limiting on pingback requests"
+      ],
+      "assurance": [
+        "Pingback disabled or restricted",
+        "Rate limiting enforced",
+        "IP-based restrictions applied"
+      ],
+      "assurance_against": ["DDoS amplification"],
+      "evidence": [
+        "Pingback endpoint test results",
+        "Rate limit configuration",
+        "Traffic analysis logs"
+      ],
+      "remediation": [
+        "Disable pingback functionality",
+        "Implement strict rate limiting",
+        "Restrict pingback to trusted sources"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate pingback amplification tests",
+        "ai_ui": "Pingback security card",
+        "ai_schema": "pingback_enabled, rate_limit_requests_per_minute"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "pingback_enabled", "type": "boolean" },
+          { "name": "rate_limit_requests_per_minute", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP AppSensor",
+          "section": "DDoS Detection Points",
+          "url": "https://owasp.org/www-community/attacks/Denial_of_Service"
+        }
+      ]
+    },
+    {
+      "id": "WP-USER-ENUMERATION-VIA-REST",
+      "category": "Authentication & Access Control",
+      "title": "User enumeration via REST API endpoints",
+      "severity": "Medium",
+      "description": "REST API allows enumeration of valid usernames through differential responses.",
+      "risks": ["Username harvesting", "Targeted brute-force attacks"],
+      "tests": [
+        "Query REST API with valid/invalid usernames",
+        "Analyze response timing and content differences",
+        "Check author archive enumeration"
+      ],
+      "assurance": [
+        "Consistent responses for valid/invalid users",
+        "Rate limiting on user-related endpoints",
+        "Enumeration protection implemented"
+      ],
+      "assurance_against": ["User enumeration"],
+      "evidence": [
+        "REST API response analysis",
+        "Timing comparison results",
+        "Rate limit logs"
+      ],
+      "remediation": [
+        "Implement consistent error responses",
+        "Add rate limiting to user endpoints",
+        "Disable user enumeration features"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate user enumeration probes",
+        "ai_ui": "User enumeration protection card",
+        "ai_schema": "consistent_error_responses, user_endpoint_rate_limit"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "consistent_error_responses", "type": "boolean" },
+          { "name": "user_endpoint_rate_limit", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Testing Guide",
+          "section": "Testing for User Enumeration",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-COMMENTS-SETTINGS",
+      "category": "Database & Input Validation",
+      "title": "Insecure comments settings allowing anonymous posting",
+      "severity": "Medium",
+      "description": "Comments allowed from anonymous users without moderation increase spam and XSS risks.",
+      "risks": ["Comment spam", "Stored XSS injection", "SEO poisoning"],
+      "tests": [
+        "Test anonymous comment submission",
+        "Check comment moderation settings",
+        "Verify Akismet integration status"
+      ],
+      "assurance": [
+        "Comments require approval",
+        "Spam filtering enabled",
+        "Anonymous posting restricted"
+      ],
+      "assurance_against": ["Comment spam", "XSS injection"],
+      "evidence": [
+        "Comment settings configuration",
+        "Moderation queue samples",
+        "Spam filter logs"
+      ],
+      "remediation": [
+        "Require comment moderation",
+        "Enable spam filtering services",
+        "Restrict anonymous commenting"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate comment spam tests",
+        "ai_ui": "Comment security dashboard",
+        "ai_schema": "comments_require_approval, spam_filtering_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "comments_require_approval", "type": "boolean" },
+          { "name": "spam_filtering_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Security Guide",
+          "section": "Discussion Settings",
+          "url": "https://wordpress.org/support/article/coments-in-posts-pages/"
+        }
+      ]
+    },
+    {
+      "id": "WP-PLUGIN-VULNERABILITY-SCAN",
+      "category": "Malware & Persistence",
+      "title": "Known vulnerable plugins/themes not scanned or updated",
+      "severity": "High",
+      "description": "Outdated plugins/themes with known vulnerabilities create exploitable attack surfaces.",
+      "risks": ["Remote code execution", "Privilege escalation", "Data breach"],
+      "tests": [
+        "Scan installed plugins for known CVEs",
+        "Check plugin update status",
+        "Verify vulnerability database integration"
+      ],
+      "assurance": [
+        "Regular vulnerability scanning performed",
+        "Outdated components patched promptly",
+        "Automated update monitoring enabled"
+      ],
+      "assurance_against": ["Known exploits"],
+      "evidence": [
+        "Vulnerability scan reports",
+        "Update history logs",
+        "Plugin version inventory"
+      ],
+      "remediation": [
+        "Implement automated vulnerability scanning",
+        "Establish patch management procedures",
+        "Remove unused plugins/themes"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate plugin vulnerability assessment",
+        "ai_ui": "Plugin security scanner",
+        "ai_schema": "vulnerability_scan_frequency_days, auto_update_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "vulnerability_scan_frequency_days", "type": "integer" },
+          { "name": "auto_update_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WPScan Vulnerability Database",
+          "section": "Plugin Security",
+          "url": "https://wpscan.com/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DATABASE-CONNECTION-ENCRYPTION",
+      "category": "Database & Input Validation",
+      "title": "Database connection not encrypted (SSL/TLS)",
+      "severity": "High",
+      "description": "Unencrypted database connections expose credentials and data to network interception.",
+      "risks": [
+        "Credential interception",
+        "Data exposure",
+        "Man-in-the-middle attacks"
+      ],
+      "tests": [
+        "Verify SSL/TLS configuration for database",
+        "Check MySQL SSL requirements",
+        "Test connection encryption status"
+      ],
+      "assurance": [
+        "Database connections encrypted",
+        "SSL certificates properly configured",
+        "Certificate validation enforced"
+      ],
+      "assurance_against": ["Connection interception"],
+      "evidence": [
+        "Database connection configuration",
+        "SSL certificate status",
+        "Connection encryption verification"
+      ],
+      "remediation": [
+        "Enable SSL/TLS for database connections",
+        "Configure certificate validation",
+        "Update wp-config.php with SSL settings"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate database encryption verification",
+        "ai_ui": "Database security card",
+        "ai_schema": "database_ssl_enabled, certificate_validation_required"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "database_ssl_enabled", "type": "boolean" },
+          { "name": "certificate_validation_required", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "MySQL Secure Connections",
+          "section": "SSL Configuration",
+          "url": "https://dev.mysql.com/doc/refman/8.0/en/ssl-connections.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-ADMIN-AJAX-PUBLIC-ACCESS",
+      "category": "API & Integrations",
+      "title": "Admin AJAX actions accessible to unauthenticated users",
+      "severity": "High",
+      "description": "AJAX actions intended for administrators accessible publicly enable unauthorized operations.",
+      "risks": [
+        "Unauthorized administrative actions",
+        "Privilege escalation",
+        "Data manipulation"
+      ],
+      "tests": [
+        "Probe admin-ajax.php with unauthenticated requests",
+        "Test sensitive AJAX actions without authentication",
+        "Check capability verification implementation"
+      ],
+      "assurance": [
+        "AJAX actions properly authenticated",
+        "Capability checks enforced",
+        "Public access restricted"
+      ],
+      "assurance_against": ["Unauthorized AJAX usage"],
+      "evidence": [
+        "AJAX endpoint access logs",
+        "Capability check implementation",
+        "Authentication requirement verification"
+      ],
+      "remediation": [
+        "Implement proper authentication checks",
+        "Add capability verification for AJAX actions",
+        "Restrict sensitive AJAX endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate AJAX access control tests",
+        "ai_ui": "AJAX security dashboard",
+        "ai_schema": "ajax_authentication_required, capability_checks_implemented"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "ajax_authentication_required", "type": "boolean" },
+          { "name": "capability_checks_implemented", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress AJAX Security",
+          "section": "Admin Actions",
+          "url": "https://developer.wordpress.org/plugins/javascript/ajax/"
+        }
+      ]
+    },
+    {
+      "id": "WP-FILE-INCLUSION-VULNERABILITIES",
+      "category": "Emerging & Advanced Risks",
+      "title": "Local/Remote file inclusion vulnerabilities in themes/plugins",
+      "severity": "Critical",
+      "description": "Dynamic file inclusion based on user input enables arbitrary code execution.",
+      "risks": [
+        "Remote code execution",
+        "Local file inclusion",
+        "Server compromise"
+      ],
+      "tests": [
+        "Scan for dynamic include/require usage",
+        "Test file inclusion with malicious paths",
+        "Check theme/plugin code for unsafe file operations"
+      ],
+      "assurance": [
+        "File inclusion whitelisted",
+        "Input validation enforced",
+        "Dynamic inclusion disabled"
+      ],
+      "assurance_against": ["File inclusion attacks"],
+      "evidence": [
+        "Code review findings",
+        "Inclusion test results",
+        "Whitelist implementation"
+      ],
+      "remediation": [
+        "Implement file inclusion whitelists",
+        "Validate all file paths",
+        "Avoid dynamic file inclusion"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate file inclusion vulnerability scan",
+        "ai_ui": "File inclusion protection card",
+        "ai_schema": "file_inclusion_whitelisted, dynamic_inclusion_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "file_inclusion_whitelisted", "type": "boolean" },
+          { "name": "dynamic_inclusion_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Injection",
+          "url": "https://owasp.org/Top10/A01_2021-Injection/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SESSION-HIJACKING-PREVENTION",
+      "category": "Session",
+      "title": "Insufficient session hijacking prevention mechanisms",
+      "severity": "High",
+      "description": "Lack of session binding to IP/User-Agent increases session hijacking risk.",
+      "risks": ["Session hijacking", "Account takeover", "Persistent access"],
+      "tests": [
+        "Test session transfer between different IPs",
+        "Check User-Agent binding implementation",
+        "Verify session regeneration mechanisms"
+      ],
+      "assurance": [
+        "Session binding to client characteristics",
+        "Regular session regeneration",
+        "IP/User-Agent validation implemented"
+      ],
+      "assurance_against": ["Session hijacking"],
+      "evidence": [
+        "Session handling configuration",
+        "Binding implementation verification",
+        "Regeneration policy documentation"
+      ],
+      "remediation": [
+        "Implement session binding mechanisms",
+        "Configure regular session regeneration",
+        "Add IP/User-Agent validation"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate session hijacking prevention tests",
+        "ai_ui": "Session security dashboard",
+        "ai_schema": "session_binding_enabled, regeneration_interval_minutes"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "session_binding_enabled", "type": "boolean" },
+          { "name": "regeneration_interval_minutes", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Session Management",
+          "section": "Session Binding",
+          "url": "https://owasp.org/www-project-cheat-sheets/cheatsheets/Session_Management_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-CROSS-SITE-TRACKING-COOKIES",
+      "category": "Caching & Transport",
+      "title": "Third-party tracking cookies not properly secured",
+      "severity": "Medium",
+      "description": "Tracking cookies from third-party services may lack proper security attributes.",
+      "risks": ["Privacy violations", "Cross-site tracking", "Cookie theft"],
+      "tests": [
+        "Audit third-party cookie attributes",
+        "Check Secure/HttpOnly flags",
+        "Verify SameSite policy implementation"
+      ],
+      "assurance": [
+        "Tracking cookies properly secured",
+        "Privacy-consent gating implemented",
+        "Cookie attribute validation enforced"
+      ],
+      "assurance_against": ["Unauthorized tracking"],
+      "evidence": [
+        "Cookie attribute analysis",
+        "Privacy consent logs",
+        "Third-party service configurations"
+      ],
+      "remediation": [
+        "Implement proper cookie security flags",
+        "Add privacy consent gating",
+        "Regular third-party cookie audits"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cookie security audit",
+        "ai_ui": "Tracking cookie compliance card",
+        "ai_schema": "third_party_cookies_secured, consent_gating_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "third_party_cookies_secured", "type": "boolean" },
+          { "name": "consent_gating_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "GDPR Cookie Compliance",
+          "section": "Third-Party Cookies",
+          "url": "https://gdpr-info.eu/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WEAK-CRYPTOGRAPHIC-PRNG",
+      "category": "Authentication & Access Control",
+      "title": "Weak cryptographic pseudo-random number generation",
+      "severity": "High",
+      "description": "Predictable random numbers in tokens, salts, or identifiers enable exploitation.",
+      "risks": [
+        "Token prediction",
+        "Session fixation",
+        "Cryptographic weakness"
+      ],
+      "tests": [
+        "Verify PRNG implementation quality",
+        "Test randomness of generated values",
+        "Check for cryptographically secure functions usage"
+      ],
+      "assurance": [
+        "Cryptographically secure PRNG used",
+        "Proper entropy sources implemented",
+        "Random value generation validated"
+      ],
+      "assurance_against": ["Predictable values"],
+      "evidence": [
+        "PRNG implementation review",
+        "Randomness test results",
+        "Entropy source verification"
+      ],
+      "remediation": [
+        "Use cryptographically secure random functions",
+        "Implement proper entropy gathering",
+        "Validate random value generation"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cryptographic randomness tests",
+        "ai_ui": "Crypto PRNG validation card",
+        "ai_schema": "cryptographically_secure_prng, entropy_sources_count"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "cryptographically_secure_prng", "type": "boolean" },
+          { "name": "entropy_sources_count", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Cryptographic Storage",
+          "section": "Random Number Generation",
+          "url": "https://owasp.org/www-project-cheat-sheets/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-OPEN-REDIRECT-IN-LOGIN",
+      "category": "Authentication & Access Control",
+      "title": "Open redirect vulnerability in login redirection",
+      "severity": "Medium",
+      "description": "Login redirect parameter accepts arbitrary URLs enabling phishing attacks.",
+      "risks": ["Phishing attacks", "Session fixation", "Trust abuse"],
+      "tests": [
+        "Test redirect parameter with external URLs",
+        "Check whitelist implementation",
+        "Verify URL validation logic"
+      ],
+      "assurance": [
+        "Redirect URLs properly validated",
+        "Whitelist-based redirection implemented",
+        "External URL rejection enforced"
+      ],
+      "assurance_against": ["Open redirect exploitation"],
+      "evidence": [
+        "Redirect parameter testing results",
+        "Whitelist configuration",
+        "URL validation implementation"
+      ],
+      "remediation": [
+        "Implement strict redirect URL validation",
+        "Use whitelist-based redirection",
+        "Reject external redirect targets"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate open redirect vulnerability tests",
+        "ai_ui": "Login redirect security card",
+        "ai_schema": "redirect_whitelist_enabled, external_urls_rejected"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "redirect_whitelist_enabled", "type": "boolean" },
+          { "name": "external_urls_rejected", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A01 Broken Access Control",
+          "url": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+        }
+      ]
+    },
+    {
+      "id": "WP-SUBDOMAIN-TAKEOVER",
+      "category": "Emerging & Advanced Risks",
+      "title": "Subdomain takeover due to dangling DNS records",
+      "severity": "High",
+      "description": "Orphaned subdomains pointing to deprovisioned services enable hostile takeovers.",
+      "risks": ["Domain hijacking", "Phishing platform", "Brand impersonation"],
+      "tests": [
+        "Audit DNS records for orphaned subdomains",
+        "Check service provisioning status",
+        "Test subdomain accessibility"
+      ],
+      "assurance": [
+        "DNS records regularly audited",
+        "Orphaned subdomains removed",
+        "Provisioning/deprovisioning synchronized"
+      ],
+      "assurance_against": ["Subdomain takeover"],
+      "evidence": [
+        "DNS record audit reports",
+        "Subdomain accessibility tests",
+        "Provisioning synchronization logs"
+      ],
+      "remediation": [
+        "Implement DNS record auditing procedures",
+        "Remove orphaned subdomain records",
+        "Synchronize provisioning processes"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate subdomain takeover vulnerability scan",
+        "ai_ui": "DNS security dashboard",
+        "ai_schema": "dns_audit_frequency_days, orphaned_subdomains_removed"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "dns_audit_frequency_days", "type": "integer" },
+          { "name": "orphaned_subdomains_removed", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Testing Guide",
+          "section": "Subdomain Takeover",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        }
+      ]
+    },
+    {
+      "id": "WP-CLICKJACKING-PROTECTION",
+      "category": "Caching & Transport",
+      "title": "Insufficient clickjacking protection on sensitive pages",
+      "severity": "Medium",
+      "description": "Missing X-Frame-Options or frame-ancestors CSP directive enables UI redress attacks.",
+      "risks": [
+        "Clickjacking attacks",
+        "UI redress exploitation",
+        "Unauthorized actions"
+      ],
+      "tests": [
+        "Check X-Frame-Options header presence",
+        "Verify frame-ancestors CSP directive",
+        "Test framing capabilities on sensitive pages"
+      ],
+      "assurance": [
+        "Clickjacking protection implemented",
+        "X-Frame-Options configured properly",
+        "frame-ancestors CSP directive enforced"
+      ],
+      "assurance_against": ["Clickjacking exploitation"],
+      "evidence": [
+        "Header configuration verification",
+        "Framing test results",
+        "CSP policy implementation"
+      ],
+      "remediation": [
+        "Implement X-Frame-Options header",
+        "Configure frame-ancestors CSP directive",
+        "Test protection effectiveness"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate clickjacking protection tests",
+        "ai_ui": "Frame protection dashboard",
+        "ai_schema": "x_frame_options_set, frame_ancestors_csp_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "x_frame_options_set", "type": "boolean" },
+          { "name": "frame_ancestors_csp_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Clickjacking Prevention",
+          "section": "X-Frame-Options",
+          "url": "https://owasp.org/www-community/attacks/Clickjacking"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-DESERIALIZATION-PHP",
+      "category": "Emerging & Advanced Risks",
+      "title": "Insecure PHP object deserialization in plugins/themes",
+      "severity": "Critical",
+      "description": "Unserialize() usage on untrusted data enables remote code execution attacks.",
+      "risks": [
+        "Remote code execution",
+        "Object injection",
+        "Privilege escalation"
+      ],
+      "tests": [
+        "Scan for unserialize() function usage",
+        "Test object injection payloads",
+        "Check plugin/theme code for unsafe deserialization"
+      ],
+      "assurance": [
+        "Deserialization limited to safe formats",
+        "Input validation enforced",
+        "Unsafe deserialization disabled"
+      ],
+      "assurance_against": ["Object injection attacks"],
+      "evidence": [
+        "Code scanning results",
+        "Deserialization test outcomes",
+        "Safe format implementation"
+      ],
+      "remediation": [
+        "Replace unserialize() with json_decode()",
+        "Implement input validation",
+        "Disable unsafe deserialization functions"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate deserialization vulnerability scan",
+        "ai_ui": "Serialization security card",
+        "ai_schema": "safe_deserialization_only, unserialize_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "safe_deserialization_only", "type": "boolean" },
+          { "name": "unserialize_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A08 Software and Data Integrity Failures",
+          "url": "https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-PHPINFO",
+      "category": "File Handling & Uploads",
+      "title": "Exposed phpinfo() output or debug information pages",
+      "severity": "High",
+      "description": "phpinfo() pages reveal detailed server configuration and potential attack vectors.",
+      "risks": [
+        "Information disclosure",
+        "Server fingerprinting",
+        "Configuration analysis"
+      ],
+      "tests": [
+        "Probe for phpinfo.php and similar files",
+        "Check for debug information pages",
+        "Verify access restrictions on info pages"
+      ],
+      "assurance": [
+        "phpinfo() pages removed or restricted",
+        "Debug information not publicly accessible",
+        "Access controls enforced on info pages"
+      ],
+      "assurance_against": ["Information disclosure"],
+      "evidence": [
+        "File access test results",
+        "Server configuration samples",
+        "Access control implementation"
+      ],
+      "remediation": [
+        "Remove phpinfo() files from production",
+        "Restrict access to debug information pages",
+        "Implement proper access controls"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate phpinfo exposure tests",
+        "ai_ui": "Debug information security card",
+        "ai_schema": "phpinfo_accessible, debug_pages_restricted"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "phpinfo_accessible", "type": "boolean" },
+          { "name": "debug_pages_restricted", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Testing Guide",
+          "section": "Information Gathering",
+          "url": "https://owasp.org/www-project-web-security-testing-guide/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WEAK-SSL-TLS-CONFIGURATION",
+      "category": "Caching & Transport",
+      "title": "Weak SSL/TLS configuration exposing protocol vulnerabilities",
+      "severity": "High",
+      "description": "Outdated SSL/TLS protocols and weak cipher suites increase MITM attack risks.",
+      "risks": [
+        "Man-in-the-middle attacks",
+        "Protocol downgrade attacks",
+        "Cipher suite weaknesses"
+      ],
+      "tests": [
+        "Scan SSL/TLS configuration with SSL Labs",
+        "Check supported protocols and cipher suites",
+        "Verify certificate chain validity"
+      ],
+      "assurance": [
+        "Modern SSL/TLS protocols enforced",
+        "Strong cipher suites configured",
+        "Certificate chain properly maintained"
+      ],
+      "assurance_against": ["SSL/TLS exploitation"],
+      "evidence": [
+        "SSL Labs test results",
+        "Protocol configuration snapshots",
+        "Certificate chain verification"
+      ],
+      "remediation": [
+        "Disable weak SSL/TLS protocols",
+        "Configure strong cipher suites",
+        "Maintain certificate chain integrity"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate SSL/TLS configuration audit",
+        "ai_ui": "SSL/TLS security dashboard",
+        "ai_schema": "tls_min_version, weak_ciphers_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "tls_min_version", "type": "string" },
+          { "name": "weak_ciphers_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Transport Layer Protection",
+          "section": "SSL/TLS Configuration",
+          "url": "https://owasp.org/www-project-cheat-sheets/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-BROKEN-AUTHENTICATION-RECOVERY",
+      "category": "Authentication & Access Control",
+      "title": "Broken authentication in password recovery flows",
+      "severity": "High",
+      "description": "Weak password recovery mechanisms enable account takeover through various bypasses.",
+      "risks": ["Account takeover", "Password reset abuse", "User enumeration"],
+      "tests": [
+        "Test password reset token predictability",
+        "Check token expiration enforcement",
+        "Verify recovery flow rate limiting"
+      ],
+      "assurance": [
+        "Strong password recovery implemented",
+        "Token expiration enforced",
+        "Rate limiting applied to recovery flows"
+      ],
+      "assurance_against": ["Password recovery abuse"],
+      "evidence": [
+        "Recovery flow testing results",
+        "Token expiration logs",
+        "Rate limit configuration"
+      ],
+      "remediation": [
+        "Implement strong recovery tokens",
+        "Enforce token expiration policies",
+        "Apply rate limiting to recovery endpoints"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate password recovery flow tests",
+        "ai_ui": "Authentication recovery security card",
+        "ai_schema": "recovery_token_strength, token_expiration_minutes"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "recovery_token_strength", "type": "integer" },
+          { "name": "token_expiration_minutes", "type": "integer" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Top 10",
+          "section": "A07 Identification and Authentication Failures",
+          "url": "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-CRON-EXECUTION",
+      "category": "Malware & Persistence",
+      "title": "Insecure WordPress cron execution exposing system commands",
+      "severity": "High",
+      "description": "WordPress cron jobs executing system commands without proper validation enable command injection.",
+      "risks": [
+        "Command injection",
+        "System compromise",
+        "Privilege escalation"
+      ],
+      "tests": [
+        "Audit cron job implementations",
+        "Check for shell_exec/system calls in cron tasks",
+        "Verify input validation in cron callbacks"
+      ],
+      "assurance": [
+        "Cron jobs properly validated",
+        "System command execution restricted",
+        "Input sanitization enforced in cron tasks"
+      ],
+      "assurance_against": ["Command injection"],
+      "evidence": [
+        "Cron job code review",
+        "System call audit results",
+        "Input validation implementation"
+      ],
+      "remediation": [
+        "Validate all cron job inputs",
+        "Restrict system command execution",
+        "Implement proper input sanitization"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cron job security audit",
+        "ai_ui": "Cron execution security card",
+        "ai_schema": "cron_input_validation, system_commands_restricted"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "cron_input_validation", "type": "boolean" },
+          { "name": "system_commands_restricted", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Command Injection",
+          "section": "Prevention",
+          "url": "https://owasp.org/www-community/attacks/Command_Injection"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-WORDPRESS-CONSTANTS",
+      "category": "Installation & Configuration Hardening",
+      "title": "Exposed WordPress constants revealing configuration details",
+      "severity": "Medium",
+      "description": "WordPress constants in HTML/JS expose installation paths and configuration details.",
+      "risks": [
+        "Configuration disclosure",
+        "Path revelation",
+        "Installation profiling"
+      ],
+      "tests": [
+        "Search HTML/JS for WP_* constants",
+        "Check for exposed configuration values",
+        "Verify constant exposure prevention"
+      ],
+      "assurance": [
+        "Constants not exposed in frontend",
+        "Configuration values properly hidden",
+        "Debug information restricted"
+      ],
+      "assurance_against": ["Configuration disclosure"],
+      "evidence": [
+        "Frontend code analysis",
+        "Constant exposure test results",
+        "Configuration hiding implementation"
+      ],
+      "remediation": [
+        "Remove constants from frontend output",
+        "Hide configuration values in production",
+        "Implement debug information restrictions"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate constant exposure tests",
+        "ai_ui": "Configuration disclosure card",
+        "ai_schema": "constants_exposed_frontend, debug_info_hidden"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "constants_exposed_frontend", "type": "boolean" },
+          { "name": "debug_info_hidden", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "WordPress Hardening Guide",
+          "section": "Information Disclosure",
+          "url": "https://wordpress.org/support/article/hardening-wordpress/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-PLUGIN-CONFIGURATION",
+      "category": "Malware & Persistence",
+      "title": "Insecure default configurations in popular plugins",
+      "severity": "Medium",
+      "description": "Popular plugins with insecure default settings expose functionality unnecessarily.",
+      "risks": [
+        "Unintended functionality exposure",
+        "Security misconfiguration",
+        "Attack surface expansion"
+      ],
+      "tests": [
+        "Audit popular plugin default settings",
+        "Check for exposed APIs or debug features",
+        "Verify security-related configuration options"
+      ],
+      "assurance": [
+        "Plugin configurations hardened",
+        "Debug features disabled in production",
+        "Security settings properly configured"
+      ],
+      "assurance_against": ["Plugin misconfiguration"],
+      "evidence": [
+        "Plugin configuration audits",
+        "Security setting verification",
+        "Debug feature status checks"
+      ],
+      "remediation": [
+        "Review and harden plugin configurations",
+        "Disable unnecessary debug features",
+        "Configure security-related settings properly"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate plugin configuration audit",
+        "ai_ui": "Plugin configuration security card",
+        "ai_schema": "plugins_hardened, debug_features_disabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "plugins_hardened", "type": "boolean" },
+          { "name": "debug_features_disabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V12 General Security Requirements",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-DATABASE-BACKUP-EXPOSURE",
+      "category": "File Handling & Uploads",
+      "title": "Database backup files exposed in web root",
+      "severity": "Critical",
+      "description": "Database backup files stored in accessible locations expose sensitive data.",
+      "risks": ["Data breach", "Credential exposure", "PII disclosure"],
+      "tests": [
+        "Probe common backup file locations",
+        "Check for .sql, .bak, .dump files in web root",
+        "Verify backup file access restrictions"
+      ],
+      "assurance": [
+        "Backup files stored securely off-web-root",
+        "Access restrictions enforced on backups",
+        "Backup encryption implemented"
+      ],
+      "assurance_against": ["Backup file exposure"],
+      "evidence": [
+        "Backup file location audit",
+        "Access restriction verification",
+        "Encryption implementation confirmation"
+      ],
+      "remediation": [
+        "Move backups outside web-accessible directories",
+        "Implement strict access controls on backups",
+        "Enable backup file encryption"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate backup file exposure tests",
+        "ai_ui": "Database backup security card",
+        "ai_schema": "backups_off_web_root, backup_encryption_enabled"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "backups_off_web_root", "type": "boolean" },
+          { "name": "backup_encryption_enabled", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP ASVS",
+          "section": "V6 Data Protection",
+          "url": "https://owasp.org/www-project-application-security-verification-standard/"
+        }
+      ]
+    },
+    {
+      "id": "WP-WEAK-USER-AGENT-VALIDATION",
+      "category": "Authentication & Access Control",
+      "title": "Weak user-agent validation enabling bot traffic",
+      "severity": "Medium",
+      "description": "Simple user-agent blocking ineffective against sophisticated automated attacks.",
+      "risks": [
+        "Automated attack success",
+        "Brute-force effectiveness",
+        "Scraping and enumeration"
+      ],
+      "tests": [
+        "Test user-agent bypass techniques",
+        "Check validation sophistication",
+        "Verify bot detection capabilities"
+      ],
+      "assurance": [
+        "Sophisticated bot detection implemented",
+        "Behavioral analysis used for validation",
+        "Multiple validation factors applied"
+      ],
+      "assurance_against": ["Bot traffic abuse"],
+      "evidence": [
+        "Bot detection test results",
+        "Validation sophistication analysis",
+        "Behavioral analysis implementation"
+      ],
+      "remediation": [
+        "Implement behavioral bot detection",
+        "Use sophisticated validation techniques",
+        "Apply multiple anti-bot measures"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate bot detection effectiveness tests",
+        "ai_ui": "Bot protection dashboard",
+        "ai_schema": "behavioral_analysis_enabled, multi_factor_bot_detection"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "behavioral_analysis_enabled", "type": "boolean" },
+          { "name": "multi_factor_bot_detection", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Automated Threats",
+          "section": "Bot Detection",
+          "url": "https://owasp.org/www-project-automated-threats-to-web-applications/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-CACHE-CONTROL",
+      "category": "Caching & Transport",
+      "title": "Insecure cache control exposing sensitive content",
+      "severity": "High",
+      "description": "Improper cache headers expose authenticated or sensitive content to shared caches.",
+      "risks": [
+        "Sensitive data exposure",
+        "Session fixation facilitation",
+        "Privacy violations"
+      ],
+      "tests": [
+        "Check cache headers on authenticated pages",
+        "Verify Vary header implementation",
+        "Test shared cache behavior with sensitive content"
+      ],
+      "assurance": [
+        "Cache headers properly configured",
+        "Authenticated content not cached publicly",
+        "Vary headers correctly implemented"
+      ],
+      "assurance_against": ["Cache-based data exposure"],
+      "evidence": [
+        "Cache header analysis",
+        "Authenticated content caching tests",
+        "Vary header implementation verification"
+      ],
+      "remediation": [
+        "Configure proper cache headers",
+        "Prevent public caching of sensitive content",
+        "Implement correct Vary header usage"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate cache control configuration audit",
+        "ai_ui": "Cache security dashboard",
+        "ai_schema": "sensitive_content_cached_publicly, vary_headers_correct"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "sensitive_content_cached_publicly", "type": "boolean" },
+          { "name": "vary_headers_correct", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Caching",
+          "section": "Security Considerations",
+          "url": "https://owasp.org/www-project-cheat-sheets/cheatsheets/Web_Cache_Poisoning_Prevention_Cheat_Sheet.html"
+        }
+      ]
+    },
+    {
+      "id": "WP-EXPOSED-INTERNAL-APIS",
+      "category": "API & Integrations",
+      "title": "Exposed internal APIs without proper access controls",
+      "severity": "High",
+      "description": "Internal APIs accessible externally without authentication enable unauthorized data access.",
+      "risks": [
+        "Unauthorized data access",
+        "Internal system exposure",
+        "Privilege escalation"
+      ],
+      "tests": [
+        "Scan for internal API endpoints",
+        "Test external accessibility of internal APIs",
+        "Verify authentication on internal endpoints"
+      ],
+      "assurance": [
+        "Internal APIs properly restricted",
+        "External access blocked to internal endpoints",
+        "Authentication enforced on all APIs"
+      ],
+      "assurance_against": ["Internal API exposure"],
+      "evidence": [
+        "API endpoint accessibility tests",
+        "Access restriction verification",
+        "Authentication implementation confirmation"
+      ],
+      "remediation": [
+        "Restrict internal API access",
+        "Block external connectivity to internal endpoints",
+        "Enforce authentication on all APIs"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate internal API exposure tests",
+        "ai_ui": "API security dashboard",
+        "ai_schema": "internal_apis_restricted, external_access_blocked"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "internal_apis_restricted", "type": "boolean" },
+          { "name": "external_access_blocked", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP API Security",
+          "section": "Access Control",
+          "url": "https://owasp.org/www-project-api-security/"
+        }
+      ]
+    },
+    {
+      "id": "WP-INSECURE-COMMENT-FORMS",
+      "category": "Database & Input Validation",
+      "title": "Insecure comment forms lacking anti-spam protections",
+      "severity": "Medium",
+      "description": "Comment forms without proper anti-spam measures facilitate comment spam and DoS attacks.",
+      "risks": [
+        "Comment spam flooding",
+        "Database performance degradation",
+        "SEO poisoning"
+      ],
+      "tests": [
+        "Test comment form spam submission",
+        "Check CAPTCHA/Honeypot implementation",
+        "Verify rate limiting on comment submissions"
+      ],
+      "assurance": [
+        "Anti-spam measures implemented",
+        "Rate limiting enforced on comments",
+        "Automated submission detection enabled"
+      ],
+      "assurance_against": ["Comment spam abuse"],
+      "evidence": [
+        "Comment spam submission tests",
+        "Anti-spam implementation verification",
+        "Rate limit configuration review"
+      ],
+      "remediation": [
+        "Implement CAPTCHA or honeypot techniques",
+        "Enforce rate limiting on comment forms",
+        "Enable automated spam detection"
+      ],
+      "automation_prompts": {
+        "ai_check": "Generate comment form spam tests",
+        "ai_ui": "Comment form security card",
+        "ai_schema": "anti_spam_measures_enabled, comment_rate_limiting"
+      },
+      "schema_hints": {
+        "fields": [
+          { "name": "anti_spam_measures_enabled", "type": "boolean" },
+          { "name": "comment_rate_limiting", "type": "boolean" }
+        ]
+      },
+      "references": [
+        {
+          "name": "OWASP Comment Spam Prevention",
+          "section": "Best Practices",
+          "url": "https://owasp.org/www-community/controls/Comment_Spam_Prevention"
+        }
+      ]
+    }
+  ]
+}

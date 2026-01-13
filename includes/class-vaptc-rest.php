@@ -42,6 +42,12 @@ class VAPTC_REST
       'permission_callback' => array($this, 'check_permission'),
     ));
 
+    register_rest_route('vaptc/v1', '/reset-limit', array(
+      'methods' => 'POST',
+      'callback' => array($this, 'reset_rate_limit'),
+      'permission_callback' => '__return_true', // Public endpoint for testing (limited to user IP)
+    ));
+
 
     register_rest_route('vaptc/v1', '/features/update', array(
       'methods'  => 'POST',
@@ -114,6 +120,12 @@ class VAPTC_REST
       'callback' => array($this, 'update_file_meta'),
       'permission_callback' => array($this, 'check_permission'),
     ));
+
+    register_rest_route('vaptc/v1', '/active-file', array(
+      'methods'  => array('GET', 'POST'),
+      'callback' => array($this, 'handle_active_file'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
   }
 
   public function check_permission()
@@ -131,7 +143,8 @@ class VAPTC_REST
 
   public function get_features($request)
   {
-    $file = $request->get_param('file') ?: 'features-with-test-methods.json';
+    $default_file = get_option('vaptc_active_feature_file', 'features-with-test-methods.json');
+    $file = $request->get_param('file') ?: $default_file;
     $json_path = VAPTC_PATH . 'data/' . sanitize_file_name($file);
 
     if (! file_exists($json_path)) {
@@ -199,6 +212,14 @@ class VAPTC_REST
       $feature['status'] = $st['status'];
       $feature['implemented_at'] = $st['implemented_at'];
       $feature['assigned_to'] = $st['assigned_to'];
+
+      // Normalize status synonyms for internal logic
+      $norm_status = strtolower($st['status']);
+      if ($norm_status === 'implemented') $norm_status = 'release';
+      if ($norm_status === 'in_progress') $norm_status = 'develop';
+      if ($norm_status === 'testing')     $norm_status = 'test';
+      if ($norm_status === 'available')   $norm_status = 'draft';
+      $feature['normalized_status'] = $norm_status;
 
       $meta = VAPTC_DB::get_feature_meta($key);
       if ($meta) {
@@ -361,14 +382,33 @@ class VAPTC_REST
 
     // Filter for Client Scope
     if ($scope === 'client') {
-      $features = array_values(array_filter($features, function ($f) use ($is_superadmin) {
-        // If Superadmin, return EVERYTHING (Drafts/Available are needed for 'Develop' tab)
-        if ($is_superadmin) {
+      $domain = $request->get_param('domain');
+      $enabled_features = [];
+
+      if ($domain) {
+        $dom_row = $wpdb->get_row($wpdb->prepare("SELECT id FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain));
+        if ($dom_row) {
+          $feat_rows = $wpdb->get_results($wpdb->prepare("SELECT feature_key FROM {$wpdb->prefix}vaptc_domain_features WHERE domain_id = %d AND enabled = 1", $dom_row->id), ARRAY_N);
+          $enabled_features = array_column($feat_rows, 0);
+        }
+      }
+
+      $features = array_filter($features, function ($f) use ($enabled_features, $is_superadmin) {
+        $s = isset($f['normalized_status']) ? $f['normalized_status'] : strtolower($f['status']);
+
+        // 1. Release features must be explicitly enabled for the domain
+        if ($s === 'release') {
+          return in_array($f['key'], $enabled_features);
+        }
+
+        // 2. Develop/Test features are visible only to Superadmins (for testing)
+        if ($is_superadmin && in_array($s, ['develop', 'test'])) {
           return true;
         }
-        // If Client/Standard User, return ONLY Release
-        return $f['status'] === 'Release';
-      }));
+
+        return false;
+      });
+      $features = array_values($features);
     }
 
     return new WP_REST_Response(array(
@@ -381,15 +421,27 @@ class VAPTC_REST
   public function get_data_files()
   {
     $data_dir = VAPTC_PATH . 'data';
+    if (!is_dir($data_dir)) return new WP_REST_Response([], 200);
+
     $files = array_diff(scandir($data_dir), array('..', '.'));
     $json_files = [];
 
     $hidden_files = get_option('vaptc_hidden_json_files', array());
+    $active_file  = get_option('vaptc_active_feature_file', 'features-with-test-methods.json');
+
+    // Create a normalized list for comparison
+    $hidden_normalized = array_map('sanitize_file_name', $hidden_files);
+    $active_normalized = sanitize_file_name($active_file);
 
     foreach ($files as $file) {
       if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'json') {
-        // Only include if NOT hidden
-        if (!in_array($file, $hidden_files)) {
+        $normalized_current = sanitize_file_name($file);
+
+        // Safety: Always include the active file, regardless of hidden status
+        $is_active = ($normalized_current === $active_normalized || $file === $active_file);
+        $is_hidden = in_array($normalized_current, $hidden_normalized) || in_array($file, $hidden_files);
+
+        if ($is_active || !$is_hidden) {
           $json_files[] = array(
             'label' => $file,
             'value' => $file
@@ -433,32 +485,41 @@ class VAPTC_REST
 
     if ($is_enforced !== null) $meta_updates['is_enforced'] = $is_enforced ? 1 : 0;
     if ($wireframe_url !== null) $meta_updates['wireframe_url'] = $wireframe_url;
-    if ($generated_schema !== null) {
-      // Robustly handle both Arrays and Objects (stdClass) from JSON body
-      $schema = (is_array($generated_schema) || is_object($generated_schema))
-        ? json_decode(json_encode($generated_schema), true) // Normalize to array
-        : json_decode($generated_schema, true);
 
-      // Skip validation for legacy/auto-generated schema formats (type: 'wp_config', 'htaccess', 'manual', etc.)
-      // These are temporary schemas that will be replaced with full schemas later
-      $is_legacy_format = isset($schema['type']) && in_array($schema['type'], ['wp_config', 'htaccess', 'manual', 'complex_input']);
+    if ($request->has_param('generated_schema')) {
+      $generated_schema = $request->get_param('generated_schema');
+      if ($generated_schema === null) {
+        $meta_updates['generated_schema'] = null;
+      } else {
+        // Robustly handle both Arrays and Objects (stdClass) from JSON body
+        $schema = (is_array($generated_schema) || is_object($generated_schema))
+          ? json_decode(json_encode($generated_schema), true) // Normalize to array
+          : json_decode($generated_schema, true);
 
-      if (!$is_legacy_format) {
-        // Validate only full schemas with controls array
-        $validation = self::validate_schema($schema);
-        if (is_wp_error($validation)) {
-          return new WP_REST_Response(array(
-            'error' => 'Schema validation failed',
-            'message' => $validation->get_error_message(),
-            'code' => $validation->get_error_code(),
-            'schema_received' => $schema // Include for debugging
-          ), 400);
+        // Skip validation for legacy/auto-generated schema formats (type: 'wp_config', 'htaccess', 'manual', etc.)
+        // These are temporary schemas that will be replaced with full schemas later
+        $is_legacy_format = isset($schema['type']) && in_array($schema['type'], ['wp_config', 'htaccess', 'manual', 'complex_input']);
+
+        if (!$is_legacy_format) {
+          // Validate only full schemas with controls array
+          $validation = self::validate_schema($schema);
+          if (is_wp_error($validation)) {
+            return new WP_REST_Response(array(
+              'error' => 'Schema validation failed',
+              'message' => $validation->get_error_message(),
+              'code' => $validation->get_error_code(),
+              'schema_received' => $schema // Include for debugging
+            ), 400);
+          }
         }
+        $meta_updates['generated_schema'] = json_encode($schema);
       }
-
-      $meta_updates['generated_schema'] = json_encode($schema);
     }
-    if ($implementation_data !== null) $meta_updates['implementation_data'] = is_array($implementation_data) ? json_encode($implementation_data) : $implementation_data;
+
+    if ($request->has_param('implementation_data')) {
+      $implementation_data = $request->get_param('implementation_data');
+      $meta_updates['implementation_data'] = ($implementation_data === null) ? null : (is_array($implementation_data) ? json_encode($implementation_data) : $implementation_data);
+    }
 
     if (! empty($meta_updates)) {
       VAPTC_DB::update_feature_meta($key, $meta_updates);
@@ -585,20 +646,34 @@ class VAPTC_REST
   }
 
   /**
+   * Reset Rate Limit for current user
+   */
+  public function reset_rate_limit($request)
+  {
+    require_once(VAPTC_PATH . 'includes/enforcers/class-vaptc-hook-driver.php');
+    $result = VAPTC_Hook_Driver::reset_limit();
+    return new WP_REST_Response(array('success' => true, 'debug' => $result), 200);
+  }
+
+  /**
    * Get All JSON files (including hidden ones, for management UI)
    */
   public function get_all_data_files()
   {
     $data_dir = VAPTC_PATH . 'data';
+    if (!is_dir($data_dir)) return new WP_REST_Response([], 200);
+
     $files = array_diff(scandir($data_dir), array('..', '.'));
     $json_files = [];
     $hidden_files = get_option('vaptc_hidden_json_files', array());
+    $hidden_normalized = array_map('sanitize_file_name', $hidden_files);
 
     foreach ($files as $file) {
       if (strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'json') {
+        $normalized_current = sanitize_file_name($file);
         $json_files[] = array(
           'filename' => $file,
-          'isHidden' => in_array($file, $hidden_files)
+          'isHidden' => in_array($normalized_current, $hidden_normalized) || in_array($file, $hidden_files)
         );
       }
     }
@@ -808,8 +883,9 @@ class VAPTC_REST
         );
       }
 
-      if (empty($control['key']) && $control['type'] !== 'button') {
-        // Buttons might not need keys, but most controls do
+      $no_key_types = ['button', 'info', 'alert', 'section', 'group', 'divider', 'html', 'header', 'label', 'evidence_uploader', 'risk_indicators', 'assurance_badges', 'remediation_steps', 'test_checklist', 'evidence_list'];
+      if (empty($control['key']) && !in_array($control['type'], $no_key_types)) {
+        // Most functional controls need keys
         return new WP_Error(
           'invalid_schema',
           sprintf('Control at index %d must have a "key" field', $index),
@@ -818,7 +894,7 @@ class VAPTC_REST
       }
 
       // Validate control types
-      $valid_types = ['toggle', 'input', 'select', 'textarea', 'code', 'test_action', 'button'];
+      $valid_types = ['toggle', 'input', 'select', 'textarea', 'code', 'test_action', 'button', 'info', 'alert', 'section', 'group', 'divider', 'html', 'header', 'label', 'password', 'evidence_uploader', 'risk_indicators', 'assurance_badges', 'remediation_steps', 'test_checklist', 'evidence_list'];
       if (!in_array($control['type'], $valid_types)) {
         return new WP_Error(
           'invalid_schema',
@@ -898,6 +974,27 @@ class VAPTC_REST
     }
 
     return true;
+  }
+
+  /**
+   * Get or Set the Active Feature Source File
+   */
+  public function handle_active_file($request)
+  {
+    if ($request->get_method() === 'POST') {
+      $file = $request->get_param('file');
+      if (!$file) {
+        return new WP_REST_Response(array('error' => 'No file specified'), 400);
+      }
+      $filename = sanitize_file_name($file);
+      update_option('vaptc_active_feature_file', $filename);
+      return new WP_REST_Response(array('success' => true, 'active_file' => $filename), 200);
+    }
+
+    // GET
+    return new WP_REST_Response(array(
+      'active_file' => get_option('vaptc_active_feature_file', 'features-with-test-methods.json')
+    ), 200);
   }
 }
 

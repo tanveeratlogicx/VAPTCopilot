@@ -1,0 +1,30 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  },
+  "extends": "eslint:recommended",
+  "globals": {
+    "wp": "readonly",
+    "vaptmSettings": "readonly",
+    "ajaxurl": "readonly",
+    "VAPTM_Generator": "readonly",
+    "VAPTM_GeneratedInterface": "readonly",
+    "React": "readonly",
+    "ReactDOM": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "varsIgnorePattern": "^React$" }],
+    "no-undef": "error",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  }
+}

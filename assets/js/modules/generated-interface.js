@@ -4,7 +4,7 @@
 
 (function () {
   const { createElement: el, useState, useEffect } = wp.element;
-  const { Button, TextControl, ToggleControl, SelectControl, TextareaControl } = wp.components;
+  const { Button, TextControl, ToggleControl, SelectControl, TextareaControl, Modal, Icon } = wp.components;
   const { __, sprintf } = wp.i18n;
 
   /**
@@ -55,6 +55,19 @@
         const load = Math.ceil(rpm * 1.25);
         if (load > 1000) {
           console.warn('[VAPTM] Warning: Rate limit test sending more than 1000 requests. This may impact server performance.');
+        }
+
+        if (load > 1000) {
+          console.warn('[VAPTM] Warning: Rate limit test sending more than 1000 requests. This may impact server performance.');
+        }
+
+        // Reset Rate Limit before starting test to ensure clean state
+        try {
+          const resetRes = await fetch(siteUrl + '/wp-json/vaptc/v1/reset-limit', { method: 'POST', cache: 'no-store' });
+          const resetJson = await resetRes.json();
+          console.log('[VAPTM] Rate limit reset debug:', resetJson);
+        } catch (e) {
+          console.warn('[VAPTM] Failed to reset rate limit:', e);
         }
 
         const probes = [];
@@ -419,9 +432,13 @@
     ]);
   };
 
-  const GeneratedInterface = ({ feature, onUpdate }) => {
+  /* Main Generated Interface Component */
+  const GeneratedInterface = ({ feature, onUpdate, isGuidePanel = false }) => {
     const schema = feature.generated_schema ? (typeof feature.generated_schema === 'string' ? JSON.parse(feature.generated_schema) : feature.generated_schema) : {};
+
     const currentData = feature.implementation_data ? (typeof feature.implementation_data === 'string' ? JSON.parse(feature.implementation_data) : feature.implementation_data) : {};
+
+    const [localAlert, setLocalAlert] = useState(null);
 
     if (!schema || !schema.controls || !Array.isArray(schema.controls)) {
       return el('div', { style: { padding: '20px', textAlign: 'center', color: '#999', fontStyle: 'italic' } },
@@ -448,7 +465,7 @@
             el(Button, {
               isSecondary: true,
               onClick: () => {
-                if (action === 'reset_validation_logs') alert('Reset signal sent.');
+                if (action === 'reset_validation_logs') setLocalAlert({ message: __('Reset signal sent.', 'vapt-Copilot'), type: 'success' });
               }
             }, label),
             help && el('p', { style: { margin: '5px 0 0', fontSize: '12px', color: '#666' } }, help)
@@ -467,7 +484,9 @@
               label: el('strong', null, label),
               help: help,
               value: value ? value.toString() : '',
-              onChange: (val) => handleChange(key, val)
+              onChange: (val) => handleChange(key, val),
+              __nextHasNoMarginBottom: true,
+              __next40pxDefaultSize: true
             })
           ]);
 
@@ -489,14 +508,163 @@
             style: type === 'code' ? { fontFamily: 'monospace', fontSize: '12px', background: '#f0f0f1' } : {}
           });
 
+        case 'header':
+          return el('h3', { key: uniqueKey, style: { fontSize: '16px', borderBottom: '1px solid #ddd', paddingBottom: '8px', marginTop: '10px' } }, label);
+
+        case 'section':
+          return el('h4', { key: uniqueKey, style: { fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', color: '#666', marginTop: '15px' } }, label);
+
+        case 'risk_indicators':
+          return el('div', { key: uniqueKey, style: { padding: '10px 0' } }, [
+            label && el('strong', { style: { display: 'block', fontSize: '11px', color: '#991b1b', marginBottom: '5px', textTransform: 'uppercase' } }, label),
+            el('ul', { style: { margin: 0, paddingLeft: '18px', color: '#b91c1c', fontSize: '12px', listStyleType: 'disc' } },
+              (control.risks || control.items || []).map((r, i) => el('li', { key: i, style: { marginBottom: '4px' } }, r)))
+          ]);
+
+        case 'assurance_badges':
+          return el('div', { key: uniqueKey, style: { display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '10px 0', marginTop: '10px', borderTop: '1px solid #fed7aa' } },
+            (control.badges || control.items || []).map((b, i) => el('span', { key: i, style: { display: 'flex', alignItems: 'center', background: '#ffffff', color: '#166534', padding: '4px 10px', borderRadius: '15px', fontSize: '12px', border: '1px solid #bbf7d0', fontWeight: '600', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' } }, [
+              el('span', { style: { marginRight: '6px', fontSize: '14px' } }, '🛡️'),
+              b
+            ]))
+          );
+
+        case 'test_checklist':
+        case 'evidence_list':
+          return el('div', { key: uniqueKey, style: { marginBottom: '10px' } }, [
+            label && el('strong', { style: { display: 'block', fontSize: '12px', color: '#334155', marginBottom: '6px' } }, label),
+            el('ol', { style: { margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '12px' } },
+              (control.items || control.tests || control.checklist || control.evidence || []).map((item, i) => el('li', { key: i, style: { marginBottom: '4px' } }, item)))
+          ]);
+
+        case 'info':
+        case 'html':
+          return el('div', { key: uniqueKey, style: { padding: '10px', background: '#f0f9ff', borderLeft: '3px solid #0ea5e9', fontSize: '12px', color: '#0c4a6e', marginBottom: '10px' }, dangerouslySetInnerHTML: { __html: control.content || control.html || label } });
+
+        case 'warning':
+        case 'alert':
+          return el('div', { key: uniqueKey, style: { padding: '10px', background: '#fff7ed', borderLeft: '3px solid #f97316', fontSize: '12px', color: '#7c2d12', marginBottom: '10px' }, dangerouslySetInnerHTML: { __html: label || control.content } });
+
+        // Explicitly ignored types
+        case 'remediation_steps':
+        case 'evidence_uploader':
+          return null;
+
         default:
           return null;
       }
     };
 
-    return el('div', { className: 'vaptm-generated-controls', style: { display: 'flex', flexDirection: 'column', gap: '15px' } },
-      schema.controls.map(renderControl)
+    // Segregate Controls
+    const verificationTypes = ['verification_action', 'automated_test', 'risk_indicators', 'assurance_badges'];
+    const guideTypes = ['test_checklist', 'evidence_list', 'remediation_steps', 'evidence_uploader'];
+    const ignoredTypes = []; // No longer explicitly ignored here, handled by mainControls filter
+
+    // Filter out Verification section headers as they are now redundant with the new layout
+    const mainControls = schema.controls.filter(c => {
+      const isVerification = verificationTypes.includes(c.type);
+      const isGuide = guideTypes.includes(c.type);
+
+      // Determine if we should show this control based on the panel type
+      if (isGuidePanel) {
+        // If it's a guide panel, only show guide-related controls
+        return isGuide;
+      } else {
+        // If it's not a guide panel, show functional controls, but exclude verification and guide types
+        if (isVerification || isGuide) return false;
+
+        // Filter out redundant section headers (case-insensitive)
+        if (c.type === 'section') {
+          const label = (c.label || '').toLowerCase();
+          const redundantLabels = [
+            'verification',
+            'automated verification',
+            'functional verification',
+            'manual verification guidelines',
+            'threat coverage',
+            'verification & assurance'
+          ];
+          if (redundantLabels.some(rl => label.includes(rl))) return false;
+        }
+        return true;
+      }
+    });
+
+    // Segregate specific verification controls for the other panels
+    const riskControls = schema.controls.filter(c => c.type === 'risk_indicators');
+    const badgeControls = schema.controls.filter(c => c.type === 'assurance_badges');
+    const otherVerificationControls = schema.controls.filter(c =>
+      verificationTypes.includes(c.type) &&
+      c.type !== 'risk_indicators' &&
+      c.type !== 'assurance_badges' &&
+      c.type !== 'verification_action' &&
+      c.type !== 'automated_test'
     );
+
+    // Dynamic Badge Icons
+    const getBadgeIcon = (text) => {
+      const t = text.toLowerCase();
+      if (t.includes('prevent') || t.includes('block')) return '🛡️';
+      if (t.includes('detect') || t.includes('log')) return '👁️';
+      if (t.includes('limit') || t.includes('rate')) return '⚡';
+      if (t.includes('secure') || t.includes('safe')) return '🔒';
+      if (t.includes('complian') || t.includes('audit')) return '📋';
+      return '✅';
+    };
+
+    return el('div', { className: 'vaptm-generated-interface', style: { display: 'flex', flexDirection: 'column', gap: '20px' } }, [
+
+      // Panel 1: Functional Implementation
+      el('div', { className: 'vaptm-functional-panel', style: { background: '#fff', borderRadius: '8px', padding: '0' } }, [
+        // Main Functional Controls
+        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '15px' } }, mainControls.map(renderControl)),
+
+      ]),
+
+      // Panel 2: Threat Coverage (Risks Only)
+      (riskControls.length > 0 || otherVerificationControls.length > 0) && el('div', {
+        className: 'vaptm-threat-panel',
+        style: {
+          background: '#fff7ed',
+          border: '1px solid #fed7aa',
+          borderRadius: '8px',
+          padding: '15px'
+        }
+      }, [
+        el('h4', { style: { margin: '0 0 10px 0', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', color: '#9a3412' } }, __('Threat Coverage', 'vapt-Copilot')),
+        riskControls.map(renderControl),
+        otherVerificationControls.map(renderControl)
+      ]),
+
+      // Panel 3: Assurance Badges (Standalone Row)
+      badgeControls.length > 0 && el('div', {
+        className: 'vaptm-badges-row',
+        style: { display: 'flex', flexWrap: 'wrap', gap: '10px' }
+      },
+        badgeControls.map(c =>
+          (c.badges || c.items || []).map((b, i) => el('span', { key: i, style: { display: 'flex', alignItems: 'center', background: '#ffffff', color: '#166534', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', border: '1px solid #bbf7d0', fontWeight: '600', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' } }, [
+            el('span', { style: { marginRight: '6px', fontSize: '14px' } }, getBadgeIcon(b)),
+            b
+          ]))
+        )
+      ),
+
+      // Local Alert Modal
+      localAlert && el(Modal, {
+        title: localAlert.type === 'error' ? __('Error', 'vapt-Copilot') : __('Notice', 'vapt-Copilot'),
+        onRequestClose: () => setLocalAlert(null),
+        style: { maxWidth: '400px' }
+      }, [
+        el('div', { style: { display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '15px' } }, [
+          localAlert.type === 'success' && el(Icon, { icon: 'yes', size: 24, style: { color: 'green', background: '#dcfce7', borderRadius: '50%', padding: '4px' } }),
+          el('p', { style: { fontSize: '14px', color: '#1f2937', margin: 0 } }, localAlert.message)
+        ]),
+        el('div', { style: { textAlign: 'right' } },
+          el(Button, { isPrimary: true, onClick: () => setLocalAlert(null) }, __('OK', 'vapt-Copilot'))
+        )
+      ])
+
+    ]);
   };
 
   window.VAPTM_GeneratedInterface = GeneratedInterface;
