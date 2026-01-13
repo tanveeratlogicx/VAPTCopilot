@@ -4,7 +4,7 @@ A comprehensive WordPress Plugin for VAPT (Vulnerability Assessment and Penetrat
 
 ## Version
 
-2.1.0
+2.2.0
 
 ## Description
 
