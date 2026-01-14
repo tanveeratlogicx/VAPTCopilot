@@ -12,17 +12,21 @@
    */
   const PROBE_REGISTRY = {
     // 1. Header Probe: Verifies HTTP response headers
-    check_headers: async (siteUrl, control, featureData) => {
+    check_headers: async (siteUrl, control, featureData, featureKey) => {
       const resp = await fetch(siteUrl + '?vaptm_header_check=' + Date.now(), { method: 'GET', cache: 'no-store' });
       const headers = {};
       resp.headers.forEach((v, k) => { headers[k] = v; });
       console.log("[VAPTM] Full Response Headers:", headers);
 
       const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
+      const enforcedFeature = resp.headers.get('x-vaptc-feature');
       const securityHeaders = ['x-frame-options', 'x-content-type-options', 'x-xss-protection', 'content-security-policy', 'access-control-expose-headers'];
       const found = securityHeaders.filter(h => resp.headers.has(h)).map(h => `${h}: ${resp.headers.get(h)}`);
 
       if (vaptcEnforced) {
+        if (featureKey && enforcedFeature && enforcedFeature !== featureKey) {
+          return { success: false, message: `Inconclusive: Headers are present, but enforced by another feature ('${enforcedFeature}'), not this one. Please disable the conflicting feature to test this one accurately.`, raw: headers };
+        }
         return { success: true, message: `Plugin is actively enforcing headers (${vaptcEnforced}). Data: ${found.join(' | ')}`, raw: headers };
       }
 
@@ -143,11 +147,15 @@
     },
 
     // 3. Status Probe: Verifies specific file block (e.g., XML-RPC)
-    block_xmlrpc: async (siteUrl, control, featureData) => {
+    block_xmlrpc: async (siteUrl, control, featureData, featureKey) => {
       const resp = await fetch(siteUrl + '/xmlrpc.php', { method: 'POST', body: '<?xml version="1.0"?><methodCall><methodName>system.listMethods</methodName><params></params></methodCall>' });
       const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
+      const enforcedFeature = resp.headers.get('x-vaptc-feature');
 
       if (vaptcEnforced === 'php-xmlrpc') {
+        if (featureKey && enforcedFeature && enforcedFeature !== featureKey) {
+          return { success: false, message: `Inconclusive: XML-RPC is blocked by another VAPT feature ('${enforcedFeature}'). You must disable it there to verify this control independently.` };
+        }
         return { success: true, message: `Plugin is actively blocking XML-RPC (${vaptcEnforced}).` };
       }
 
@@ -158,16 +166,20 @@
     },
 
     // 4. Directory Probe: Verifies Indexing Block
-    disable_directory_browsing: async (siteUrl, control, featureData) => {
+    disable_directory_browsing: async (siteUrl, control, featureData, featureKey) => {
       const target = siteUrl + '/wp-content/uploads/';
       const resp = await fetch(target, { cache: 'no-store' });
       const text = await resp.text();
       const snippet = text.substring(0, 500); // Take first 500 chars for proof
       const vaptcEnforced = resp.headers.get('x-vaptc-enforced');
+      const enforcedFeature = resp.headers.get('x-vaptc-feature');
 
       const isListing = snippet.toLowerCase().includes('index of /') || snippet.includes('parent directory');
 
       if (vaptcEnforced === 'php-dir') {
+        if (featureKey && enforcedFeature && enforcedFeature !== featureKey) {
+          return { success: false, message: `Inconclusive: Directory browsing blocked by '${enforcedFeature}'.`, raw: snippet };
+        }
         return { success: true, message: `PASS: Plugin is actively blocking directory listing (${vaptcEnforced}).`, raw: snippet };
       }
 
@@ -296,6 +308,7 @@
       const expectsBlock = expectedStatusArray.length > 0 && expectedStatusArray.every(s => s >= 400);
       const expectsAllow = expectedStatusArray.includes(200);
       const hasHeaderCheck = expectedHeaders && typeof expectedHeaders === 'object';
+      const enforcedFeature = resp.headers.get('x-vaptc-feature');
 
       if (hasHeaderCheck) {
         // Header-based verification: Check headers even if status is 200
@@ -314,6 +327,18 @@
         isSecure = code >= 400; // Assume block = secure by default
       }
 
+      // Feature Attribution Check
+      if (isSecure && expectsBlock && featureKey && enforcedFeature && enforcedFeature !== featureKey) {
+        // It's secure (blocked), BUT by someone else
+        isSecure = false;
+        message = `Inconclusive: Request blocked by overlapping feature '${enforcedFeature}'. Disable it to verify this control.`;
+        return {
+          success: false,
+          message: message,
+          raw: `URL: ${url} | Status: ${code} | Enforcer: ${enforcedFeature} vs ${featureKey}`
+        };
+      }
+
       // Result Formatting with detailed feedback
       let message = '';
       if (isSecure) {
@@ -330,7 +355,11 @@
         if (code === 200 && expectsBlock) {
           message = `Attack Accepted (HTTP 200). Expected Block (${expectedStatus}).`;
         } else if (hasHeaderCheck && !headerMatches) {
-          message = `Missing Protection Headers (HTTP ${code}).`;
+          if (expectsBlock && statusMatches) {
+            message = `Verification Inconclusive: Request was blocked (HTTP ${code}), but the expected "X-VAPTC-Enforced" header is missing. This likely means another plugin or server rule is blocking requests, not VAPT Copilot.`;
+          } else {
+            message = `Missing Protection Headers (HTTP ${code}). Verification failed.`;
+          }
         } else if (statusMatches === false && expectedStatus) {
           message = `Mismatch: Got HTTP ${code}, expected ${expectedStatus}.`;
         } else {
@@ -353,7 +382,7 @@
   };
 
   /* New: Interactive Test Runner Component */
-  const TestRunnerControl = ({ control, featureData }) => {
+  const TestRunnerControl = ({ control, featureData, featureKey }) => {
     const [status, setStatus] = useState('idle'); // idle, running, success, error
     const [result, setResult] = useState(null);
 
@@ -369,7 +398,7 @@
         const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Test timeout after 30 seconds')), 30000)
         );
-        const handlerPromise = handler(siteUrl, control, featureData);
+        const handlerPromise = handler(siteUrl, control, featureData, featureKey);
         const res = await Promise.race([handlerPromise, timeoutPromise]);
 
         if (res && typeof res === 'object') {
@@ -458,7 +487,7 @@
 
       switch (type) {
         case 'test_action':
-          return el(TestRunnerControl, { key: uniqueKey, control, featureData: currentData });
+          return el(TestRunnerControl, { key: uniqueKey, control, featureData: currentData, featureKey: feature.key });
 
         case 'button':
           return el('div', { key: uniqueKey, style: { marginBottom: '15px' } }, [

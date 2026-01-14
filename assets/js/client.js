@@ -119,9 +119,22 @@
       return statusFeatures.filter(f => (f.category || 'Uncategorized') === activeCategory);
     }, [statusFeatures, activeCategory]);
 
+    const scrollToFeature = (featureKey, category) => {
+      if (activeCategory !== 'all' && activeCategory !== category) {
+        setActiveCategory(category);
+        setTimeout(() => {
+          const el = document.getElementById(`feature-${featureKey}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      } else {
+        const el = document.getElementById(`feature-${featureKey}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
     // Helper to render a single feature card
     const renderFeatureCard = (f) => {
-      return el(Card, { key: f.key, style: { borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: 'none' } }, [
+      return el(Card, { key: f.key, id: `feature-${f.key}`, style: { borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: 'none' } }, [
         el(CardHeader, { style: { borderBottom: '1px solid #f3f4f6', padding: '20px 24px' } }, [
           el('div', { style: { display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: '30px', width: '100%' } }, [
             el('div', null, [
@@ -319,35 +332,69 @@
         // Sidebar
         el('aside', { style: { width: '280px', borderRight: '1px solid #e5e7eb', background: '#fff', overflowY: 'auto', padding: '20px 0' } }, [
           el('div', { style: { padding: '0 20px 10px', fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' } }, __('Feature Categories')),
-          categories.length > 0 && el('button', {
-            onClick: () => setActiveCategory('all'),
-            style: {
-              width: '100%', border: 'none', background: activeCategory === 'all' ? '#eff6ff' : 'transparent',
-              color: activeCategory === 'all' ? '#1d4ed8' : '#4b5563',
-              padding: '12px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
-              borderRight: activeCategory === 'all' ? '3px solid #1d4ed8' : 'none', fontWeight: activeCategory === 'all' ? 600 : 500,
-              fontSize: '14px'
-            }
-          }, [
-            el('span', null, __('All Categories', 'vapt-Copilot')),
-            el('span', { style: { fontSize: '11px', background: activeCategory === 'all' ? '#dbeafe' : '#f3f4f6', padding: '2px 6px', borderRadius: '4px' } }, statusFeatures.length)
-          ]),
-          categories.length === 0 && el('p', { style: { padding: '20px', color: '#9ca3af', fontSize: '13px' } }, __('No active categories', 'vapt-Copilot')),
-          categories.map(cat => {
-            const count = statusFeatures.filter(f => (f.category || 'Uncategorized') === cat).length;
-            return el('button', {
-              key: cat,
-              onClick: () => setActiveCategory(cat),
+          categories.length > 0 && el(Fragment, null, [
+            el('button', {
+              onClick: () => setActiveCategory('all'),
               style: {
-                width: '100%', border: 'none', background: activeCategory === cat ? '#eff6ff' : 'transparent',
-                color: activeCategory === cat ? '#1d4ed8' : '#4b5563',
+                width: '100%', border: 'none', background: activeCategory === 'all' ? '#eff6ff' : 'transparent',
+                color: activeCategory === 'all' ? '#1d4ed8' : '#4b5563',
                 padding: '12px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
-                borderRight: activeCategory === cat ? '3px solid #1d4ed8' : 'none', fontWeight: activeCategory === cat ? 600 : 500,
+                borderRight: activeCategory === 'all' ? '3px solid #1d4ed8' : 'none', fontWeight: activeCategory === 'all' ? 600 : 500,
                 fontSize: '14px'
               }
             }, [
-              el('span', null, cat),
-              el('span', { style: { fontSize: '11px', background: activeCategory === cat ? '#dbeafe' : '#f3f4f6', padding: '2px 6px', borderRadius: '4px' } }, count)
+              el('span', null, __('All Categories', 'vapt-Copilot')),
+              el('span', { style: { fontSize: '11px', background: activeCategory === 'all' ? '#dbeafe' : '#f3f4f6', padding: '2px 6px', borderRadius: '4px' } }, statusFeatures.length)
+            ]),
+            activeCategory === 'all' && el('div', {
+              style: {
+                display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px',
+                padding: '10px 20px', background: '#f8fafc', borderBottom: '1px solid #e5e7eb'
+              }
+            }, statusFeatures.map(f => el('div', {
+              key: f.key,
+              onClick: () => scrollToFeature(f.key, 'all'),
+              style: {
+                fontSize: '10px', color: '#6b7280', cursor: 'pointer', whiteSpace: 'nowrap',
+                overflow: 'hidden', textOverflow: 'ellipsis', padding: '4px 8px', borderRadius: '4px',
+                background: '#fff', border: '1px solid #e5e7eb', transition: 'all 0.2s',
+              },
+              title: f.label
+            }, f.label)))
+          ]),
+          categories.length === 0 && el('p', { style: { padding: '20px', color: '#9ca3af', fontSize: '13px' } }, __('No active categories', 'vapt-Copilot')),
+          categories.map(cat => {
+            const catFeatures = statusFeatures.filter(f => (f.category || 'Uncategorized') === cat);
+            const isActive = activeCategory === cat;
+            return el(Fragment, { key: cat }, [
+              el('button', {
+                onClick: () => setActiveCategory(cat),
+                style: {
+                  width: '100%', border: 'none', background: isActive ? '#eff6ff' : 'transparent',
+                  color: isActive ? '#1d4ed8' : '#4b5563',
+                  padding: '12px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
+                  borderRight: isActive ? '3px solid #1d4ed8' : 'none', fontWeight: isActive ? 600 : 500,
+                  fontSize: '14px'
+                }
+              }, [
+                el('span', null, cat),
+                el('span', { style: { fontSize: '11px', background: isActive ? '#dbeafe' : '#f3f4f6', padding: '2px 6px', borderRadius: '4px' } }, catFeatures.length)
+              ]),
+              isActive && el('div', {
+                style: {
+                  display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px',
+                  padding: '10px 20px', background: '#f8fafc', borderBottom: '1px solid #e5e7eb'
+                }
+              }, catFeatures.map(f => el('div', {
+                key: f.key,
+                onClick: () => scrollToFeature(f.key, cat),
+                style: {
+                  fontSize: '10px', color: '#6b7280', cursor: 'pointer', whiteSpace: 'nowrap',
+                  overflow: 'hidden', textOverflow: 'ellipsis', padding: '4px 8px', borderRadius: '4px',
+                  background: '#fff', border: '1px solid #e5e7eb', transition: 'all 0.2s',
+                },
+                title: f.label
+              }, f.label)))
             ]);
           })
         ]),

@@ -118,19 +118,33 @@ class VAPTC_DB
   /**
    * Add or update domain
    */
-  public static function update_domain($domain, $is_wildcard = 0, $license_id = '')
+  public static function update_domain($domain, $is_wildcard = 0, $license_id = '', $license_type = 'standard', $manual_expiry_date = null, $auto_renew = 0, $renewals_count = 0)
   {
     global $wpdb;
     $table = $wpdb->prefix . 'vaptc_domains';
 
+    // Check for existing record to preserve first_activated_at
+    $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE domain = %s", $domain));
+    $first_activated_at = $existing ? $existing->first_activated_at : null;
+
+    // Only set first_activated_at if it's new and we have a license
+    if (!$first_activated_at && $license_id) {
+        $first_activated_at = current_time('mysql');
+    }
+
     return $wpdb->replace(
       $table,
       array(
-        'domain'      => $domain,
-        'is_wildcard' => $is_wildcard,
-        'license_id'  => $license_id,
+        'domain'             => $domain,
+        'is_wildcard'        => $is_wildcard,
+        'license_id'         => $license_id,
+        'license_type'       => $license_type,
+        'first_activated_at' => $first_activated_at,
+        'manual_expiry_date' => $manual_expiry_date,
+        'auto_renew'         => $auto_renew,
+        'renewals_count'     => $renewals_count,
       ),
-      array('%s', '%d', '%s')
+      array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
     );
   }
 

@@ -697,13 +697,36 @@ class VAPTC_REST
 
   public function update_domain($request)
   {
+    global $wpdb;
     $domain = $request->get_param('domain');
     $is_wildcard = $request->get_param('is_wildcard');
     $license_id = $request->get_param('license_id');
+    $license_type = $request->get_param('license_type') ?: 'standard';
+    $manual_expiry_date = $request->get_param('manual_expiry_date');
+    $auto_renew = $request->get_param('auto_renew') ? 1 : 0;
+    $renewals_count = (int) $request->get_param('renewals_count');
 
-    VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $license_id);
+    // Normalize Date to Midnight
+    if ($manual_expiry_date) {
+      $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($manual_expiry_date));
+    }
 
-    return new WP_REST_Response(array('success' => true), 200);
+    // Auto-Renew Logic: If enabling auto-renew on an expired license, extend it immediately
+    if ($auto_renew && $manual_expiry_date && strtotime($manual_expiry_date) < current_time('timestamp')) {
+      $duration = '+30 days';
+      if ($license_type === 'pro') $duration = '+1 year';
+      if ($license_type === 'developer') $duration = '+100 years';
+
+      $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($manual_expiry_date . ' ' . $duration));
+      $renewals_count++;
+    }
+
+    VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $license_id, $license_type, $manual_expiry_date, $auto_renew, $renewals_count);
+
+    // Return fresh data for UI update
+    $fresh = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);
+
+    return new WP_REST_Response(array('success' => true, 'domain' => $fresh), 200);
   }
 
   public function update_domain_features($request)

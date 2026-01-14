@@ -59,13 +59,13 @@ class VAPTC_Hook_Driver
       // Handle specific PHP-based actions
       switch ($method) {
         case 'block_xmlrpc':
-          self::block_xmlrpc();
+          self::block_xmlrpc($key);
           break;
         case 'enable_security_headers':
-          self::add_security_headers();
+          self::add_security_headers($key);
           break;
         case 'disable_directory_browsing':
-          self::disable_directory_browsing();
+          self::disable_directory_browsing($key);
           break;
         case 'limit_login_attempts':
           // 🛡️ Conflict Resolution: 'xml-rpc-api-security' duplicates 'WP-XMLRPC-ABUSE' but often carries a hardcoded/low default.
@@ -75,13 +75,13 @@ class VAPTC_Hook_Driver
           self::limit_login_attempts($value, $resolved_data, $key);
           break;
         case 'block_null_byte_injection':
-          self::block_null_byte_injection();
+          self::block_null_byte_injection($key);
           break;
         case 'hide_wp_version':
-          self::hide_wp_version();
+          self::hide_wp_version($key);
           break;
         case 'block_debug_exposure':
-          self::block_debug_exposure($value);
+          self::block_debug_exposure($value, $key);
           break;
       }
     }
@@ -255,10 +255,14 @@ class VAPTC_Hook_Driver
    * Block Directory Browsing via PHP
    * (Nginx-friendly fallback)
    */
-  private static function disable_directory_browsing()
+  /**
+   * Block Directory Browsing via PHP
+   * (Nginx-friendly fallback)
+   */
+  private static function disable_directory_browsing($key = 'unknown')
   {
     // If the request is for a directory, we need to ensure it's blocked
-    add_action('wp_loaded', function () {
+    add_action('wp_loaded', function () use ($key) {
       $uri = $_SERVER['REQUEST_URI'];
       // Very specific check for uploads directory listing attempts
       if (strpos($uri, '/wp-content/uploads/') !== false && substr($uri, -1) === '/') {
@@ -267,7 +271,8 @@ class VAPTC_Hook_Driver
         if (is_dir($path)) {
           status_header(403);
           header('X-VAPTC-Enforced: php-dir');
-          header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+          header('X-VAPTC-Feature: ' . $key);
+          header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
           wp_die('VAPTC: Directory Browsing is Blocked for Security.');
         }
       }
@@ -277,12 +282,16 @@ class VAPTC_Hook_Driver
   /**
    * Block XML-RPC requests
    */
-  private static function block_xmlrpc()
+  /**
+   * Block XML-RPC requests
+   */
+  private static function block_xmlrpc($key = 'unknown')
   {
     if (strpos($_SERVER['REQUEST_URI'], 'xmlrpc.php') !== false) {
       status_header(403);
       header('X-VAPTC-Enforced: php-xmlrpc');
-      header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+      header('X-VAPTC-Feature: ' . $key);
+      header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
       header('Content-Type: text/plain');
       wp_die('VAPTC: XML-RPC Access is Blocked for Security.');
     }
@@ -291,13 +300,17 @@ class VAPTC_Hook_Driver
   /**
    * Block requests containing null byte injections
    */
-  private static function block_null_byte_injection()
+  /**
+   * Block requests containing null byte injections
+   */
+  private static function block_null_byte_injection($key = 'unknown')
   {
     $query = $_SERVER['QUERY_STRING'] ?? '';
     if (strpos($query, '%00') !== false || strpos(urldecode($query), "\0") !== false) {
       status_header(403);
       header('X-VAPTC-Enforced: php-null-byte');
-      header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+      header('X-VAPTC-Feature: ' . $key);
+      header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
       wp_die('VAPTC: Null Byte Injection Attempt Blocked.');
     }
   }
@@ -305,15 +318,19 @@ class VAPTC_Hook_Driver
   /**
    * Hide WordPress Version
    */
-  private static function hide_wp_version()
+  /**
+   * Hide WordPress Version
+   */
+  private static function hide_wp_version($key = 'unknown')
   {
     remove_action('wp_head', 'wp_generator');
     add_filter('the_generator', '__return_empty_string');
     // Enforced Header on Init to signal the probe
-    add_action('init', function () {
+    add_action('init', function () use ($key) {
       if (!headers_sent()) {
         header('X-VAPTC-Enforced: php-version-hide');
-        header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+        header('X-VAPTC-Feature: ' . $key);
+        header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
       }
     });
   }
@@ -322,15 +339,20 @@ class VAPTC_Hook_Driver
    * Block Debug Exposure
    * (Standardizes error messages if active)
    */
-  private static function block_debug_exposure($config)
+  /**
+   * Block Debug Exposure
+   * (Standardizes error messages if active)
+   */
+  private static function block_debug_exposure($config, $key = 'unknown')
   {
-    add_action('init', function () {
+    add_action('init', function () use ($key) {
       // If we are on a page that is NOT an admin page, and some error happens, 
       // we might want to handle it. 
       // For the probe, we just want to signal enforcement.
       if (!headers_sent()) {
         header('X-VAPTC-Enforced: php-debug-exposure');
-        header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+        header('X-VAPTC-Feature: ' . $key);
+        header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
       }
 
       // Real world: we'd also trigger ini_set or filters here to suppress errors
@@ -341,12 +363,13 @@ class VAPTC_Hook_Driver
     });
 
     // Block access to debug.log if it exists
-    add_action('wp_loaded', function () {
+    add_action('wp_loaded', function () use ($key) {
       $uri = $_SERVER['REQUEST_URI'];
       if (strpos($uri, 'debug.log') !== false) {
         status_header(403);
         header('X-VAPTC-Enforced: php-debug-log-block');
-        header('Access-Control-Expose-Headers: X-VAPTC-Enforced');
+        header('X-VAPTC-Feature: ' . $key);
+        header('Access-Control-Expose-Headers: X-VAPTC-Enforced, X-VAPTC-Feature');
         wp_die('VAPTC: Access to debug.log is Blocked for Security.');
       }
     });
@@ -355,15 +378,19 @@ class VAPTC_Hook_Driver
   /**
    * Add Security Headers via PHP
    */
-  private static function add_security_headers()
+  /**
+   * Add Security Headers via PHP
+   */
+  private static function add_security_headers($key = 'unknown')
   {
     // Use wp_headers for better compatibility with REST/Ajax
-    add_filter('wp_headers', function ($headers) {
+    add_filter('wp_headers', function ($headers) use ($key) {
       $headers['X-Frame-Options'] = 'SAMEORIGIN';
       $headers['X-Content-Type-Options'] = 'nosniff';
       $headers['X-XSS-Protection'] = '1; mode=block';
       $headers['X-VAPTC-Enforced'] = 'php-headers';
-      $headers['Access-Control-Expose-Headers'] = 'X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, X-VAPTC-Enforced';
+      $headers['X-VAPTC-Feature'] = $key;
+      $headers['Access-Control-Expose-Headers'] = 'X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, X-VAPTC-Enforced, X-VAPTC-Feature';
       return $headers;
     }, 999);
 
@@ -373,7 +400,8 @@ class VAPTC_Hook_Driver
       header('X-Content-Type-Options: nosniff');
       header('X-XSS-Protection: 1; mode=block');
       header('X-VAPTC-Enforced: php-headers');
-      header('Access-Control-Expose-Headers: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, X-VAPTC-Enforced');
+      header('X-VAPTC-Feature: ' . $key);
+      header('Access-Control-Expose-Headers: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, X-VAPTC-Enforced, X-VAPTC-Feature');
     }
   }
 }
