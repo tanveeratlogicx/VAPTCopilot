@@ -103,6 +103,18 @@ class VAPTC_REST
       'permission_callback' => array($this, 'check_permission'),
     ));
 
+    register_rest_route('vaptc/v1', '/domains/delete', array(
+      'methods'  => 'DELETE',
+      'callback' => array($this, 'delete_domain'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
+
+    register_rest_route('vaptc/v1', '/domains/batch-delete', array(
+      'methods'  => 'POST',
+      'callback' => array($this, 'batch_delete_domains'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
+
     register_rest_route('vaptc/v1', '/build/generate', array(
       'methods'  => 'POST',
       'callback' => array($this, 'generate_build'),
@@ -706,14 +718,46 @@ class VAPTC_REST
     $auto_renew = $request->get_param('auto_renew') !== null ? ($request->get_param('auto_renew') ? 1 : 0) : null;
     $action = $request->get_param('action'); // 'undo' or 'reset' or null
 
+    $id = $request->get_param('id');
     // Get current state
-    $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);
+    if ($id) {
+      $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE id = %d", $id), ARRAY_A);
+      if ($current && !$domain) $domain = $current['domain'];
+    } else {
+      $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);
+    }
+
     $history = $current && !empty($current['renewal_history']) ? json_decode($current['renewal_history'], true) : array();
 
     // Preserve existing values if not provided
     $renewals_count = $request->has_param('renewals_count') ? (int) $request->get_param('renewals_count') : ($current ? (int)$current['renewals_count'] : 0);
     if ($auto_renew === null && $current) $auto_renew = (int)$current['auto_renew'];
-    if ($is_wildcard === null && $current) $is_wildcard = (int)$current['is_wildcard'];
+
+    // Robust Boolean Casting for is_wildcard
+    if ($request->has_param('is_wildcard')) {
+      $val = $request->get_param('is_wildcard');
+      if (is_string($val)) {
+        $is_wildcard = ($val === 'true' || $val === '1');
+      } else {
+        $is_wildcard = (bool)$val;
+      }
+    } else if ($current) {
+      $is_wildcard = (int)$current['is_wildcard'];
+    }
+
+    // Robust Boolean Casting for is_enabled
+    if ($request->has_param('is_enabled')) {
+      $val = $request->get_param('is_enabled');
+      if (is_string($val)) {
+        $is_enabled = ($val === 'true' || $val === '1');
+      } else {
+        $is_enabled = (bool)$val;
+      }
+    } else if ($current) {
+      $is_enabled = (int)$current['is_enabled'];
+    } else {
+      $is_enabled = 1; // Default to enabled
+    }
     if ($license_id === null && $current) $license_id = $current['license_id'];
     if ($manual_expiry_date === null && $current) $manual_expiry_date = $current['manual_expiry_date'];
 
@@ -797,12 +841,51 @@ class VAPTC_REST
       }
     }
 
-    VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $license_id, $license_type, $manual_expiry_date, $auto_renew, $renewals_count, $history);
+    error_log('VAPTC: REST Triggering Domain Update. Params: ' . json_encode(array(
+      'id' => $id,
+      'domain' => $domain,
+      'is_wildcard' => $is_wildcard
+    )));
 
-    // Return fresh data for UI update
-    $fresh = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);
+    $result_id = VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $is_enabled ? 1 : 0, $id, $license_id, $license_type, $manual_expiry_date, $auto_renew, $renewals_count, $history);
+
+    if ($result_id === false) {
+      error_log('VAPTC: REST Update Failed. DB returned false.');
+      return new WP_REST_Response(array('error' => 'Database update failed'), 500);
+    }
+
+    error_log('VAPTC: REST Update Success. New/Updated ID: ' . $result_id);
+
+    // Return fresh data for UI update using the return ID
+    $fresh = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE id = %d", $result_id), ARRAY_A);
+
+    if (!$fresh) {
+      error_log('VAPTC: Query for fresh data failed for ID: ' . $result_id);
+    }
 
     return new WP_REST_Response(array('success' => true, 'domain' => $fresh), 200);
+  }
+
+  public function delete_domain($request)
+  {
+    $domain_id = $request->get_param('id');
+    if (!$domain_id) {
+      return new WP_REST_Response(array('error' => 'Missing domain ID'), 400);
+    }
+
+    VAPTC_DB::delete_domain($domain_id);
+    return new WP_REST_Response(array('success' => true), 200);
+  }
+
+  public function batch_delete_domains($request)
+  {
+    $ids = $request->get_param('ids');
+    if (!$ids || !is_array($ids)) {
+      return new WP_REST_Response(array('error' => 'Missing or invalid domain IDs'), 400);
+    }
+
+    VAPTC_DB::batch_delete_domains($ids);
+    return new WP_REST_Response(array('success' => true), 200);
   }
 
   public function update_domain_features($request)

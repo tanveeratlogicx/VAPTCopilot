@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 2.3.0
+ * Version: 2.3.2
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin Constants (Copilot-specific)
-define('VAPTC_VERSION', '2.2.1');
+define('VAPTC_VERSION', '2.4.0');
 define('VAPTC_PATH', plugin_dir_path(__FILE__));
 define('VAPTC_URL', plugin_dir_url(__FILE__));
 define('VAPTC_SUPERADMIN_EMAIL', 'tanmalik786@gmail.com');
@@ -72,6 +72,7 @@ function vaptc_copilot_activate_plugin()
         auto_renew TINYINT(1) DEFAULT 0,
         renewals_count INT DEFAULT 0,
         renewal_history TEXT DEFAULT NULL,
+        is_enabled TINYINT(1) DEFAULT 1,
         PRIMARY KEY  (id),
         UNIQUE KEY domain (domain)
     ) $charset_collate;";
@@ -225,7 +226,26 @@ if (! function_exists('vaptc_manual_db_fix')) {
         $wpdb->query("ALTER TABLE $meta_table ADD COLUMN include_verification_engine TINYINT(1) DEFAULT 0");
       }
 
-      $msg = "Database schema updated (History Table + assigned_to + is_enforced + Status Enum + Manual Expiry + Generated Schema + Implementation Data).";
+      $col_enabled = $wpdb->get_results("SHOW COLUMNS FROM $table LIKE 'is_enabled'");
+      if (empty($col_enabled)) {
+        $wpdb->query("ALTER TABLE $table ADD COLUMN is_enabled TINYINT(1) DEFAULT 1");
+      }
+
+      $col_id = $wpdb->get_results("SHOW COLUMNS FROM $table LIKE 'id'");
+      if (empty($col_id)) {
+        // Drop existing PK (likely 'domain') to add 'id' as the new PK
+        $wpdb->query("ALTER TABLE $table DROP PRIMARY KEY");
+        $wpdb->query("ALTER TABLE $table ADD COLUMN id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id)");
+      } else {
+        // Ensure 'id' is the Primary Key even if it exists
+        $pk_check = $wpdb->get_row("SHOW KEYS FROM $table WHERE Key_name = 'PRIMARY'");
+        if (!$pk_check || $pk_check->Column_name !== 'id') {
+          $wpdb->query("ALTER TABLE $table DROP PRIMARY KEY");
+          $wpdb->query("ALTER TABLE $table MODIFY COLUMN id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (id)");
+        }
+      }
+
+      $msg = "Database schema updated (History Table + assigned_to + is_enforced + Status Enum + Manual Expiry + Generated Schema + Implementation Data + Domain Enabled + Robust ID column).";
 
       wp_die("<h1>VAPT Copilot Database Updated</h1><p>Schema refresh run. $msg</p><p>Please go back to the dashboard.</p>");
     }
@@ -767,6 +787,7 @@ function vaptc_enqueue_admin_assets($hook)
     wp_localize_script('vaptc-admin-js', 'vaptmSettings', array(
       'root' => esc_url_raw(rest_url()),
       'nonce' => wp_create_nonce('wp_rest'),
+      'isSuper' => $is_superadmin,
       'pluginVersion' => VAPTC_VERSION
     ));
   }

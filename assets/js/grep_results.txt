@@ -1,0 +1,47 @@
+250:        (selectedDomains || []).length > 0 && el(Button, {
+253:            const count = (selectedDomains || []).length;
+270:              checked: (domains || []).length > 0 && (selectedDomains || []).length === (domains || []).length,
+271:              indeterminate: (selectedDomains || []).length > 0 && (selectedDomains || []).length < (domains || []).length,
+328:          el('td', null, `${(d.features || []).length} ${__('Features', 'vapt-Copilot')}`),
+427:            isPrimary: statusFilters.length !== 3,
+428:            variant: statusFilters.length === 3 ? 'secondary' : 'primary',
+430:              if (statusFilters.length === 3) setStatusFilters([]);
+437:              boxShadow: statusFilters.length !== 3 ? '0 2px 4px rgba(34, 113, 177, 0.2)' : 'none'
+439:          }, statusFilters.length === 3 ? __('Clear All Filters', 'vapt-Copilot') : __('Select All Statuses', 'vapt-Copilot')),
+450:              else if (statusFilters.length > 1) setStatusFilters(statusFilters.filter(v => v !== opt.value));
+489:                el('span', { style: { fontSize: '10px', padding: '2px 6px', borderRadius: '10px', background: activeCategory === 'all' ? '#dbeafe' : '#f1f5f9' } }, filteredByStatus.length)
+493:                const count = filteredByStatus.filter(f => (f.category || 'Uncategorized') === cat).length;
+531:            displayFeatures.length === 0 ? el('div', { style: { textAlign: 'center', padding: '40px', color: '#94a3b8' } }, __('No features matching the current selection.', 'vapt-Copilot')) :
+685:    const [selectedDomainId, setSelectedDomainId] = useState(domains.length > 0 ? domains[0].id : null);
+688:    const currentDomain = domains.find(d => d.id === parseInt(selectedDomainId)) || (domains.length > 0 ? domains[0] : null);
+876:      domains.length > 1 && el('div', { style: { marginBottom: '20px' } }, [
+1206:          if (Array.isArray(feature[contentField]) && feature[contentField].length === 0) isEmpty = true;
+1207:          if (typeof feature[contentField] === 'object' && feature[contentField] !== null && Object.keys(feature[contentField]).length === 0) isEmpty = true;
+1209:          if (contentField === 'generated_schema' && feature[contentField]?.controls?.length === 0) isEmpty = true;
+1254:      if (missingKeys.length > 0) {
+1263:    if (selectedCategories.length > 0) {
+1268:    if (selectedSeverities.length > 0) {
+1274:      total: processedFeatures.length,
+1275:      draft: processedFeatures.filter(f => f.status === 'Draft' || f.status === 'draft' || f.status === 'available').length,
+1276:      develop: processedFeatures.filter(f => f.status === 'Develop' || f.status === 'develop' || f.status === 'in_progress').length,
+1277:      test: processedFeatures.filter(f => f.status === 'Test' || f.status === 'test').length,
+1278:      release: processedFeatures.filter(f => f.status === 'Release' || f.status === 'release' || f.status === 'implemented').length
+1374:            disabled: loading || history.length === 0
+1378:          history.length === 0 ? el('p', null, __('No history recorded yet.', 'vapt-Copilot')) :
+1888:                      const hasManualSteps = includeGuidance && (protocol || checklist.length > 0 || schemaGuideItems.length > 0);
+1913:                          checklist.length > 0 && el('div', { id: 'vaptm-preview-col-checklist' }, [
+1923:                          schemaGuideItems.length > 0 && el(GeneratedInterface, {
+1933:                    includeGuidance && supportControls.length > 0 && el('div', {
+2258:              rows: Math.max(2, (formValues.note || '').split('\n').length),
+2287:                  transitioning.assurance_against && transitioning.assurance_against.length > 0 && [
+2294:                  transitioning.assurance && transitioning.assurance.length > 0 && [
+2301:                  transitioning.tests && transitioning.tests.length > 0 && [
+2308:                  transitioning.evidence && transitioning.evidence.length > 0 && [
+2315:                  transitioning.schema_hints && transitioning.schema_hints.fields && transitioning.schema_hints.fields.length > 0 && [
+2446:                const half = Math.ceil(availableFields.length / 2);
+2534:                    el('span', { style: { fontSize: '11px', color: '#949494' } }, sprintf(__('%d Columns active, %d Available', 'vapt-Copilot'), activeFields.length, availableFields.length)),
+2583:                onChange: (e) => e.target.files.length > 0 && onUpload(e.target.files[0]),
+2674:              }, selectedCategories.length === 0 ? __('All Categories', 'vapt-Copilot') : sprintf(__('%d Selected', 'vapt-Copilot'), selectedCategories.length)),
+2678:                  checked: selectedCategories.length === 0,
+2828:                    const risk = (f.assurance_against && f.assurance_against.length > 0) ? f.assurance_against[0] : __('identified risks', 'vapt-Copilot');
+3094:        setSaveStatus({ message: sprintf(__('%d domains deleted', 'vapt-Copilot'), ids.length), type: 'success' });

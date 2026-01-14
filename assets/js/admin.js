@@ -7,7 +7,7 @@ window.vaptmScriptLoaded = true;
     return;
   }
 
-  const { render, useState, useEffect, Fragment, createElement: el } = wp.element || {};
+  const { render, useState, useEffect, useMemo, Fragment, createElement: el } = wp.element || {};
   const {
     TabPanel, Panel, PanelBody, PanelRow, Button, Dashicon,
     ToggleControl, SelectControl, Modal, TextControl, Spinner,
@@ -126,58 +126,482 @@ window.vaptmScriptLoaded = true;
     ]);
   };
 
-  const DomainFeatures = ({ domains, features, isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain }) => {
+  const DomainFeatures = ({ domains = [], features = [], isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain, deleteDomain, batchDeleteDomains, setConfirmState, selectedDomains = [], setSelectedDomains }) => {
     const [newDomain, setNewDomain] = useState('');
+    const [isWildcardNew, setIsWildcardNew] = useState(false);
+    const [activeCategory, setActiveCategory] = useState('all');
+    const [statusFilters, setStatusFilters] = useState(['release']);
+    const [sortConfig, setSortConfig] = useState({ key: 'domain', direction: 'asc' });
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [editDomainData, setEditDomainData] = useState({ id: '', domain: '', is_wildcard: false, is_enabled: true });
+
+    const toggleDomainSelection = (id) => {
+      const current = selectedDomains || [];
+      if (current.includes(id)) {
+        setSelectedDomains(current.filter(i => i !== id));
+      } else {
+        setSelectedDomains([...current, id]);
+      }
+    };
+
+    const sortedDomains = useMemo(() => {
+      const sortable = [...(domains || [])];
+      if (sortConfig.key !== null) {
+        sortable.sort((a, b) => {
+          let valA = a[sortConfig.key];
+          let valB = b[sortConfig.key];
+
+          // Special handling for domain types (Wildcard vs Standard)
+          if (sortConfig.key === 'is_wildcard') {
+            valA = (valA === '1' || valA === true || valA === 1) ? 1 : 0;
+            valB = (valB === '1' || valB === true || valB === 1) ? 1 : 0;
+          }
+
+          if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+          if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      return sortable;
+    }, [domains, sortConfig]);
+
+    const requestSort = (key) => {
+      let direction = 'asc';
+      if (sortConfig.key === key && sortConfig.direction === 'asc') {
+        direction = 'desc';
+      }
+      setSortConfig({ key, direction });
+    };
+
+    const SortIndicator = ({ column }) => {
+      if (sortConfig.key !== column) return el(Dashicon, { icon: 'sort', size: 14, style: { opacity: 0.3, marginLeft: '5px' } });
+      return el(Dashicon, {
+        icon: sortConfig.direction === 'asc' ? 'arrow-up-alt2' : 'arrow-down-alt2',
+        size: 14,
+        style: { marginLeft: '5px', color: '#2271b1' }
+      });
+    };
+
+    const filteredByStatus = useMemo(() => {
+      return (features || []).filter(f => {
+        const s = f.status ? f.status.toLowerCase() : '';
+        const normalized = (s === 'implemented') ? 'release' : s;
+        return (statusFilters || []).includes(normalized);
+      });
+    }, [features, statusFilters]);
+
+    const categories = useMemo(() => {
+      const cats = [...new Set(filteredByStatus.map(f => f.category || 'Uncategorized'))].sort();
+      return cats;
+    }, [filteredByStatus]);
+
+    const displayFeatures = useMemo(() => {
+      const filtered = filteredByStatus || [];
+      if (activeCategory === 'all') return filtered;
+      return filtered.filter(f => (f.category || 'Uncategorized') === activeCategory);
+    }, [filteredByStatus, activeCategory]);
 
     return el(PanelBody, { title: __('Domain Specific Features', 'vapt-Copilot'), initialOpen: true }, [
-      el('div', { key: 'add-domain', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'flex-end' } }, [
-        el(TextControl, {
-          label: __('Add New Domain', 'vapt-Copilot'),
-          value: newDomain,
-          onChange: (val) => setNewDomain(val),
-          placeholder: 'example.com'
-        }),
+      el('div', { key: 'add-domain-header', style: { padding: '0 0 10px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' } }, __('Add New Domain')),
+      el('div', {
+        key: 'add-domain-row',
+        style: {
+          marginBottom: '20px',
+          display: 'flex',
+          gap: '15px',
+          alignItems: 'center',
+          background: '#f8fafc',
+          padding: '15px',
+          borderRadius: '8px',
+          border: '1px solid #e2e8f0'
+        }
+      }, [
+        el('div', { style: { flex: 1 } }, [
+          el(TextControl, {
+            label: __('Domain Name', 'vapt-Copilot'),
+            value: newDomain,
+            onChange: (val) => setNewDomain(val),
+            placeholder: 'example.com',
+            __nextHasNoMarginBottom: true
+          })
+        ]),
+        el('div', { style: { minWidth: '150px' } }, [
+          el(SelectControl, {
+            label: __('Type', 'vapt-Copilot'),
+            value: isWildcardNew ? 'wildcard' : 'standard',
+            options: [
+              { label: __('Standard', 'vapt-Copilot'), value: 'standard' },
+              { label: __('Wildcard (*.domain)', 'vapt-Copilot'), value: 'wildcard' }
+            ],
+            onChange: (val) => setIsWildcardNew(val === 'wildcard'),
+            __nextHasNoMarginBottom: true
+          })
+        ]),
         el(Button, {
           isPrimary: true,
-          onClick: () => { addDomain(newDomain); setNewDomain(''); }
-        }, __('Add Domain', 'vapt-Copilot'))
+          onClick: () => {
+            const domain = (newDomain || '').trim();
+            if (!domain) return;
+            console.log('Adding domain:', domain, 'isWildcard:', isWildcardNew);
+            addDomain(domain, isWildcardNew);
+            setNewDomain('');
+            setIsWildcardNew(false);
+          },
+          style: { alignSelf: 'flex-end', height: '32px' }
+        }, __('Add Domain', 'vapt-Copilot')),
+        (selectedDomains || []).length > 0 && el(Button, {
+          isDestructive: true,
+          onClick: () => {
+            const count = (selectedDomains || []).length;
+            setConfirmState({
+              message: sprintf(__('Are you sure you want to delete %d selected domains?', 'vapt-Copilot'), count),
+              onConfirm: () => {
+                batchDeleteDomains(selectedDomains);
+                setConfirmState(null);
+              },
+              isDestructive: true
+            });
+          },
+          style: { alignSelf: 'flex-end', height: '32px', marginLeft: 'auto' }
+        }, __('Delete Selected', 'vapt-Copilot'))
       ]),
       el('table', { key: 'table', className: 'wp-list-table widefat fixed striped' }, [
         el('thead', null, el('tr', null, [
-          el('th', null, __('Domain', 'vapt-Copilot')),
-          el('th', null, __('Type', 'vapt-Copilot')),
+          el('th', { style: { width: '40px' } }, el('div', { style: { display: 'flex', alignItems: 'center', gap: '4px' } }, [
+            el(CheckboxControl, {
+              checked: (domains || []).length > 0 && (selectedDomains || []).length === (domains || []).length,
+              indeterminate: (selectedDomains || []).length > 0 && (selectedDomains || []).length < (domains || []).length,
+              onChange: (val) => setSelectedDomains(val ? (domains || []).map(d => d.id) : []),
+              __nextHasNoMarginBottom: true
+            }),
+            el('span', { style: { fontSize: '10px', opacity: 0.6, fontWeight: 600, whiteSpace: 'nowrap' } }, __('ALL', 'vapt-Copilot'))
+          ])),
+          el('th', {
+            style: { cursor: 'pointer', userSelect: 'none' },
+            onClick: () => requestSort('domain')
+          }, [
+            __('Domain', 'vapt-Copilot'),
+            el(SortIndicator, { column: 'domain' })
+          ]),
+          el('th', { style: { width: '100px' } }, __('Status', 'vapt-Copilot')),
+          el('th', {
+            style: { width: '180px', cursor: 'pointer', userSelect: 'none' },
+            onClick: () => requestSort('is_wildcard')
+          }, [
+            __('Type', 'vapt-Copilot'),
+            el(SortIndicator, { column: 'is_wildcard' })
+          ]),
           el('th', null, __('Features Enabled', 'vapt-Copilot')),
-          el('th', null, __('Actions', 'vapt-Copilot')),
+          el('th', { style: { width: '220px' } }, __('Actions', 'vapt-Copilot'))
         ])),
-        el('tbody', null, domains.map((d) => el('tr', { key: d.id }, [
+        el('tbody', null, sortedDomains.map((d) => el('tr', { key: d.id }, [
+          el('td', null, el(CheckboxControl, {
+            checked: (selectedDomains || []).includes(d.id),
+            onChange: () => toggleDomainSelection(d.id),
+            __nextHasNoMarginBottom: true
+          })),
           el('td', null, el('strong', null, d.domain)),
-          el('td', null, d.is_wildcard ? __('Wildcard', 'vapt-Copilot') : __('Standard', 'vapt-Copilot')),
-          el('td', null, `${d.features.length} ${__('Features', 'vapt-Copilot')}`),
           el('td', null, el(Button, {
-            isSecondary: true,
-            onClick: () => { setSelectedDomain(d); setDomainModalOpen(true); }
-          }, __('Manage Features', 'vapt-Copilot')))
+            isLink: true,
+            onClick: () => {
+              const currentEnabled = !(d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0);
+              addDomain(d.domain, (d.is_wildcard === '1' || d.is_wildcard === true || d.is_wildcard === 1), !currentEnabled, d.id);
+            },
+            style: { color: (d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0) ? '#d63638' : '#00a32a', fontWeight: 600, textDecoration: 'none' },
+            title: __('Click to toggle domain status', 'vapt-Copilot')
+          }, [
+            el(Dashicon, { icon: (d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0) ? 'hidden' : 'visibility', size: 16, style: { marginRight: '4px' } }),
+            (d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0) ? __('Disabled', 'vapt-Copilot') : __('Active', 'vapt-Copilot')
+          ])),
+          el('td', null, el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+            el(Button, {
+              isLink: true,
+              onClick: (e) => {
+                e.preventDefault();
+                const currentWildcard = (d.is_wildcard === '1' || d.is_wildcard === true || d.is_wildcard === 1);
+                const nextWildcard = !currentWildcard;
+                addDomain(d.domain, nextWildcard, !(d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0), d.id);
+              },
+              style: { textDecoration: 'none', color: (d.is_wildcard === '1' || d.is_wildcard === true || d.is_wildcard === 1) ? '#2271b1' : '#64748b', fontWeight: 600 },
+              title: __('Click to toggle domain type', 'vapt-Copilot')
+            }, (d.is_wildcard === '1' || d.is_wildcard === true || d.is_wildcard === 1) ? __('Wildcard', 'vapt-Copilot') : __('Standard', 'vapt-Copilot')),
+            el(Dashicon, { icon: 'update', size: 14, style: { opacity: 0.5 } })
+          ])),
+          el('td', null, `${(Array.isArray(d.features) ? d.features.length : 0)} ${__('Features', 'vapt-Copilot')}`),
+          el('td', null, el('div', { style: { display: 'flex', gap: '8px' } }, [
+            el(Button, {
+              isSecondary: true,
+              isSmall: true,
+              onClick: () => {
+                setEditDomainData({
+                  id: d.id,
+                  domain: d.domain,
+                  is_wildcard: (d.is_wildcard === '1' || d.is_wildcard === true || d.is_wildcard === 1),
+                  is_enabled: !(d.is_enabled === '0' || d.is_enabled === false || d.is_enabled === 0)
+                });
+                setEditModalOpen(true);
+              }
+            }, __('Edit', 'vapt-Copilot')),
+            el(Button, {
+              isSecondary: true,
+              isSmall: true,
+              onClick: () => { setSelectedDomain(d); setDomainModalOpen(true); }
+            }, __('Manage Features', 'vapt-Copilot')),
+            el(Button, {
+              isDestructive: true,
+              isSmall: true,
+              onClick: () => {
+                setConfirmState({
+                  message: sprintf(__('Are you sure you want to delete the domain "%s"? This action cannot be undone.', 'vapt-Copilot'), d.domain),
+                  onConfirm: () => {
+                    deleteDomain(d.id);
+                    setConfirmState(null);
+                  },
+                  isDestructive: true
+                });
+              }
+            }, __('Delete', 'vapt-Copilot'))
+          ]))
         ])))
+      ]),
+
+      // Edit Domain Modal
+      isEditModalOpen && el(Modal, {
+        title: __('Edit Domain Settings', 'vapt-Copilot'),
+        onRequestClose: () => setEditModalOpen(false),
+        style: { maxWidth: '500px' }
+      }, [
+        el('div', { style: { padding: '10px 0' } }, [
+          el(TextControl, {
+            label: __('Domain Name', 'vapt-Copilot'),
+            value: editDomainData.domain,
+            onChange: (val) => setEditDomainData({ ...editDomainData, domain: val })
+          }),
+          el(SelectControl, {
+            label: __('Type', 'vapt-Copilot'),
+            value: editDomainData.is_wildcard ? 'wildcard' : 'standard',
+            options: [
+              { label: __('Standard', 'vapt-Copilot'), value: 'standard' },
+              { label: __('Wildcard (*.domain)', 'vapt-Copilot'), value: 'wildcard' }
+            ],
+            onChange: (val) => setEditDomainData({ ...editDomainData, is_wildcard: val === 'wildcard' })
+          }),
+          el(ToggleControl, {
+            label: __('Enabled', 'vapt-Copilot'),
+            checked: editDomainData.is_enabled,
+            onChange: (val) => setEditDomainData({ ...editDomainData, is_enabled: val }),
+            help: __('Enable or disable all VAPT features for this domain.', 'vapt-Copilot')
+          }),
+          el('div', { style: { marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' } }, [
+            el(Button, { isSecondary: true, onClick: () => setEditModalOpen(false) }, __('Cancel', 'vapt-Copilot')),
+            el(Button, {
+              isPrimary: true,
+              onClick: () => {
+                addDomain(editDomainData.domain, editDomainData.is_wildcard, editDomainData.is_enabled, editDomainData.id);
+                setEditModalOpen(false);
+              }
+            }, __('Update Domain', 'vapt-Copilot'))
+          ])
+        ])
       ]),
       isDomainModalOpen && selectedDomain && el(Modal, {
         key: 'modal',
         title: sprintf(__('Features for %s', 'vapt-Copilot'), selectedDomain.domain),
-        onRequestClose: () => setDomainModalOpen(false)
+        onRequestClose: () => setDomainModalOpen(false),
+        className: 'vaptm-domain-features-modal',
+        style: { maxWidth: '1000px', width: '90%' }
       }, [
-        el('p', null, __('Select features to enable for this domain. Only "Published" features are available.', 'vapt-Copilot')),
-        el('div', { className: 'vaptm-feature-grid' }, features.filter(f => ['implemented', 'release'].includes(f.status.toLowerCase())).map(f => el(ToggleControl, {
-          key: f.key,
-          label: f.label,
-          help: f.description,
-          checked: selectedDomain.features.includes(f.key),
-          onChange: (val) => {
-            const newFeats = val
-              ? [...selectedDomain.features, f.key]
-              : selectedDomain.features.filter(k => k !== f.key);
-            updateDomainFeatures(selectedDomain.id, newFeats);
-            setSelectedDomain({ ...selectedDomain, features: newFeats });
+        // Status Visibility Filters (Superadmin Only)
+        isSuper && el('div', {
+          style: {
+            marginBottom: '20px',
+            padding: '12px 20px',
+            background: '#f8fafc',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px'
           }
-        }))),
+        }, [
+          el('span', { style: { fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' } }, __('Status Visibility:')),
+          el(Button, {
+            isPrimary: (statusFilters || []).length !== 3,
+            variant: (statusFilters || []).length === 3 ? 'secondary' : 'primary',
+            onClick: () => {
+              if ((statusFilters || []).length === 3) setStatusFilters([]);
+              else setStatusFilters(['develop', 'test', 'release']);
+            },
+            style: {
+              fontWeight: 700,
+              padding: '8px 20px',
+              height: 'auto',
+              boxShadow: (statusFilters || []).length !== 3 ? '0 2px 4px rgba(34, 113, 177, 0.2)' : 'none'
+            }
+          }, (statusFilters || []).length === 3 ? __('Clear All Filters', 'vapt-Copilot') : __('Select All Statuses', 'vapt-Copilot')),
+          el('div', { style: { display: 'flex', gap: '15px', paddingLeft: '20px', borderLeft: '2px solid #e2e8f0' } }, [
+            { label: __('Develop', 'vapt-Copilot'), value: 'develop' },
+            { label: __('Test', 'vapt-Copilot'), value: 'test' },
+            { label: __('Release', 'vapt-Copilot'), value: 'release' }
+          ].filter(o => o.value).map(opt => el(CheckboxControl, {
+            key: opt.value,
+            label: opt.label,
+            checked: statusFilters.includes(opt.value),
+            onChange: (val) => {
+              if (val) setStatusFilters([...statusFilters, opt.value]);
+              else if ((statusFilters || []).length > 1) setStatusFilters(statusFilters.filter(v => v !== opt.value));
+            },
+            __nextHasNoMarginBottom: true
+          })))
+        ]),
+
+        el('div', { style: { display: 'flex', gap: '0', height: '60vh', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' } }, [
+          // Left Sidebar: Categories
+          el('aside', {
+            style: {
+              width: '240px',
+              flexShrink: 0,
+              background: '#fcfcfd',
+              borderRight: '1px solid #e2e8f0',
+              padding: '20px 0',
+              overflowY: 'auto'
+            }
+          }, [
+            el('div', { style: { padding: '0 20px 10px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' } }, __('Feature Categories')),
+            el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
+              // All Categories Link
+              el('a', {
+                href: '#',
+                onClick: (e) => { e.preventDefault(); setActiveCategory('all'); },
+                className: 'vaptm-sidebar-link' + (activeCategory === 'all' ? ' is-active' : ''),
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '10px 20px',
+                  textDecoration: 'none',
+                  color: activeCategory === 'all' ? '#2271b1' : '#64748b',
+                  background: activeCategory === 'all' ? '#eff6ff' : 'transparent',
+                  fontWeight: activeCategory === 'all' ? 600 : 500,
+                  fontSize: '13px',
+                  borderRight: activeCategory === 'all' ? '3px solid #2271b1' : 'none'
+                }
+              }, [
+                el('span', null, __('All Categories', 'vapt-Copilot')),
+                el('span', { style: { fontSize: '10px', padding: '2px 6px', borderRadius: '10px', background: activeCategory === 'all' ? '#dbeafe' : '#f1f5f9' } }, (Array.isArray(filteredByStatus) ? filteredByStatus : []).length)
+              ]),
+              // Category Links
+              ...categories.map(cat => {
+                const count = (Array.isArray(filteredByStatus) ? filteredByStatus : []).filter(f => (f.category || 'Uncategorized') === cat).length;
+                const isActive = activeCategory === cat;
+                return el('a', {
+                  key: cat,
+                  href: '#',
+                  onClick: (e) => { e.preventDefault(); setActiveCategory(cat); },
+                  className: 'vaptm-sidebar-link' + (isActive ? ' is-active' : ''),
+                  style: {
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '10px 20px',
+                    textDecoration: 'none',
+                    color: isActive ? '#2271b1' : '#64748b',
+                    background: isActive ? '#eff6ff' : 'transparent',
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: '13px',
+                    borderRight: isActive ? '3px solid #2271b1' : 'none',
+                    whiteSpace: 'nowrap',
+                    overflow: 'visible'
+                  }
+                }, [
+                  el('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis' } }, cat),
+                  el('span', { style: { fontSize: '10px', padding: '2px 6px', borderRadius: '10px', background: isActive ? '#dbeafe' : '#f1f5f9', marginLeft: '8px', flexShrink: 0 } }, count)
+                ]);
+              })
+            ])
+          ]),
+
+          // Main Content: Feature Cards
+          el('div', {
+            style: {
+              flexGrow: 1,
+              padding: '25px',
+              background: '#fff',
+              overflowY: 'auto'
+            }
+          }, [
+            ((Array.isArray(displayFeatures) ? displayFeatures : []).length === 0) ? el('div', { style: { textAlign: 'center', padding: '40px', color: '#94a3b8' } }, __('No features matching the current selection.', 'vapt-Copilot')) :
+              el('div', {
+                style: {
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '20px'
+                }
+              }, (Array.isArray(displayFeatures) ? displayFeatures : []).map(f => el('div', {
+                key: f.key,
+                className: 'vaptm-domain-feature-card',
+                style: {
+                  padding: '20px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  background: '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                }
+              }, [
+                el('div', { style: { marginBottom: '20px' } }, [
+                  el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' } }, [
+                    el('h4', { style: { margin: 0, fontSize: '16px', fontWeight: 700, color: '#1e293b' } }, f.label),
+                    el('span', {
+                      className: `vaptm-status-pill status-${(f.status || '').toLowerCase()}`,
+                      style: {
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        background: (f.status === 'Develop' || f.status === 'develop') ? '#fee2e2' :
+                          (f.status === 'Test' || f.status === 'test') ? '#dbeafe' :
+                            (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#dcfce7' : '#f1f5f9',
+                        color: (f.status === 'Develop' || f.status === 'develop') ? '#b91c1c' :
+                          (f.status === 'Test' || f.status === 'test') ? '#1d4ed8' :
+                            (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#15803d' : '#64748b',
+                        border: '1px solid currentColor',
+                        borderOpacity: 0.1
+                      }
+                    }, f.status)
+                  ]),
+                  el('p', { style: { margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' } }, f.description)
+                ]),
+                el('div', {
+                  style: {
+                    marginTop: 'auto',
+                    paddingTop: '15px',
+                    borderTop: '1px solid #f1f5f9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }
+                }, [
+                  el('span', { style: { fontSize: '12px', fontWeight: 600, color: '#475569' } }, (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key) ? __('Active', 'vapt-Copilot') : __('Disabled', 'vapt-Copilot')),
+                  el(ToggleControl, {
+                    checked: (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key),
+                    onChange: (val) => {
+                      const newFeats = val
+                        ? [...(Array.isArray(selectedDomain.features) ? selectedDomain.features : []), f.key]
+                        : (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).filter(k => k !== f.key);
+                      updateDomainFeatures(selectedDomain.id, newFeats);
+                      setSelectedDomain({ ...selectedDomain, features: newFeats });
+                    },
+                    __nextHasNoMarginBottom: true,
+                    style: { margin: 0 }
+                  })
+                ])
+              ])))
+          ])
+        ]),
         el('div', { style: { marginTop: '20px', textAlign: 'right' } }, el(Button, {
           isPrimary: true,
           onClick: () => setDomainModalOpen(false)
@@ -198,26 +622,39 @@ window.vaptmScriptLoaded = true;
     const [downloadUrl, setDownloadUrl] = useState(null);
 
     const runBuild = () => {
+      if (!buildDomain) {
+        setAlertState({ message: __('Please select a target domain.', 'vapt-Copilot'), type: 'error' });
+        return;
+      }
       setGenerating(true);
       setDownloadUrl(null);
-      const selectedDomain = domains.find(d => d.domain === buildDomain);
-      const buildFeatures = selectedDomain ? selectedDomain.features : features.filter(f => f.status === 'implemented').map(f => f.key);
+      const selectedDomain = (Array.isArray(domains) ? domains : []).find(d => d.domain === buildDomain);
+      const buildFeatures = selectedDomain ? (Array.isArray(selectedDomain.features) ? selectedDomain.features : []) : (Array.isArray(features) ? features : []).filter(f => f.status === 'implemented').map(f => f.key);
 
       apiFetch({
         path: 'vaptc/v1/build/generate',
         method: 'POST',
         data: {
-          domain: buildDomain,
-          version: buildVersion,
+          domain: buildDomain.trim(),
+          version: buildVersion.trim(),
           features: buildFeatures,
-          white_label: whiteLabel
+          white_label: {
+            name: whiteLabel.name.trim(),
+            description: whiteLabel.description.trim(),
+            author: whiteLabel.author.trim()
+          }
         }
       }).then((res) => {
-        setDownloadUrl(res.download_url);
+        if (res && res.download_url) {
+          setDownloadUrl(res.download_url);
+          setAlertState({ message: __('Build generated successfully!', 'vapt-Copilot'), type: 'success' });
+        } else {
+          setAlertState({ message: __('Build failed: No download URL received.', 'vapt-Copilot'), type: 'error' });
+        }
         setGenerating(false);
-      }).catch(() => {
+      }).catch((error) => {
         setGenerating(false);
-        setAlertState({ message: __('Build failed!', 'vapt-Copilot') });
+        setAlertState({ message: __('Build failed! ' + (error.message || ''), 'vapt-Copilot'), type: 'error' });
       });
     };
 
@@ -229,30 +666,30 @@ window.vaptmScriptLoaded = true;
           options: [
             { label: __('--- Select Domain ---', 'vapt-Copilot'), value: '' },
             { label: __('Wildcard (Include All Implemented Features)', 'vapt-Copilot'), value: 'wildcard' },
-            ...domains.map(d => ({ label: d.domain, value: d.domain }))
+            ...(Array.isArray(domains) ? domains : []).map(d => ({ label: d.domain, value: d.domain }))
           ],
           onChange: (val) => setBuildDomain(val)
         }),
         el(TextControl, {
           label: __('Build Version', 'vapt-Copilot'),
           value: buildVersion,
-          onChange: (val) => setBuildVersion(val)
+          onChange: (val) => setBuildVersion(val.trim())
         }),
         el('h3', null, __('White Label Options', 'vapt-Copilot')),
         el(TextControl, {
           label: __('Plugin Name', 'vapt-Copilot'),
           value: whiteLabel.name,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val })
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val.trim() })
         }),
         el(TextControl, {
           label: __('Plugin Description', 'vapt-Copilot'),
           value: whiteLabel.description,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, description: val })
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, description: val.trim() })
         }),
         el(TextControl, {
           label: __('Author Name', 'vapt-Copilot'),
           value: whiteLabel.author,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val })
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val.trim() })
         }),
         el(Button, {
           isPrimary: true,
@@ -274,10 +711,13 @@ window.vaptmScriptLoaded = true;
 
   const LicenseManager = ({ domains, fetchData, isSuper, loading }) => {
     // Manage state for the selected domain (if multiple, allows switching)
-    const [selectedDomainId, setSelectedDomainId] = useState(domains.length > 0 ? domains[0].id : null);
+    const [selectedDomainId, setSelectedDomainId] = useState(() => (Array.isArray(domains) && domains.length > 0) ? domains[0].id : null);
 
     // Derived current domain object
-    const currentDomain = domains.find(d => d.id === parseInt(selectedDomainId)) || (domains.length > 0 ? domains[0] : null);
+    const currentDomain = useMemo(() => {
+      const doms = Array.isArray(domains) ? domains : [];
+      return doms.find(d => d.id === parseInt(selectedDomainId)) || (doms.length > 0 ? doms[0] : null);
+    }, [domains, selectedDomainId]);
 
     // Local Form State
     const [formState, setFormState] = useState({
@@ -465,7 +905,7 @@ window.vaptmScriptLoaded = true;
 
     return el(PanelBody, { title: __('License & Subscription Management', 'vapt-Copilot'), initialOpen: true }, [
       // Domain Selector (Only if multiple)
-      domains.length > 1 && el('div', { style: { marginBottom: '20px' } }, [
+      (Array.isArray(domains) && domains.length > 1) && el('div', { style: { marginBottom: '20px' } }, [
         el(SelectControl, {
           label: __('Select Domain to Manage', 'vapt-Copilot'),
           value: selectedDomainId,
@@ -2526,10 +2966,16 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
     const [saveStatus, setSaveStatus] = useState(null); // { message: '', type: 'info'|'success'|'error' }
     const [designPromptConfig, setDesignPromptConfig] = useState(null);
     const [isPromptConfigModalOpen, setIsPromptConfigModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(() => {
+      const validTabs = ['features', 'license', 'domains', 'build'];
+      const saved = localStorage.getItem('vaptm_active_tab');
+      return validTabs.includes(saved) ? saved : 'features';
+    });
 
     // New: Global UI States for Modals
     const [alertState, setAlertState] = useState(null);
     const [confirmState, setConfirmState] = useState(null);
+    const [selectedDomains, setSelectedDomains] = useState([]);
 
     // Status Auto-clear helper
     useEffect(() => {
@@ -2624,12 +3070,66 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
       });
     };
 
-    const addDomain = (domain, isWildcard = false) => {
-      apiFetch({
+    const addDomain = (domain, isWildcard = false, isEnabled = true, id = null) => {
+      // Optimistic Update for better UX
+      if (id) {
+        setDomains(prev => prev.map(d => d.id === id ? { ...d, domain, is_wildcard: isWildcard, is_enabled: isEnabled } : d));
+      }
+
+      // Explicitly pass values as booleans to avoid truthiness confusion on backend
+      return apiFetch({
         path: 'vaptc/v1/domains/update',
         method: 'POST',
-        data: { domain, is_wildcard: isWildcard }
+        data: {
+          id: id,
+          domain,
+          is_wildcard: Boolean(isWildcard),
+          is_enabled: Boolean(isEnabled)
+        }
+      }).then((res) => {
+        if (res.domain) {
+          setDomains(prev => {
+            const exists = prev.find(d => d.id === res.domain.id);
+            if (exists) {
+              return prev.map(d => d.id === res.domain.id ? res.domain : d);
+            } else {
+              return [...prev, res.domain];
+            }
+          });
+        }
+        setSaveStatus({ message: __('Domain updated successfully', 'vapt-Copilot'), type: 'success' });
+        fetchData();
+        return res;
+      }).catch(err => {
+        setSaveStatus({ message: __('Failed to update domain', 'vapt-Copilot'), type: 'error' });
+        fetchData(); // Rollback to server state
+        throw err;
+      });
+    };
+
+    const deleteDomain = (domainId) => {
+      apiFetch({
+        path: `vaptc/v1/domains/delete?id=${domainId}`,
+        method: 'DELETE'
       }).then(() => fetchData());
+    };
+
+    const batchDeleteDomains = (ids) => {
+      // Optimistic Delete
+      setDomains(prev => prev.filter(d => !ids.includes(d.id)));
+
+      return apiFetch({
+        path: 'vaptc/v1/domains/batch-delete',
+        method: 'POST',
+        data: { ids }
+      }).then(() => {
+        setSaveStatus({ message: sprintf(__('%d domains deleted', 'vapt-Copilot'), ids.length), type: 'success' });
+        setSelectedDomains([]);
+        fetchData();
+      }).catch(err => {
+        setSaveStatus({ message: __('Batch delete failed', 'vapt-Copilot'), type: 'error' });
+        fetchData(); // Rollback
+      });
     };
 
     const updateDomainFeatures = (domainId, updatedFeatures) => {
@@ -2744,7 +3244,7 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
     return el('div', { className: 'vaptm-admin-wrap' }, [
       el('h1', null, [
         __('VAPT Copilot Dashboard', 'vapt-Copilot'),
-        el('span', { style: { fontSize: '0.5em', marginLeft: '10px', color: '#666', fontWeight: 'normal' } }, `v${vaptmSettings.pluginVersion}`)
+        el('span', { style: { fontSize: '0.5em', marginLeft: '10px', color: '#666', fontWeight: 'normal' } }, `v${settings.pluginVersion}`)
       ]),
       saveStatus && el('div', {
         style: {
@@ -2765,6 +3265,12 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
       el(TabPanel, {
         className: 'vaptm-main-tabs',
         activeClass: 'is-active',
+        initialTabName: activeTab,
+        onSelect: (tabName) => {
+          const name = typeof tabName === 'string' ? tabName : tabName.name;
+          setActiveTab(name);
+          localStorage.setItem('vaptm_active_tab', name);
+        },
         tabs: tabs
       }, (tab) => {
         switch (tab.name) {
@@ -2790,7 +3296,7 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
             setIsPromptConfigModalOpen
           });
           case 'license': return el(LicenseManager, { domains, fetchData, isSuper, loading });
-          case 'domains': return el(DomainFeatures, { domains, features, isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain });
+          case 'domains': return el(DomainFeatures, { domains, features, isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain, deleteDomain, batchDeleteDomains, setConfirmState, selectedDomains, setSelectedDomains });
           case 'build': return el(BuildGenerator, { domains, features, setAlertState });
           default: return null;
         }

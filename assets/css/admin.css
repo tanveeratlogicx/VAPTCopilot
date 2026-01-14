@@ -323,3 +323,91 @@
 .vaptm-correction-controls button.is-link:not(.is-destructive) {
     color: #2271b1;
 }
+
+/* Domain Features UI Enhancements */
+.vaptm-domain-features-modal .components-modal__content {
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.vaptm-domain-features-modal .components-modal__header {
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 0 !important;
+    padding: 15px 25px !important;
+}
+
+.vaptm-sidebar-link {
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vaptm-sidebar-link:hover:not(.is-active) {
+    background: #f8fafc !important;
+    color: #334155 !important;
+}
+
+.vaptm-sidebar-link.is-active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #2271b1;
+}
+
+.vaptm-domain-feature-card {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vaptm-domain-feature-card:hover {
+    border-color: #2271b1 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.vaptm-status-pill {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.vaptm-status-pill.status-release,
+.vaptm-status-pill.status-implemented {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+}
+
+.vaptm-status-pill.status-test {
+    background: #fefce8 !important;
+    color: #854d0e !important;
+}
+
+.vaptm-status-pill.status-develop {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+}
+
+.vaptm-status-pill.status-draft {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+}
+
+/* Custom Scrollbars */
+.vaptm-domain-features-modal *::-webkit-scrollbar {
+    width: 8px;
+}
+
+.vaptm-domain-features-modal *::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.vaptm-domain-features-modal *::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+    border: 2px solid #f1f5f9;
+}
+
+.vaptm-domain-features-modal *::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
