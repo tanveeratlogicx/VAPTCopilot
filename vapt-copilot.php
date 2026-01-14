@@ -3,7 +3,7 @@
 /**
  * Plugin Name: VAPT Copilot
  * Description: Ultimate VAPT and OWASP Security Plugin Copilot.
- * Version: 2.2.1
+ * Version: 2.3.0
  * Author: Tan Malik
  * Text Domain: vapt-Copilot
  */
@@ -71,6 +71,7 @@ function vaptc_copilot_activate_plugin()
         manual_expiry_date DATETIME DEFAULT NULL,
         auto_renew TINYINT(1) DEFAULT 0,
         renewals_count INT DEFAULT 0,
+        renewal_history TEXT DEFAULT NULL,
         PRIMARY KEY  (id),
         UNIQUE KEY domain (domain)
     ) $charset_collate;";

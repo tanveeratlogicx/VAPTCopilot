@@ -36,14 +36,14 @@ Transform the "License Management" tab into a fully functional, 2-column interfa
 #### [MODIFY] [includes/class-vaptc-rest.php](file:///t:/~/Local925%20Sites/vaptbuilder/app/public/wp-content/plugins/VAPTCopilot/includes/class-vaptc-rest.php)
 - Update `update_domain` endpoint (`vaptc/v1/domains/update`):
     - **Refined Logic**:
-        - When `Auto Renew` is saved as `1` (true), check if `manual_expiry_date` < TODAY via `Y-m-d 00:00:00`. If so, extend it immediately by the duration and increment `renewals_count`. **[Logic Update]**: Push `{date: now, duration: D, license_type: T, source: 'auto'}` to `renewal_history`.
+        - When `Auto Renew` is saved as `1` (true), check if `manual_expiry_date` < TODAY via `Y-m-d 00:00:00`. If so, extend it immediately by the duration and increment `renewals_count`.
         - When `Manual Renew` is requested, calculate `new_expiry = current_expiry + duration`, ensuring 00:00:00 time. **[Logic Update]**: Push `{date: now, duration: D, license_type: T, source: 'manual'}` to `renewal_history`.
         - **Correction Logic**:
             - **Undo**: Pop last entry from `renewal_history`. Subtract `duration` from `manual_expiry_date`. Decrement `renewals_count`.
             - **Reset (Sequence Rollback)**: Iterate `renewal_history` **backwards**.
                 - Calculate `potential_expiry = current_expiry - duration`.
                 - If entry `source` is **'auto'**: **Stop/Break the sequence**.
-                - If `potential_expiry < TODAY**: **Stop/Break the sequence** (to avoid accidental expiration).
+                - If `potential_expiry < TODAY`: **Stop/Break the sequence** (to avoid accidental expiration).
                 - Otherwise: Subtract `duration` from `manual_expiry_date`, decrement `renewals_count`, and remove entry from history.
     - Ensure `first_activated_at` logic respects the DB layer's "preserve existing" rule.
 
@@ -52,8 +52,15 @@ Transform the "License Management" tab into a fully functional, 2-column interfa
 #### [MODIFY] [assets/js/admin.js](file:///t:/~/Local925%20Sites/vaptbuilder/app/public/wp-content/plugins/VAPTCopilot/assets/js/admin.js)
 - Replace `LicenseTab` component with a new `LicenseManager` component.
 - Implement a 2-column layout:
+        - Show description text based on license type.
+    - **UI Alignment**:
+        - Ensure both columns in `.vaptm-license-grid` are of equal height to create a balanced, premium look.
+
+> [!IMPORTANT]
+> **New Interactive Constraints**:
+> 1. **Manual Renew Button**: Must be **DISABLED** if the "Auto Renew" toggle is **ON**.
+> 2. **Update License Button**: Must be **DISABLED** by default and only blossom into an **ENABLED** state when **UNSAVED CHANGES** are detected on the panel (e.g., license type changed, date modified, or toggle flipped).
     - **Left - [License Status]**:
-        - Display "Current Type" (Badge).
         - **Display "First Activated: {Date}" text** (Moved to 2nd position). **[High Prominence]**
         - Display "Expiry Date" (Formatted Date).
         - Display "Terms Renewed" (Count). **[High Prominence]**
@@ -61,15 +68,20 @@ Transform the "License Management" tab into a fully functional, 2-column interfa
     - **Right - [Update License]**:
         - Form controls: License Type (Select), New Expiry (Date Picker), Auto Renew (Toggle).
         - Actions: "Update License" (Save), "Manual Renew" (Calculate new date & Save).
+        - Actions: "Update License" (Save), "Manual Renew" (Calculate new date & Save).
         - **AJAX**: Ensure hitting "Update License" immediately updates the left card without reload.
         - **Dynamic Form Logic**: changing "License Type" must immediately recalculate and display the corresponding "New Expiry Date" in the form input field.
         - **Correction Controls** `[NEW]`:
             - **Undo Last Renewal**: Button to decrease `renewals_count` by 1 and subtract one license duration from `manual_expiry_date`. Visible only if `renewals_count > 0`.
             - **Reset Renewals**: Button to trigger sequence rollback of consecutive manual renewals.
+            - **Confirmation**: Use `VAPTM_ConfirmModal` (React Component) for all destructive or rollback actions. Do NOT use standard JS `confirm()` alert boxes.
 - Add logic to calculate new expiry dates based on type:
     - Standard: +30 Days
     - Pro: +1 Year
     - Developer: Perpetual (No Expiry/ Far Future)
+- **Button Relocation**:
+    - Move "Undo Last" and "Reset Renewals" buttons next to the "Manual Renew" button.
+    - Style these secondary buttons as links or minimal text buttons to maintain a clean interface.
 - **Empty Domain State** `[UPDATED]`:
     - **[NEW]** If no domains exist, show an **"Initialize Workspace"** interface.
     - **[NEW]** Allow Superadmins to 1-click provision the current hostname with a Developer License.
@@ -95,7 +107,7 @@ Transform the "License Management" tab into a fully functional, 2-column interfa
     - Verify Expiry becomes X + 30 days and "Terms Renewed" increments.
 5.  **Correction Controls**:
     - Click **"Undo Last Renewal"**. Verify Expiry becomes (Previous - 30 days) and Terms Renewed decrements.
-    - Click **"Reset Renewals"**. Verify it rolls back only consecutive manual renewals and stops at the first auto-renewal (if one was triggered) OR if the resulting date would be in the past.
+    - Click **"Reset Renewals"**. Verify Terms Renewed becomes 0.
 6.  **Auto Renew Toggle**: Toggle "Auto Renew" on/off. Reload page to verify state persistence.
 7.  **Perpetual**: Set type to "Developer". Verify Expiry Date shows appropriately (e.g., "Never" or far future).
 8.  **Empty State**: Provision a new domain via the "Initialize Workspace" card if no domains exist.

@@ -118,7 +118,7 @@ class VAPTC_DB
   /**
    * Add or update domain
    */
-  public static function update_domain($domain, $is_wildcard = 0, $license_id = '', $license_type = 'standard', $manual_expiry_date = null, $auto_renew = 0, $renewals_count = 0)
+  public static function update_domain($domain, $is_wildcard = 0, $license_id = '', $license_type = 'standard', $manual_expiry_date = null, $auto_renew = 0, $renewals_count = 0, $renewal_history = null)
   {
     global $wpdb;
     $table = $wpdb->prefix . 'vaptc_domains';
@@ -129,7 +129,13 @@ class VAPTC_DB
 
     // Only set first_activated_at if it's new and we have a license
     if (!$first_activated_at && $license_id) {
-        $first_activated_at = current_time('mysql');
+      $first_activated_at = current_time('mysql');
+    }
+
+    // [SAFETY] Check if column exists
+    $column_exists = $wpdb->get_results($wpdb->prepare("SHOW COLUMNS FROM $table LIKE %s", 'renewal_history'));
+    if (empty($column_exists)) {
+      $wpdb->query("ALTER TABLE $table ADD COLUMN renewal_history TEXT DEFAULT NULL AFTER renewals_count");
     }
 
     return $wpdb->replace(
@@ -143,8 +149,9 @@ class VAPTC_DB
         'manual_expiry_date' => $manual_expiry_date,
         'auto_renew'         => $auto_renew,
         'renewals_count'     => $renewals_count,
+        'renewal_history'    => is_array($renewal_history) ? json_encode($renewal_history) : $renewal_history,
       ),
-      array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
+      array('%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s')
     );
   }
 

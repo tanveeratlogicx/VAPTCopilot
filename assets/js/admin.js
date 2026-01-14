@@ -98,30 +98,521 @@ window.vaptmScriptLoaded = true;
     return el(Modal, {
       title: __('Confirmation', 'vapt-Copilot'),
       onRequestClose: onCancel,
-      style: { maxWidth: '450px' },
-      className: 'vaptm-confirm-modal'
+      className: 'vaptm-modal vaptm-confirm-modal'
     }, [
-      el('div', { style: { display: 'flex', gap: '15px', alignItems: 'flex-start', marginBottom: '20px' } }, [
-        el(Icon, {
-          icon: 'warning',
-          size: 32,
-          style: {
-            color: '#d97706',
-            background: '#fffbeb',
-            padding: '8px',
-            borderRadius: '50%',
-            flexShrink: 0
-          }
-        }),
-        el('div', { style: { paddingTop: '4px' } }, [
-          el('h3', { style: { margin: '0 0 8px 0', fontSize: '16px', fontWeight: 600 } }, __('Are you sure?', 'vapt-Copilot')),
-          el('p', { style: { margin: 0, fontSize: '14px', color: '#4b5563', lineHeight: '1.5', whiteSpace: 'pre-line' } }, message)
+      el('div', { className: 'vaptm-modal-body' }, [
+        el('div', { style: { display: 'flex', gap: '15px', alignItems: 'flex-start', marginBottom: '20px' } }, [
+          el(Icon, {
+            icon: 'warning',
+            size: 32,
+            style: {
+              color: '#d97706',
+              background: '#fffbeb',
+              padding: '8px',
+              borderRadius: '50%',
+              flexShrink: 0
+            }
+          }),
+          el('div', { style: { paddingTop: '4px' } }, [
+            el('h3', { style: { margin: '0 0 8px 0', fontSize: '16px', fontWeight: 600 } }, __('Are you sure?', 'vapt-Copilot')),
+            el('p', { style: { margin: 0, fontSize: '14px', color: '#4b5563', lineHeight: '1.5', whiteSpace: 'pre-line' } }, message)
+          ])
         ])
       ]),
       el('div', { style: { display: 'flex', justifyContent: 'flex-end', gap: '10px', borderTop: '1px solid #e5e7eb', paddingTop: '15px', marginTop: '10px' } }, [
         el(Button, { isSecondary: true, onClick: onCancel }, __('Cancel', 'vapt-Copilot')),
         el(Button, { isDestructive: isDestructive, isPrimary: !isDestructive, onClick: onConfirm }, confirmLabel)
       ])
+    ]);
+  };
+
+  const DomainFeatures = ({ domains, features, isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain }) => {
+    const [newDomain, setNewDomain] = useState('');
+
+    return el(PanelBody, { title: __('Domain Specific Features', 'vapt-Copilot'), initialOpen: true }, [
+      el('div', { key: 'add-domain', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'flex-end' } }, [
+        el(TextControl, {
+          label: __('Add New Domain', 'vapt-Copilot'),
+          value: newDomain,
+          onChange: (val) => setNewDomain(val),
+          placeholder: 'example.com'
+        }),
+        el(Button, {
+          isPrimary: true,
+          onClick: () => { addDomain(newDomain); setNewDomain(''); }
+        }, __('Add Domain', 'vapt-Copilot'))
+      ]),
+      el('table', { key: 'table', className: 'wp-list-table widefat fixed striped' }, [
+        el('thead', null, el('tr', null, [
+          el('th', null, __('Domain', 'vapt-Copilot')),
+          el('th', null, __('Type', 'vapt-Copilot')),
+          el('th', null, __('Features Enabled', 'vapt-Copilot')),
+          el('th', null, __('Actions', 'vapt-Copilot')),
+        ])),
+        el('tbody', null, domains.map((d) => el('tr', { key: d.id }, [
+          el('td', null, el('strong', null, d.domain)),
+          el('td', null, d.is_wildcard ? __('Wildcard', 'vapt-Copilot') : __('Standard', 'vapt-Copilot')),
+          el('td', null, `${d.features.length} ${__('Features', 'vapt-Copilot')}`),
+          el('td', null, el(Button, {
+            isSecondary: true,
+            onClick: () => { setSelectedDomain(d); setDomainModalOpen(true); }
+          }, __('Manage Features', 'vapt-Copilot')))
+        ])))
+      ]),
+      isDomainModalOpen && selectedDomain && el(Modal, {
+        key: 'modal',
+        title: sprintf(__('Features for %s', 'vapt-Copilot'), selectedDomain.domain),
+        onRequestClose: () => setDomainModalOpen(false)
+      }, [
+        el('p', null, __('Select features to enable for this domain. Only "Published" features are available.', 'vapt-Copilot')),
+        el('div', { className: 'vaptm-feature-grid' }, features.filter(f => ['implemented', 'release'].includes(f.status.toLowerCase())).map(f => el(ToggleControl, {
+          key: f.key,
+          label: f.label,
+          help: f.description,
+          checked: selectedDomain.features.includes(f.key),
+          onChange: (val) => {
+            const newFeats = val
+              ? [...selectedDomain.features, f.key]
+              : selectedDomain.features.filter(k => k !== f.key);
+            updateDomainFeatures(selectedDomain.id, newFeats);
+            setSelectedDomain({ ...selectedDomain, features: newFeats });
+          }
+        }))),
+        el('div', { style: { marginTop: '20px', textAlign: 'right' } }, el(Button, {
+          isPrimary: true,
+          onClick: () => setDomainModalOpen(false)
+        }, __('Done', 'vapt-Copilot')))
+      ])
+    ]);
+  };
+
+  const BuildGenerator = ({ domains, features, setAlertState }) => {
+    const [buildDomain, setBuildDomain] = useState('');
+    const [buildVersion, setBuildVersion] = useState('1.0.0');
+    const [whiteLabel, setWhiteLabel] = useState({
+      name: 'VAPT Master Client',
+      description: 'Custom Security Build',
+      author: 'Tan Malik'
+    });
+    const [generating, setGenerating] = useState(false);
+    const [downloadUrl, setDownloadUrl] = useState(null);
+
+    const runBuild = () => {
+      setGenerating(true);
+      setDownloadUrl(null);
+      const selectedDomain = domains.find(d => d.domain === buildDomain);
+      const buildFeatures = selectedDomain ? selectedDomain.features : features.filter(f => f.status === 'implemented').map(f => f.key);
+
+      apiFetch({
+        path: 'vaptc/v1/build/generate',
+        method: 'POST',
+        data: {
+          domain: buildDomain,
+          version: buildVersion,
+          features: buildFeatures,
+          white_label: whiteLabel
+        }
+      }).then((res) => {
+        setDownloadUrl(res.download_url);
+        setGenerating(false);
+      }).catch(() => {
+        setGenerating(false);
+        setAlertState({ message: __('Build failed!', 'vapt-Copilot') });
+      });
+    };
+
+    return el(PanelBody, { title: __('Generate Customized Plugin Build', 'vapt-Copilot'), initialOpen: true }, [
+      el('div', { key: 'form', style: { maxWidth: '600px' } }, [
+        el(SelectControl, {
+          label: __('Select Target Domain', 'vapt-Copilot'),
+          value: buildDomain,
+          options: [
+            { label: __('--- Select Domain ---', 'vapt-Copilot'), value: '' },
+            { label: __('Wildcard (Include All Implemented Features)', 'vapt-Copilot'), value: 'wildcard' },
+            ...domains.map(d => ({ label: d.domain, value: d.domain }))
+          ],
+          onChange: (val) => setBuildDomain(val)
+        }),
+        el(TextControl, {
+          label: __('Build Version', 'vapt-Copilot'),
+          value: buildVersion,
+          onChange: (val) => setBuildVersion(val)
+        }),
+        el('h3', null, __('White Label Options', 'vapt-Copilot')),
+        el(TextControl, {
+          label: __('Plugin Name', 'vapt-Copilot'),
+          value: whiteLabel.name,
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val })
+        }),
+        el(TextControl, {
+          label: __('Plugin Description', 'vapt-Copilot'),
+          value: whiteLabel.description,
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, description: val })
+        }),
+        el(TextControl, {
+          label: __('Author Name', 'vapt-Copilot'),
+          value: whiteLabel.author,
+          onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val })
+        }),
+        el(Button, {
+          isPrimary: true,
+          isLarge: true,
+          onClick: runBuild,
+          disabled: !buildDomain || generating
+        }, generating ? el(Spinner) : __('Generate Build ZIP', 'vapt-Copilot')),
+        downloadUrl && el('div', { key: 'download', style: { marginTop: '20px', padding: '15px', background: '#edeff0', borderLeft: '4px solid #00a0d2' } }, [
+          el('p', null, el('strong', null, __('Build Ready!', 'vapt-Copilot'))),
+          el(Button, {
+            isLink: true,
+            href: downloadUrl,
+            target: '_blank'
+          }, __('Click here to download your custom plugin ZIP', 'vapt-Copilot'))
+        ])
+      ])
+    ]);
+  };
+
+  const LicenseManager = ({ domains, fetchData, isSuper, loading }) => {
+    // Manage state for the selected domain (if multiple, allows switching)
+    const [selectedDomainId, setSelectedDomainId] = useState(domains.length > 0 ? domains[0].id : null);
+
+    // Derived current domain object
+    const currentDomain = domains.find(d => d.id === parseInt(selectedDomainId)) || (domains.length > 0 ? domains[0] : null);
+
+    // Local Form State
+    const [formState, setFormState] = useState({
+      license_type: 'standard',
+      manual_expiry_date: '',
+      auto_renew: false
+    });
+
+    const [isSaving, setIsSaving] = useState(false);
+    const [localStatus, setLocalStatus] = useState(null);
+    const [confirmState, setConfirmState] = useState({ isOpen: false, type: null });
+
+    // Sync form with current domain when selection changes or domain updates
+    useEffect(() => {
+      if (currentDomain && !isSaving && !loading) {
+        const newType = currentDomain.license_type || 'standard';
+        const newExpiry = currentDomain.manual_expiry_date ? currentDomain.manual_expiry_date.split(' ')[0] : '';
+        const newAuto = !!parseInt(currentDomain.auto_renew);
+
+        // Only update if actually different to prevent flickering
+        if (formState.license_type !== newType ||
+          formState.manual_expiry_date !== newExpiry ||
+          formState.auto_renew !== newAuto) {
+          setFormState({
+            license_type: newType,
+            manual_expiry_date: newExpiry,
+            auto_renew: newAuto
+          });
+        }
+      }
+    }, [currentDomain, isSaving, loading]);
+
+    const isDirty = currentDomain ? (
+      formState.license_type !== (currentDomain.license_type || 'standard') ||
+      formState.manual_expiry_date !== (currentDomain.manual_expiry_date ? currentDomain.manual_expiry_date.split(' ')[0] : '') ||
+      formState.auto_renew !== !!parseInt(currentDomain.auto_renew)
+    ) : false;
+
+    if (!currentDomain) {
+      return el(PanelBody, { title: __('License & Subscription Management', 'vapt-Copilot'), initialOpen: true },
+        el('div', { style: { padding: '30px', textAlign: 'center' } }, [
+          el('div', { style: { marginBottom: '20px', color: '#666' } }, __('No domains configured.', 'vapt-Copilot')),
+
+          // Auto-Provision for Superadmins/Admins
+          el('div', {
+            style: {
+              padding: '20px',
+              background: '#f0f6fc',
+              border: '1px solid #cce5ff',
+              borderRadius: '8px',
+              maxWidth: '500px',
+              margin: '0 auto'
+            }
+          }, [
+            el('h3', { style: { marginTop: 0 } }, __('Initialize Workspace License', 'vapt-Copilot')),
+            el('p', null, sprintf(__('Detected environment: %s', 'vapt-Copilot'), window.location.hostname)),
+            el('p', { style: { fontSize: '12px', color: '#666' } }, __('As a Superadmin, you can instantly provision a Developer License for this domain.', 'vapt-Copilot')),
+
+            el(Button, {
+              isPrimary: true,
+              isBusy: isSaving,
+              onClick: () => {
+                setIsSaving(true);
+                const hostname = window.location.hostname;
+                // Calculate 100 years from now for Developer
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 36500);
+                const expiry = tomorrow.toISOString().split('T')[0];
+
+                apiFetch({
+                  path: 'vaptc/v1/domains/update',
+                  method: 'POST',
+                  data: {
+                    domain: hostname,
+                    license_type: 'developer',
+                    auto_renew: 1,
+                    manual_expiry_date: expiry,
+                    license_id: 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+                  }
+                }).then(() => {
+                  setLocalStatus({ message: 'Domain Provisioned!', type: 'success' });
+                  fetchData(); // Will trigger re-render with new domain
+                }).catch(err => {
+                  setIsSaving(false);
+                  setLocalStatus({ message: 'Provision Failed: ' + err.message, type: 'error' });
+                });
+              }
+            }, sprintf(__('Provision %s (Developer)', 'vapt-Copilot'), window.location.hostname)),
+
+            localStatus && el('p', { style: { color: localStatus.type === 'error' ? 'red' : 'green', marginTop: '10px' } }, localStatus.message)
+          ])
+        ])
+      );
+    }
+
+    const handleUpdate = (isManualRenew = false) => {
+      setIsSaving(true);
+      setLocalStatus({
+        message: isManualRenew ? __('Performing Manual Renewal...', 'vapt-Copilot') : __('Updating License...', 'vapt-Copilot'),
+        type: 'info'
+      });
+
+      let payload = {
+        domain: currentDomain.domain,
+        license_type: formState.license_type,
+        auto_renew: formState.auto_renew ? 1 : 0,
+        manual_expiry_date: formState.manual_expiry_date,
+        renewals_count: currentDomain.renewals_count || 0 // Explicitly send current count
+      };
+
+      // Manual Renew Logic
+      if (isManualRenew) {
+        const baseDateStr = currentDomain.manual_expiry_date || new Date().toISOString().split('T')[0];
+        const parts = baseDateStr.split(' ')[0].split('-');
+        // Create date in local time at 00:00:00 using parts
+        const baseDate = new Date(parts[0], parts[1] - 1, parts[2]);
+
+        let durationDays = 30;
+        if (formState.license_type === 'pro') durationDays = 365;
+        if (formState.license_type === 'developer') durationDays = 36500; // ~100 years
+
+        baseDate.setDate(baseDate.getDate() + durationDays);
+
+        // Format back to YYYY-MM-DD manually to avoid UTC shift
+        const y = baseDate.getFullYear();
+        const m = String(baseDate.getMonth() + 1).padStart(2, '0');
+        const d = String(baseDate.getDate()).padStart(2, '0');
+        payload.manual_expiry_date = `${y}-${m}-${d}`;
+        payload.renew_source = 'manual'; // Explicitly tag as manual
+      }
+
+      apiFetch({
+        path: 'vaptc/v1/domains/update',
+        method: 'POST',
+        data: payload
+      }).then(res => {
+        if (res.success && res.domain) {
+          setLocalStatus({ message: __('License Updated!', 'vapt-Copilot'), type: 'success' });
+          return fetchData(); // Return promise to chain
+        }
+      }).catch(err => {
+        setLocalStatus({ message: __('Update Failed', 'vapt-Copilot'), type: 'error' });
+      }).finally(() => {
+        setIsSaving(false);
+        setTimeout(() => setLocalStatus(null), 3000);
+      });
+    };
+
+    const handleRollback = (type) => {
+      setConfirmState({ isOpen: true, type });
+    };
+
+    const executeRollback = () => {
+      const type = confirmState.type;
+      setConfirmState({ isOpen: false, type: null });
+
+      setIsSaving(true);
+      setLocalStatus({ message: __('Reverting Renewals...', 'vapt-Copilot'), type: 'info' });
+
+      apiFetch({
+        path: 'vaptc/v1/domains/update',
+        method: 'POST',
+        data: {
+          domain: currentDomain.domain,
+          action: type
+        }
+      }).then(res => {
+        if (res.success && res.domain) {
+          setLocalStatus({ message: __('Rollback Successful!', 'vapt-Copilot'), type: 'success' });
+          return fetchData();
+        }
+      }).catch(err => {
+        setLocalStatus({ message: __('Rollback Failed', 'vapt-Copilot'), type: 'error' });
+      }).finally(() => {
+        setIsSaving(false);
+        setTimeout(() => setLocalStatus(null), 3000);
+      });
+    };
+
+    // Helper to format date
+    const formatDate = (dateStr) => {
+      if (!dateStr || dateStr.startsWith('0000')) return __('Never / Invalid', 'vapt-Copilot');
+      return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
+    return el(PanelBody, { title: __('License & Subscription Management', 'vapt-Copilot'), initialOpen: true }, [
+      // Domain Selector (Only if multiple)
+      domains.length > 1 && el('div', { style: { marginBottom: '20px' } }, [
+        el(SelectControl, {
+          label: __('Select Domain to Manage', 'vapt-Copilot'),
+          value: selectedDomainId,
+          options: domains.map(d => ({ label: d.domain, value: d.id })),
+          onChange: setSelectedDomainId
+        })
+      ]),
+
+      el('div', { className: 'vaptm-license-grid' }, [
+        // LEFT: Status Card
+        el('div', { className: 'vaptm-license-card' }, [
+          el('h3', null, __('License Status', 'vapt-Copilot')),
+
+          el('div', { className: 'vaptm-info-row' }, [
+            el('label', null, __('Current Type', 'vapt-Copilot')),
+            el('span', { className: `vaptm-license-badge ${currentDomain.license_type || 'standard'}` },
+              (currentDomain.license_type || 'Standard').toUpperCase()
+            )
+          ]),
+
+          // First Activated (2nd Position)
+          el('div', { className: 'vaptm-info-row vaptm-stat-highlight' }, [
+            el('label', null, __('First Activated', 'vapt-Copilot')),
+            el('span', null, currentDomain.first_activated_at ? formatDate(currentDomain.first_activated_at) : __('Not Activated', 'vapt-Copilot'))
+          ]),
+
+          el('div', { className: 'vaptm-info-row' }, [
+            el('label', null, __('Expiry Date', 'vapt-Copilot')),
+            el('span', { style: { color: (currentDomain.manual_expiry_date && new Date(currentDomain.manual_expiry_date) < new Date()) ? '#d63638' : 'inherit' } },
+              formatDate(currentDomain.manual_expiry_date)
+            )
+          ]),
+
+          el('div', { className: 'vaptm-info-row vaptm-stat-highlight' }, [
+            el('label', null, __('Terms Renewed', 'vapt-Copilot')),
+            el('span', null, `${currentDomain.renewals_count || 0} Times`)
+          ]),
+
+          el('div', { className: 'vaptm-desc-text' },
+            currentDomain.license_type === 'developer'
+              ? __('Developer License: Perpetual access with no expiration.', 'vapt-Copilot')
+              : (currentDomain.license_type === 'pro'
+                ? __('Pro License: Annual renewal cycle with premium features.', 'vapt-Copilot')
+                : __('Standard License: 30-day renewal cycle.', 'vapt-Copilot'))
+          ),
+
+          // Status feedback
+          localStatus && el('div', {
+            style: {
+              marginTop: '15px',
+              padding: '8px',
+              borderRadius: '4px',
+              background: localStatus.type === 'error' ? '#fde8e8' : '#def7ec',
+              color: localStatus.type === 'error' ? '#9b1c1c' : '#03543f',
+              fontSize: '12px', textAlign: 'center'
+            }
+          }, localStatus.message)
+        ]),
+
+        // RIGHT: Update Form
+        el('div', { className: 'vaptm-license-card' }, [
+          el('h3', null, __('Update License', 'vapt-Copilot')),
+
+          el(SelectControl, {
+            label: __('License Type', 'vapt-Copilot'),
+            value: formState.license_type,
+            disabled: isSaving,
+            options: [
+              { label: 'Standard (30 Days)', value: 'standard' },
+              { label: 'Pro (One Year)', value: 'pro' },
+              { label: 'Developer (Perpetual)', value: 'developer' }
+            ],
+            onChange: (val) => {
+              // Dynamic Expiry Calculation
+              const baseDate = new Date(); // Start from today for new calculation basis
+              let durationDays = 30;
+              if (val === 'pro') durationDays = 365;
+              if (val === 'developer') durationDays = 36500; // ~100 years
+
+              baseDate.setDate(baseDate.getDate() + durationDays);
+              const newExpiry = baseDate.toISOString().split('T')[0];
+
+              setFormState({
+                ...formState,
+                license_type: val,
+                manual_expiry_date: newExpiry
+              });
+            }
+          }),
+
+          el(TextControl, {
+            label: __('New Expiry Date', 'vapt-Copilot'),
+            type: 'date',
+            value: formState.manual_expiry_date,
+            disabled: isSaving,
+            onChange: (val) => setFormState({ ...formState, manual_expiry_date: val })
+          }),
+
+          el(ToggleControl, {
+            label: __('Auto Renew', 'vapt-Copilot'),
+            checked: formState.auto_renew,
+            disabled: isSaving,
+            onChange: (val) => setFormState({ ...formState, auto_renew: val }),
+            help: __('Automatically extend expiry if active.', 'vapt-Copilot')
+          }),
+
+          el('div', { style: { display: 'flex', gap: '10px', marginTop: '20px', alignItems: 'center', flexWrap: 'wrap' } }, [
+            el(Button, {
+              isPrimary: true,
+              isBusy: isSaving && !localStatus?.message.includes('Manual'),
+              disabled: !isDirty || isSaving,
+              onClick: () => handleUpdate(false)
+            }, __('Update License', 'vapt-Copilot')),
+
+            el(Button, {
+              isSecondary: true,
+              isBusy: isSaving && localStatus?.message.includes('Manual'),
+              disabled: formState.auto_renew || isSaving,
+              onClick: () => handleUpdate(true)
+            }, __('Manual Renew', 'vapt-Copilot')),
+
+            // Correction Controls
+            (currentDomain.renewals_count > 0) && el('div', { className: 'vaptm-correction-controls' }, [
+              el(Button, {
+                className: 'is-link',
+                onClick: () => handleRollback('undo')
+              }, __('Undo Last', 'vapt-Copilot')),
+              el(Button, {
+                className: 'is-link is-destructive',
+                onClick: () => handleRollback('reset')
+              }, __('Reset Renewals', 'vapt-Copilot'))
+            ])
+          ]),
+        ])
+      ]),
+
+      // Confirmation Modal for Rollbacks
+      el(VAPTM_ConfirmModal, {
+        isOpen: confirmState.isOpen,
+        message: confirmState.type === 'undo'
+          ? __('Are you sure you want to undo the last manual renewal?', 'vapt-Copilot')
+          : __('Are you sure you want to reset all consecutive manual renewals?', 'vapt-Copilot'),
+        onConfirm: executeRollback,
+        onCancel: () => setConfirmState({ isOpen: false, type: null }),
+        confirmLabel: __('Revert Now', 'vapt-Copilot'),
+        isDestructive: confirmState.type === 'reset'
+      })
     ]);
   };
 
@@ -2216,408 +2707,8 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
     };
 
 
-    const DomainFeatures = () => {
-      const [newDomain, setNewDomain] = useState('');
-
-      return el(PanelBody, { title: __('Domain Specific Features', 'vapt-Copilot'), initialOpen: true }, [
-        el('div', { key: 'add-domain', style: { marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'flex-end' } }, [
-          el(TextControl, {
-            label: __('Add New Domain', 'vapt-Copilot'),
-            value: newDomain,
-            onChange: (val) => setNewDomain(val),
-            placeholder: 'example.com'
-          }),
-          el(Button, {
-            isPrimary: true,
-            onClick: () => { addDomain(newDomain); setNewDomain(''); }
-          }, __('Add Domain', 'vapt-Copilot'))
-        ]),
-        el('table', { key: 'table', className: 'wp-list-table widefat fixed striped' }, [
-          el('thead', null, el('tr', null, [
-            el('th', null, __('Domain', 'vapt-Copilot')),
-            el('th', null, __('Type', 'vapt-Copilot')),
-            el('th', null, __('Features Enabled', 'vapt-Copilot')),
-            el('th', null, __('Actions', 'vapt-Copilot')),
-          ])),
-          el('tbody', null, domains.map((d) => el('tr', { key: d.id }, [
-            el('td', null, el('strong', null, d.domain)),
-            el('td', null, d.is_wildcard ? __('Wildcard', 'vapt-Copilot') : __('Standard', 'vapt-Copilot')),
-            el('td', null, `${d.features.length} ${__('Features', 'vapt-Copilot')}`),
-            el('td', null, el(Button, {
-              isSecondary: true,
-              onClick: () => { setSelectedDomain(d); setDomainModalOpen(true); }
-            }, __('Manage Features', 'vapt-Copilot')))
-          ])))
-        ]),
-        isDomainModalOpen && selectedDomain && el(Modal, {
-          key: 'modal',
-          title: sprintf(__('Features for %s', 'vapt-Copilot'), selectedDomain.domain),
-          onRequestClose: () => setDomainModalOpen(false)
-        }, [
-          el('p', null, __('Select features to enable for this domain. Only "Published" features are available.', 'vapt-Copilot')),
-          el('div', { className: 'vaptm-feature-grid' }, features.filter(f => ['implemented', 'release'].includes(f.status.toLowerCase())).map(f => el(ToggleControl, {
-            key: f.key,
-            label: f.label,
-            help: f.description,
-            checked: selectedDomain.features.includes(f.key),
-            onChange: (val) => {
-              const newFeats = val
-                ? [...selectedDomain.features, f.key]
-                : selectedDomain.features.filter(k => k !== f.key);
-              updateDomainFeatures(selectedDomain.id, newFeats);
-              setSelectedDomain({ ...selectedDomain, features: newFeats });
-            }
-          }))),
-          el('div', { style: { marginTop: '20px', textAlign: 'right' } }, el(Button, {
-            isPrimary: true,
-            onClick: () => setDomainModalOpen(false)
-          }, __('Done', 'vapt-Copilot')))
-        ])
-      ]);
-    };
-
-    const BuildGenerator = () => {
-      const [buildDomain, setBuildDomain] = useState('');
-      const [buildVersion, setBuildVersion] = useState('1.0.0');
-      const [whiteLabel, setWhiteLabel] = useState({
-        name: 'VAPT Master Client',
-        description: 'Custom Security Build',
-        author: 'Tan Malik'
-      });
-      const [generating, setGenerating] = useState(false);
-      const [downloadUrl, setDownloadUrl] = useState(null);
-
-      const runBuild = () => {
-        setGenerating(true);
-        setDownloadUrl(null);
-        const selectedDomain = domains.find(d => d.domain === buildDomain);
-        const buildFeatures = selectedDomain ? selectedDomain.features : features.filter(f => f.status === 'implemented').map(f => f.key);
-
-        apiFetch({
-          path: 'vaptc/v1/build/generate',
-          method: 'POST',
-          data: {
-            domain: buildDomain,
-            version: buildVersion,
-            features: buildFeatures,
-            white_label: whiteLabel
-          }
-        }).then((res) => {
-          setDownloadUrl(res.download_url);
-          setGenerating(false);
-        }).catch(() => {
-          setGenerating(false);
-          setAlertState({ message: __('Build failed!', 'vapt-Copilot') });
-        });
-      };
-
-      return el(PanelBody, { title: __('Generate Customized Plugin Build', 'vapt-Copilot'), initialOpen: true }, [
-        el('div', { key: 'form', style: { maxWidth: '600px' } }, [
-          el(SelectControl, {
-            label: __('Select Target Domain', 'vapt-Copilot'),
-            value: buildDomain,
-            options: [
-              { label: __('--- Select Domain ---', 'vapt-Copilot'), value: '' },
-              { label: __('Wildcard (Include All Implemented Features)', 'vapt-Copilot'), value: 'wildcard' },
-              ...domains.map(d => ({ label: d.domain, value: d.domain }))
-            ],
-            onChange: (val) => setBuildDomain(val)
-          }),
-          el(TextControl, {
-            label: __('Build Version', 'vapt-Copilot'),
-            value: buildVersion,
-            onChange: (val) => setBuildVersion(val)
-          }),
-          el('h3', null, __('White Label Options', 'vapt-Copilot')),
-          el(TextControl, {
-            label: __('Plugin Name', 'vapt-Copilot'),
-            value: whiteLabel.name,
-            onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val })
-          }),
-          el(TextControl, {
-            label: __('Plugin Description', 'vapt-Copilot'),
-            value: whiteLabel.description,
-            onChange: (val) => setWhiteLabel({ ...whiteLabel, description: val })
-          }),
-          el(TextControl, {
-            label: __('Author Name', 'vapt-Copilot'),
-            value: whiteLabel.author,
-            onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val })
-          }),
-          el(Button, {
-            isPrimary: true,
-            isLarge: true,
-            onClick: runBuild,
-            disabled: !buildDomain || generating
-          }, generating ? el(Spinner) : __('Generate Build ZIP', 'vapt-Copilot')),
-          downloadUrl && el('div', { key: 'download', style: { marginTop: '20px', padding: '15px', background: '#edeff0', borderLeft: '4px solid #00a0d2' } }, [
-            el('p', null, el('strong', null, __('Build Ready!', 'vapt-Copilot'))),
-            el(Button, {
-              isLink: true,
-              href: downloadUrl,
-              target: '_blank'
-            }, __('Click here to download your custom plugin ZIP', 'vapt-Copilot'))
-          ])
-        ])
-      ]);
-    };
 
 
-    const LicenseManager = ({ domains, fetchData, isSuper }) => {
-      // Manage state for the selected domain (if multiple, allows switching)
-      const [selectedDomainId, setSelectedDomainId] = useState(domains.length > 0 ? domains[0].id : null);
-
-      // Derived current domain object
-      const currentDomain = domains.find(d => d.id === parseInt(selectedDomainId)) || (domains.length > 0 ? domains[0] : null);
-
-      // Local Form State
-      const [formState, setFormState] = useState({
-        license_type: 'standard',
-        manual_expiry_date: '',
-        auto_renew: false
-      });
-
-      const [isSaving, setIsSaving] = useState(false);
-      const [localStatus, setLocalStatus] = useState(null);
-
-      // Sync form with current domain when selection changes or domain updates
-      useEffect(() => {
-        if (currentDomain) {
-          setFormState({
-            license_type: currentDomain.license_type || 'standard',
-            manual_expiry_date: currentDomain.manual_expiry_date ? currentDomain.manual_expiry_date.split(' ')[0] : '',
-            auto_renew: !!parseInt(currentDomain.auto_renew)
-          });
-        }
-      }, [currentDomain]);
-
-      if (!currentDomain) {
-        return el(PanelBody, { title: __('License & Subscription Management', 'vapt-Copilot'), initialOpen: true },
-          el('div', { style: { padding: '30px', textAlign: 'center' } }, [
-            el('div', { style: { marginBottom: '20px', color: '#666' } }, __('No domains configured.', 'vapt-Copilot')),
-
-            // Auto-Provision for Superadmins/Admins
-            el('div', {
-              style: {
-                padding: '20px',
-                background: '#f0f6fc',
-                border: '1px solid #cce5ff',
-                borderRadius: '8px',
-                maxWidth: '500px',
-                margin: '0 auto'
-              }
-            }, [
-              el('h3', { style: { marginTop: 0 } }, __('Initialize Workspace License', 'vapt-Copilot')),
-              el('p', null, sprintf(__('Detected environment: %s', 'vapt-Copilot'), window.location.hostname)),
-              el('p', { style: { fontSize: '12px', color: '#666' } }, __('As a Superadmin, you can instantly provision a Developer License for this domain.', 'vapt-Copilot')),
-
-              el(Button, {
-                isPrimary: true,
-                isBusy: isSaving,
-                onClick: () => {
-                  setIsSaving(true);
-                  const hostname = window.location.hostname;
-                  // Calculate 100 years from now for Developer
-                  const tomorrow = new Date();
-                  tomorrow.setDate(tomorrow.getDate() + 36500);
-                  const expiry = tomorrow.toISOString().split('T')[0];
-
-                  apiFetch({
-                    path: 'vaptc/v1/domains/update',
-                    method: 'POST',
-                    data: {
-                      domain: hostname,
-                      license_type: 'developer',
-                      auto_renew: 1,
-                      manual_expiry_date: expiry,
-                      license_id: 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-                    }
-                  }).then(() => {
-                    setLocalStatus({ message: 'Domain Provisioned!', type: 'success' });
-                    fetchData(); // Will trigger re-render with new domain
-                  }).catch(err => {
-                    setIsSaving(false);
-                    setLocalStatus({ message: 'Provision Failed: ' + err.message, type: 'error' });
-                  });
-                }
-              }, sprintf(__('Provision %s (Developer)', 'vapt-Copilot'), window.location.hostname)),
-
-              localStatus && el('p', { style: { color: localStatus.type === 'error' ? 'red' : 'green', marginTop: '10px' } }, localStatus.message)
-            ])
-          ])
-        );
-      }
-
-      const handleUpdate = (isManualRenew = false) => {
-        setIsSaving(true);
-        setLocalStatus({ message: __('Updating License...', 'vapt-Copilot'), type: 'info' });
-
-        let payload = {
-          domain: currentDomain.domain,
-          license_type: formState.license_type,
-          auto_renew: formState.auto_renew ? 1 : 0,
-          manual_expiry_date: formState.manual_expiry_date
-        };
-
-        // Manual Renew Logic
-        if (isManualRenew) {
-          const baseDateStr = currentDomain.manual_expiry_date || new Date().toISOString().split('T')[0];
-          const baseDate = new Date(baseDateStr);
-
-          let durationDays = 30;
-          if (formState.license_type === 'pro') durationDays = 365;
-          if (formState.license_type === 'developer') durationDays = 36500; // ~100 years
-
-          baseDate.setDate(baseDate.getDate() + durationDays);
-          payload.manual_expiry_date = baseDate.toISOString().split('T')[0];
-        }
-
-        apiFetch({
-          path: 'vaptc/v1/domains/update',
-          method: 'POST',
-          data: payload
-        }).then(res => {
-          if (res.success && res.domain) {
-            setLocalStatus({ message: __('License Updated!', 'vapt-Copilot'), type: 'success' });
-            fetchData();
-          }
-          setIsSaving(false);
-          setTimeout(() => setLocalStatus(null), 3000);
-        }).catch(err => {
-          setLocalStatus({ message: __('Update Failed', 'vapt-Copilot'), type: 'error' });
-          setIsSaving(false);
-        });
-      };
-
-      // Helper to format date
-      const formatDate = (dateStr) => {
-        if (!dateStr || dateStr.startsWith('0000')) return __('Never / Invalid', 'vapt-Copilot');
-        return new Date(dateStr).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-      };
-
-      return el(PanelBody, { title: __('License & Subscription Management', 'vapt-Copilot'), initialOpen: true }, [
-        // Domain Selector (Only if multiple)
-        domains.length > 1 && el('div', { style: { marginBottom: '20px' } }, [
-          el(SelectControl, {
-            label: __('Select Domain to Manage', 'vapt-Copilot'),
-            value: selectedDomainId,
-            options: domains.map(d => ({ label: d.domain, value: d.id })),
-            onChange: setSelectedDomainId
-          })
-        ]),
-
-        el('div', { className: 'vaptm-license-grid' }, [
-          // LEFT: Status Card
-          el('div', { className: 'vaptm-license-card' }, [
-            el('h3', null, __('License Status', 'vapt-Copilot')),
-
-            el('div', { className: 'vaptm-info-row' }, [
-              el('label', null, __('Current Type', 'vapt-Copilot')),
-              el('span', { className: `vaptm-license-badge ${currentDomain.license_type || 'standard'}` },
-                (currentDomain.license_type || 'Standard').toUpperCase()
-              )
-            ]),
-
-            // First Activated (2nd Position)
-            el('div', { className: 'vaptm-info-row vaptm-stat-highlight' }, [
-              el('label', null, __('First Activated', 'vapt-Copilot')),
-              el('span', null, currentDomain.first_activated_at ? formatDate(currentDomain.first_activated_at) : __('Not Activated', 'vapt-Copilot'))
-            ]),
-
-            el('div', { className: 'vaptm-info-row' }, [
-              el('label', null, __('Expiry Date', 'vapt-Copilot')),
-              el('span', { style: { color: (currentDomain.manual_expiry_date && new Date(currentDomain.manual_expiry_date) < new Date()) ? '#d63638' : 'inherit' } },
-                formatDate(currentDomain.manual_expiry_date)
-              )
-            ]),
-
-            el('div', { className: 'vaptm-info-row vaptm-stat-highlight' }, [
-              el('label', null, __('Terms Renewed', 'vapt-Copilot')),
-              el('span', null, `${currentDomain.renewals_count || 0} Times`)
-            ]),
-
-            el('div', { className: 'vaptm-desc-text' },
-              currentDomain.license_type === 'developer'
-                ? __('Developer License: Perpetual access with no expiration.', 'vapt-Copilot')
-                : (currentDomain.license_type === 'pro'
-                  ? __('Pro License: Annual renewal cycle with premium features.', 'vapt-Copilot')
-                  : __('Standard License: 30-day renewal cycle.', 'vapt-Copilot'))
-            ),
-
-            // Status feedback
-            localStatus && el('div', {
-              style: {
-                marginTop: '15px',
-                padding: '8px',
-                borderRadius: '4px',
-                background: localStatus.type === 'error' ? '#fde8e8' : '#def7ec',
-                color: localStatus.type === 'error' ? '#9b1c1c' : '#03543f',
-                fontSize: '12px', textAlign: 'center'
-              }
-            }, localStatus.message)
-          ]),
-
-          // RIGHT: Update Form
-          el('div', { className: 'vaptm-license-card' }, [
-            el('h3', null, __('Update License', 'vapt-Copilot')),
-
-            el(SelectControl, {
-              label: __('License Type', 'vapt-Copilot'),
-              value: formState.license_type,
-              options: [
-                { label: 'Standard (30 Days)', value: 'standard' },
-                { label: 'Pro (One Year)', value: 'pro' },
-                { label: 'Developer (Perpetual)', value: 'developer' }
-              ],
-              onChange: (val) => {
-                // Dynamic Expiry Calculation
-                const baseDate = new Date(); // Start from today for new calculation basis
-                let durationDays = 30;
-                if (val === 'pro') durationDays = 365;
-                if (val === 'developer') durationDays = 36500; // ~100 years
-
-                baseDate.setDate(baseDate.getDate() + durationDays);
-                const newExpiry = baseDate.toISOString().split('T')[0];
-
-                setFormState({
-                  ...formState,
-                  license_type: val,
-                  manual_expiry_date: newExpiry
-                });
-              }
-            }),
-
-            el(TextControl, {
-              label: __('New Expiry Date', 'vapt-Copilot'),
-              type: 'date',
-              value: formState.manual_expiry_date,
-              onChange: (val) => setFormState({ ...formState, manual_expiry_date: val })
-            }),
-
-            el(ToggleControl, {
-              label: __('Auto Renew', 'vapt-Copilot'),
-              checked: formState.auto_renew,
-              onChange: (val) => setFormState({ ...formState, auto_renew: val }),
-              help: __('Automatically extend expiry if active.', 'vapt-Copilot')
-            }),
-
-            el('div', { style: { display: 'flex', gap: '10px', marginTop: '20px' } }, [
-              el(Button, {
-                isPrimary: true,
-                isBusy: isSaving && !localStatus?.message.includes('Manual'),
-                onClick: () => handleUpdate(false)
-              }, __('Update License', 'vapt-Copilot')),
-
-              el(Button, {
-                isSecondary: true,
-                isBusy: isSaving && localStatus?.message.includes('Manual'),
-                onClick: () => handleUpdate(true)
-              }, __('Manual Renew', 'vapt-Copilot'))
-            ])
-          ])
-        ])
-      ]);
-    };
 
     const tabs = [
       {
@@ -2670,6 +2761,7 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
           transition: 'opacity 0.3s ease-in-out'
         }
       }, saveStatus.message),
+
       el(TabPanel, {
         className: 'vaptm-main-tabs',
         activeClass: 'is-active',
@@ -2697,9 +2789,9 @@ Test Method: ${feature.test_method || 'None provided'}${includeGuidance ? `
             isPromptConfigModalOpen,
             setIsPromptConfigModalOpen
           });
-          case 'license': return el(LicenseManager, { domains, fetchData, isSuper });
-          case 'domains': return el(DomainFeatures);
-          case 'build': return el(BuildGenerator);
+          case 'license': return el(LicenseManager, { domains, fetchData, isSuper, loading });
+          case 'domains': return el(DomainFeatures, { domains, features, isDomainModalOpen, selectedDomain, setDomainModalOpen, setSelectedDomain, updateDomainFeatures, addDomain });
+          case 'build': return el(BuildGenerator, { domains, features, setAlertState });
           default: return null;
         }
       }),

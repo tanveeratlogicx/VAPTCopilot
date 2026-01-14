@@ -703,25 +703,101 @@ class VAPTC_REST
     $license_id = $request->get_param('license_id');
     $license_type = $request->get_param('license_type') ?: 'standard';
     $manual_expiry_date = $request->get_param('manual_expiry_date');
-    $auto_renew = $request->get_param('auto_renew') ? 1 : 0;
-    $renewals_count = (int) $request->get_param('renewals_count');
+    $auto_renew = $request->get_param('auto_renew') !== null ? ($request->get_param('auto_renew') ? 1 : 0) : null;
+    $action = $request->get_param('action'); // 'undo' or 'reset' or null
 
-    // Normalize Date to Midnight
+    // Get current state
+    $current = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);
+    $history = $current && !empty($current['renewal_history']) ? json_decode($current['renewal_history'], true) : array();
+
+    // Preserve existing values if not provided
+    $renewals_count = $request->has_param('renewals_count') ? (int) $request->get_param('renewals_count') : ($current ? (int)$current['renewals_count'] : 0);
+    if ($auto_renew === null && $current) $auto_renew = (int)$current['auto_renew'];
+    if ($is_wildcard === null && $current) $is_wildcard = (int)$current['is_wildcard'];
+    if ($license_id === null && $current) $license_id = $current['license_id'];
+    if ($manual_expiry_date === null && $current) $manual_expiry_date = $current['manual_expiry_date'];
+
+    // Normalize Input Date to Midnight for comparison
     if ($manual_expiry_date) {
       $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($manual_expiry_date));
     }
 
-    // Auto-Renew Logic: If enabling auto-renew on an expired license, extend it immediately
-    if ($auto_renew && $manual_expiry_date && strtotime($manual_expiry_date) < current_time('timestamp')) {
-      $duration = '+30 days';
-      if ($license_type === 'pro') $duration = '+1 year';
-      if ($license_type === 'developer') $duration = '+100 years';
+    // Rollback Safety: Use normalized timestamps for comparisons
+    $today_ts = strtotime(date('Y-m-d 00:00:00'));
+    $current_exp_ts = ($current && !empty($current['manual_expiry_date'])) ? strtotime(date('Y-m-d', strtotime($current['manual_expiry_date']))) : 0;
+    $new_exp_ts = $manual_expiry_date ? strtotime(date('Y-m-d', strtotime($manual_expiry_date))) : 0;
 
-      $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($manual_expiry_date . ' ' . $duration));
-      $renewals_count++;
+    // Handle Rollback Actions
+    if ($action === 'undo' && !empty($history)) {
+      $last = array_pop($history);
+      $days = (int) $last['duration_days'];
+      $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($current['manual_expiry_date'] . " -$days days"));
+      $renewals_count = max(0, (int)$current['renewals_count'] - 1);
+    } else if ($action === 'reset' && !empty($history)) {
+      $temp_expiry_ts = $current_exp_ts;
+      $temp_count = $renewals_count;
+
+      while (!empty($history)) {
+        $entry = end($history);
+        if ($entry['source'] === 'auto') break;
+
+        $days = (int) $entry['duration_days'];
+        $potential_expiry_ts = strtotime(date('Y-m-d 00:00:00', $temp_expiry_ts) . " -$days days");
+
+        if ($potential_expiry_ts < $today_ts) break;
+
+        array_pop($history);
+        $temp_expiry_ts = $potential_expiry_ts;
+        $temp_count = max(0, $temp_count - 1);
+      }
+      $manual_expiry_date = date('Y-m-d 00:00:00', $temp_expiry_ts);
+      $renewals_count = $temp_count;
+    }
+    // Handle Renewals (Manual vs Auto)
+    else {
+      // Detect renewal by comparing normalized timestamps
+      if ($current && $new_exp_ts > $current_exp_ts) {
+        $diff = $new_exp_ts - $current_exp_ts;
+        $days = round($diff / 86400);
+
+        if ($days > 0) {
+          $source = $request->get_param('renew_source') ?: 'manual';
+          $history[] = array(
+            'date_added' => current_time('mysql'),
+            'duration_days' => $days,
+            'license_type' => $license_type,
+            'source' => $source
+          );
+          $renewals_count++;
+        }
+      }
+
+      // Auto-Renew Logic (If expired and auto-renew is ON)
+      if ($auto_renew && $new_exp_ts < $today_ts) {
+        $duration = '+30 days';
+        $days = 30;
+        if ($license_type === 'pro') {
+          $duration = '+1 year';
+          $days = 365;
+        }
+        if ($license_type === 'developer') {
+          $duration = '+100 years';
+          $days = 36500;
+        }
+
+        $manual_expiry_date = date('Y-m-d 00:00:00', strtotime($manual_expiry_date . ' ' . $duration));
+        $renewals_count++;
+
+        $history[] = array(
+          'date_added' => current_time('mysql'),
+          'duration_days' => $days,
+          'license_type' => $license_type,
+          'source' => 'auto'
+        );
+      }
     }
 
-    VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $license_id, $license_type, $manual_expiry_date, $auto_renew, $renewals_count);
+    VAPTC_DB::update_domain($domain, $is_wildcard ? 1 : 0, $license_id, $license_type, $manual_expiry_date, $auto_renew, $renewals_count, $history);
 
     // Return fresh data for UI update
     $fresh = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}vaptc_domains WHERE domain = %s", $domain), ARRAY_A);

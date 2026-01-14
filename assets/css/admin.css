@@ -191,7 +191,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .vaptm-license-card {
@@ -294,4 +294,32 @@
     .vaptm-license-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Correction Controls */
+.vaptm-correction-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 10px;
+}
+
+.vaptm-correction-controls button.is-link {
+    font-size: 11px;
+    height: auto !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    text-decoration: underline;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+.vaptm-correction-controls button.is-link.is-destructive {
+    color: #d63638;
+}
+
+.vaptm-correction-controls button.is-link:not(.is-destructive) {
+    color: #2271b1;
 }
