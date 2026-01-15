@@ -335,6 +335,7 @@
           categories.length > 0 && el(Fragment, null, [
             el('button', {
               onClick: () => setActiveCategory('all'),
+              className: 'vaptm-sidebar-link' + (activeCategory === 'all' ? ' is-active' : ''),
               style: {
                 width: '100%', border: 'none', background: activeCategory === 'all' ? '#eff6ff' : 'transparent',
                 color: activeCategory === 'all' ? '#1d4ed8' : '#4b5563',
@@ -348,16 +349,17 @@
             ]),
             activeCategory === 'all' && el('div', {
               style: {
-                display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px',
-                padding: '10px 20px', background: '#f8fafc', borderBottom: '1px solid #e5e7eb'
+                display: 'flex', flexDirection: 'column', gap: '2px',
+                padding: '5px 0', background: '#fcfcfd', borderBottom: '1px solid #e5e7eb'
               }
             }, statusFeatures.map(f => el('div', {
               key: f.key,
               onClick: () => scrollToFeature(f.key, 'all'),
+              className: 'vaptm-workbench-link',
               style: {
-                fontSize: '10px', color: '#6b7280', cursor: 'pointer', whiteSpace: 'nowrap',
-                overflow: 'hidden', textOverflow: 'ellipsis', padding: '4px 8px', borderRadius: '4px',
-                background: '#fff', border: '1px solid #e5e7eb', transition: 'all 0.2s',
+                fontSize: '13px', color: '#64748b', cursor: 'pointer', whiteSpace: 'nowrap',
+                overflow: 'hidden', textOverflow: 'ellipsis', padding: '8px 20px',
+                transition: 'all 0.2s ease', position: 'relative', zIndex: 10
               },
               title: f.label
             }, f.label)))
@@ -369,12 +371,13 @@
             return el(Fragment, { key: cat }, [
               el('button', {
                 onClick: () => setActiveCategory(cat),
+                className: 'vaptm-sidebar-link' + (isActive ? ' is-active' : ''),
                 style: {
                   width: '100%', border: 'none', background: isActive ? '#eff6ff' : 'transparent',
                   color: isActive ? '#1d4ed8' : '#4b5563',
                   padding: '12px 20px', textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
                   borderRight: isActive ? '3px solid #1d4ed8' : 'none', fontWeight: isActive ? 600 : 500,
-                  fontSize: '14px'
+                  fontSize: '14px', position: 'relative'
                 }
               }, [
                 el('span', null, cat),
@@ -382,16 +385,17 @@
               ]),
               isActive && el('div', {
                 style: {
-                  display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px',
-                  padding: '10px 20px', background: '#f8fafc', borderBottom: '1px solid #e5e7eb'
+                  display: 'flex', flexDirection: 'column', gap: '2px',
+                  padding: '5px 0', background: '#fcfcfd', borderBottom: '1px solid #e5e7eb'
                 }
               }, catFeatures.map(f => el('div', {
                 key: f.key,
                 onClick: () => scrollToFeature(f.key, cat),
+                className: 'vaptm-workbench-link',
                 style: {
-                  fontSize: '10px', color: '#6b7280', cursor: 'pointer', whiteSpace: 'nowrap',
-                  overflow: 'hidden', textOverflow: 'ellipsis', padding: '4px 8px', borderRadius: '4px',
-                  background: '#fff', border: '1px solid #e5e7eb', transition: 'all 0.2s',
+                  fontSize: '13px', color: '#64748b', cursor: 'pointer', whiteSpace: 'nowrap',
+                  overflow: 'hidden', textOverflow: 'ellipsis', padding: '8px 20px',
+                  transition: 'all 0.2s ease', position: 'relative', zIndex: 10
                 },
                 title: f.label
               }, f.label)))

@@ -201,6 +201,21 @@ window.vaptmScriptLoaded = true;
       return filtered.filter(f => (f.category || 'Uncategorized') === activeCategory);
     }, [filteredByStatus, activeCategory]);
 
+    const featuresByCategory = useMemo(() => {
+      const grouped = {};
+      (displayFeatures || []).forEach(f => {
+        const cat = f.category || 'Uncategorized';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(f);
+      });
+      // Sort categories to ensure consistent order
+      const sortedResult = {};
+      Object.keys(grouped).sort().forEach(key => {
+        sortedResult[key] = grouped[key];
+      });
+      return sortedResult;
+    }, [displayFeatures]);
+
     return el(PanelBody, { title: __('Domain Specific Features', 'vapt-Copilot'), initialOpen: true }, [
       el('div', { key: 'add-domain-header', style: { padding: '0 0 10px', fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' } }, __('Add New Domain')),
       el('div', {
@@ -409,7 +424,7 @@ window.vaptmScriptLoaded = true;
         title: sprintf(__('Features for %s', 'vapt-Copilot'), selectedDomain.domain),
         onRequestClose: () => setDomainModalOpen(false),
         className: 'vaptm-domain-features-modal',
-        style: { maxWidth: '1000px', width: '90%' }
+        style: { maxWidth: '1400px', width: '90%' }
       }, [
         // Status Visibility Filters (Superadmin Only)
         isSuper && el('div', {
@@ -531,75 +546,75 @@ window.vaptmScriptLoaded = true;
             }
           }, [
             ((Array.isArray(displayFeatures) ? displayFeatures : []).length === 0) ? el('div', { style: { textAlign: 'center', padding: '40px', color: '#94a3b8' } }, __('No features matching the current selection.', 'vapt-Copilot')) :
-              el('div', {
-                style: {
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                  gap: '20px'
-                }
-              }, (Array.isArray(displayFeatures) ? displayFeatures : []).map(f => el('div', {
-                key: f.key,
-                className: 'vaptm-domain-feature-card',
-                style: {
-                  padding: '20px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '12px',
-                  background: '#fff',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                }
-              }, [
-                el('div', { style: { marginBottom: '20px' } }, [
-                  el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' } }, [
-                    el('h4', { style: { margin: 0, fontSize: '16px', fontWeight: 700, color: '#1e293b' } }, f.label),
-                    el('span', {
-                      className: `vaptm-status-pill status-${(f.status || '').toLowerCase()}`,
-                      style: {
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        background: (f.status === 'Develop' || f.status === 'develop') ? '#fee2e2' :
-                          (f.status === 'Test' || f.status === 'test') ? '#dbeafe' :
-                            (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#dcfce7' : '#f1f5f9',
-                        color: (f.status === 'Develop' || f.status === 'develop') ? '#b91c1c' :
-                          (f.status === 'Test' || f.status === 'test') ? '#1d4ed8' :
-                            (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#15803d' : '#64748b',
-                        border: '1px solid currentColor',
-                        borderOpacity: 0.1
-                      }
-                    }, f.status)
-                  ]),
-                  el('p', { style: { margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' } }, f.description)
+              Object.entries(featuresByCategory).map(([catName, catFeatures]) => el(Fragment, { key: catName }, [
+                el('h3', { className: 'vaptm-category-header' }, [
+                  el(Dashicon, { icon: 'category', size: 16 }),
+                  catName
                 ]),
-                el('div', {
+                el('div', { className: 'vaptm-feature-grid' }, catFeatures.map(f => el('div', {
+                  key: f.key,
+                  className: 'vaptm-domain-feature-card',
                   style: {
-                    marginTop: 'auto',
-                    paddingTop: '15px',
-                    borderTop: '1px solid #f1f5f9',
+                    padding: '20px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    background: '#fff',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
+                    flexDirection: 'column',
+                    transition: 'all 0.3s',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
                   }
                 }, [
-                  el('span', { style: { fontSize: '12px', fontWeight: 600, color: '#475569' } }, (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key) ? __('Active', 'vapt-Copilot') : __('Disabled', 'vapt-Copilot')),
-                  el(ToggleControl, {
-                    checked: (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key),
-                    onChange: (val) => {
-                      const newFeats = val
-                        ? [...(Array.isArray(selectedDomain.features) ? selectedDomain.features : []), f.key]
-                        : (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).filter(k => k !== f.key);
-                      updateDomainFeatures(selectedDomain.id, newFeats);
-                      setSelectedDomain({ ...selectedDomain, features: newFeats });
-                    },
-                    __nextHasNoMarginBottom: true,
-                    style: { margin: 0 }
-                  })
-                ])
-              ])))
+                  el('div', { style: { marginBottom: '20px' } }, [
+                    el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' } }, [
+                      el('h4', { style: { margin: 0, fontSize: '16px', fontWeight: 700, color: '#1e293b' } }, f.label),
+                      el('span', {
+                        className: `vaptm-status-pill status-${(f.status || '').toLowerCase()}`,
+                        style: {
+                          fontSize: '9px',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          background: (f.status === 'Develop' || f.status === 'develop') ? '#fee2e2' :
+                            (f.status === 'Test' || f.status === 'test') ? '#dbeafe' :
+                              (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#dcfce7' : '#f1f5f9',
+                          color: (f.status === 'Develop' || f.status === 'develop') ? '#b91c1c' :
+                            (f.status === 'Test' || f.status === 'test') ? '#1d4ed8' :
+                              (f.status === 'Release' || f.status === 'release' || f.status === 'implemented') ? '#15803d' : '#64748b',
+                          border: '1px solid currentColor',
+                          borderOpacity: 0.1
+                        }
+                      }, f.status)
+                    ]),
+                    el('p', { style: { margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' } }, f.description)
+                  ]),
+                  el('div', {
+                    style: {
+                      marginTop: 'auto',
+                      paddingTop: '15px',
+                      borderTop: '1px solid #f1f5f9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }
+                  }, [
+                    el('span', { style: { fontSize: '12px', fontWeight: 600, color: '#475569' } }, (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key) ? __('Active', 'vapt-Copilot') : __('Disabled', 'vapt-Copilot')),
+                    el(ToggleControl, {
+                      checked: (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).includes(f.key),
+                      onChange: (val) => {
+                        const newFeats = val
+                          ? [...(Array.isArray(selectedDomain.features) ? selectedDomain.features : []), f.key]
+                          : (Array.isArray(selectedDomain.features) ? selectedDomain.features : []).filter(k => k !== f.key);
+                        updateDomainFeatures(selectedDomain.id, newFeats);
+                        setSelectedDomain({ ...selectedDomain, features: newFeats });
+                      },
+                      __nextHasNoMarginBottom: true,
+                      style: { margin: 0 }
+                    })
+                  ])
+                ])))
+              ]))
           ])
         ]),
         el('div', { style: { marginTop: '20px', textAlign: 'right' } }, el(Button, {
@@ -614,9 +629,9 @@ window.vaptmScriptLoaded = true;
     const [buildDomain, setBuildDomain] = useState('');
     const [buildVersion, setBuildVersion] = useState('1.0.0');
     const [whiteLabel, setWhiteLabel] = useState({
-      name: 'VAPT Master Client',
+      name: 'VAPT Security',
       description: 'Custom Security Build',
-      author: 'Tan Malik'
+      author: 'Tanveer Malik'
     });
     const [generating, setGenerating] = useState(false);
     const [downloadUrl, setDownloadUrl] = useState(null);
@@ -658,52 +673,98 @@ window.vaptmScriptLoaded = true;
       });
     };
 
-    return el(PanelBody, { title: __('Generate Customized Plugin Build', 'vapt-Copilot'), initialOpen: true }, [
-      el('div', { key: 'form', style: { maxWidth: '600px' } }, [
-        el(SelectControl, {
-          label: __('Select Target Domain', 'vapt-Copilot'),
-          value: buildDomain,
-          options: [
-            { label: __('--- Select Domain ---', 'vapt-Copilot'), value: '' },
-            { label: __('Wildcard (Include All Implemented Features)', 'vapt-Copilot'), value: 'wildcard' },
-            ...(Array.isArray(domains) ? domains : []).map(d => ({ label: d.domain, value: d.domain }))
-          ],
-          onChange: (val) => setBuildDomain(val)
-        }),
-        el(TextControl, {
-          label: __('Build Version', 'vapt-Copilot'),
-          value: buildVersion,
-          onChange: (val) => setBuildVersion(val.trim())
-        }),
-        el('h3', null, __('White Label Options', 'vapt-Copilot')),
-        el(TextControl, {
-          label: __('Plugin Name', 'vapt-Copilot'),
-          value: whiteLabel.name,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val.trim() })
-        }),
-        el(TextControl, {
-          label: __('Plugin Description', 'vapt-Copilot'),
-          value: whiteLabel.description,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, description: val.trim() })
-        }),
-        el(TextControl, {
-          label: __('Author Name', 'vapt-Copilot'),
-          value: whiteLabel.author,
-          onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val.trim() })
-        }),
-        el(Button, {
-          isPrimary: true,
-          isLarge: true,
-          onClick: runBuild,
-          disabled: !buildDomain || generating
-        }, generating ? el(Spinner) : __('Generate Build ZIP', 'vapt-Copilot')),
-        downloadUrl && el('div', { key: 'download', style: { marginTop: '20px', padding: '15px', background: '#edeff0', borderLeft: '4px solid #00a0d2' } }, [
-          el('p', null, el('strong', null, __('Build Ready!', 'vapt-Copilot'))),
-          el(Button, {
-            isLink: true,
-            href: downloadUrl,
-            target: '_blank'
-          }, __('Click here to download your custom plugin ZIP', 'vapt-Copilot'))
+    return el('div', { className: 'vaptm-build-generator' }, [
+      el('div', { style: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' } }, [
+        el(Icon, { icon: 'hammer', size: 24 }),
+        el('h2', { style: { margin: 0, fontSize: '20px' } }, __('Generate New Build', 'vapt-Copilot'))
+      ]),
+      el('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'start' } }, [
+        // LEFT COLUMN: Configuration
+        el(Card, { style: { borderRadius: '8px', border: '1px solid #e2e8f0' } }, [
+          el(CardHeader, { style: { background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '15px 20px' } }, [
+            el('h3', { style: { margin: 0, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' } }, [
+              el(Icon, { icon: 'admin-settings', size: 16 }),
+              __('Configuration Details', 'vapt-Copilot')
+            ])
+          ]),
+          el(CardBody, { style: { padding: '25px' } }, [
+            el(SelectControl, {
+              label: __('Target Domain', 'vapt-Copilot'),
+              help: __('Use * for wildcards (e.g. *.example.com).', 'vapt-Copilot'),
+              value: buildDomain,
+              options: [
+                { label: __('--- Select Domain ---', 'vapt-Copilot'), value: '' },
+                { label: __('Wildcard (Include All Implemented Features)', 'vapt-Copilot'), value: 'wildcard' },
+                ...(Array.isArray(domains) ? domains : []).map(d => ({ label: d.domain, value: d.domain }))
+              ],
+              onChange: (val) => setBuildDomain(val)
+            }),
+            el(ToggleControl, {
+              label: __('Include Config', 'vapt-Copilot'),
+              help: __('Export current settings into the build.', 'vapt-Copilot'),
+              checked: true,
+              onChange: () => { }
+            }),
+            el(TextControl, {
+              label: __('Plugin Name', 'vapt-Copilot'),
+              value: whiteLabel.name,
+              onChange: (val) => setWhiteLabel({ ...whiteLabel, name: val })
+            }),
+            el(TextControl, {
+              label: __('Author', 'vapt-Copilot'),
+              value: whiteLabel.author,
+              onChange: (val) => setWhiteLabel({ ...whiteLabel, author: val })
+            }),
+            el('div', { style: { display: 'flex', gap: '10px', marginTop: '20px' } }, [
+              el(Button, {
+                isPrimary: true,
+                style: { flex: 1, height: '40px', background: '#357abd' },
+                onClick: runBuild,
+                disabled: generating || !buildDomain
+              }, [
+                el(Icon, { icon: 'download', size: 18 }),
+                generating ? __('Generating...', 'vapt-Copilot') : __('Download Zip', 'vapt-Copilot')
+              ]),
+              el(Button, {
+                isSecondary: true,
+                style: { flex: 1, height: '40px' },
+                onClick: () => setAlertState({ message: __('Save to Server feature pending.', 'vapt-Copilot'), type: 'info' })
+              }, [
+                el(Icon, { icon: 'upload', size: 18 }),
+                __('Save to Server', 'vapt-Copilot')
+              ])
+            ])
+          ])
+        ]),
+
+        // RIGHT COLUMN: Status
+        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '25px' } }, [
+          el('div', { style: { display: 'flex', alignItems: 'center', gap: '10px' } }, [
+            el(Icon, { icon: 'info', size: 20 }),
+            el('h3', { style: { margin: 0, fontSize: '16px' } }, __('Build Status', 'vapt-Copilot'))
+          ]),
+          el(Card, { style: { borderRadius: '8px', border: '1px solid #e2e8f0' } }, [
+            el(CardHeader, { style: { background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '15px 20px' } }, [
+              el('h4', { style: { margin: 0, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' } }, [
+                el(Icon, { icon: 'info-outline', size: 16 }),
+                __('Current Build Information', 'vapt-Copilot')
+              ])
+            ]),
+            el(CardBody, { style: { padding: '20px' } }, [
+              el('div', { style: { fontSize: '13px', color: '#64748b', lineHeight: '1.8' } }, [
+                el('div', null, [el('strong', null, __('Generated Version: ', 'vapt-Copilot')), '4.0.1']),
+                el('div', null, [el('strong', null, __('Generated At: ', 'vapt-Copilot')), 'December 26, 2025 4:07 pm']),
+                el('div', null, [el('strong', null, __('Locked Domain: ', 'vapt-Copilot')), el('code', null, 'wptest')]),
+                el('div', null, [el('strong', null, __('Imported At: ', 'vapt-Copilot')), 'December 26, 2025 4:07 pm'])
+              ]),
+              el(Button, {
+                isSecondary: true,
+                style: { width: '100%', marginTop: '20px' },
+                onClick: () => { }
+              }, __('Force Re-import from Server', 'vapt-Copilot')),
+              el('p', { style: { fontSize: '11px', color: '#94a3b8', marginTop: '10px' } }, __('Forces an import from vapt-locked-config.php regardless of domain match.', 'vapt-Copilot'))
+            ])
+          ])
         ])
       ])
     ]);
