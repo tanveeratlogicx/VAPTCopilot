@@ -1,7 +1,7 @@
 // Client Dashboard Entry Point
 // Phase 6 Implementation - IDE Workbench Redesign
 (function () {
-  console.log('VAPTC: client.js version 2.2.0 loaded');
+  console.log('VAPTC: client.js version 2.4.3 loaded');
   if (typeof wp === 'undefined') return;
 
   const { render, useState, useEffect, useMemo, Fragment, createElement: el } = wp.element || {};
@@ -29,14 +29,14 @@
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState(null);
     const [activeStatus, setActiveStatus] = useState(() => {
-      const saved = localStorage.getItem('vaptm_active_tab');
-      return saved ? saved : (isSuper ? 'Develop' : 'Release');
+      const saved = localStorage.getItem('vaptm_workbench_active_status');
+      return saved ? saved : 'Develop';
     });
     const [activeCategory, setActiveCategory] = useState('all');
     const [saveStatus, setSaveStatus] = useState(null);
 
     useEffect(() => {
-      localStorage.setItem('vaptm_active_tab', activeStatus);
+      localStorage.setItem('vaptm_workbench_active_status', activeStatus);
     }, [activeStatus]);
 
     // Auto-dismiss Success Toasts
@@ -328,9 +328,9 @@
       ]),
 
       // Main Content Area
-      el('div', { style: { display: 'flex', flexGrow: 1, overflow: 'hidden' } }, [
+      el('div', { style: { display: 'flex', flexGrow: 1, overflow: 'visible' } }, [
         // Sidebar
-        el('aside', { style: { width: '280px', borderRight: '1px solid #e5e7eb', background: '#fff', overflowY: 'auto', padding: '20px 0' } }, [
+        el('aside', { className: 'vaptm-workbench-sidebar', style: { width: '280px', borderRight: '1px solid #e5e7eb', background: '#fff', overflowY: 'auto', overflowX: 'visible', padding: '20px 0' } }, [
           el('div', { style: { padding: '0 20px 10px', fontSize: '11px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase' } }, __('Feature Categories')),
           categories.length > 0 && el(Fragment, null, [
             el('button', {
@@ -352,14 +352,16 @@
                 display: 'flex', flexDirection: 'column', gap: '2px',
                 padding: '5px 0', background: '#fcfcfd', borderBottom: '1px solid #e5e7eb'
               }
-            }, statusFeatures.map(f => el('div', {
+            }, statusFeatures.map(f => el('a', {
               key: f.key,
-              onClick: () => scrollToFeature(f.key, 'all'),
+              onClick: (e) => { e.preventDefault(); scrollToFeature(f.key, 'all'); },
               className: 'vaptm-workbench-link',
+              href: `#feature-${f.key}`,
               style: {
                 fontSize: '13px', color: '#64748b', cursor: 'pointer', whiteSpace: 'nowrap',
                 overflow: 'hidden', textOverflow: 'ellipsis', padding: '8px 20px',
-                transition: 'all 0.2s ease', position: 'relative', zIndex: 10
+                transition: 'all 0.2s ease', position: 'relative', zIndex: 10,
+                display: 'block', textDecoration: 'none'
               },
               title: f.label
             }, f.label)))
@@ -388,14 +390,16 @@
                   display: 'flex', flexDirection: 'column', gap: '2px',
                   padding: '5px 0', background: '#fcfcfd', borderBottom: '1px solid #e5e7eb'
                 }
-              }, catFeatures.map(f => el('div', {
+              }, catFeatures.map(f => el('a', {
                 key: f.key,
-                onClick: () => scrollToFeature(f.key, cat),
+                onClick: (e) => { e.preventDefault(); scrollToFeature(f.key, cat); },
                 className: 'vaptm-workbench-link',
+                href: `#feature-${f.key}`,
                 style: {
                   fontSize: '13px', color: '#64748b', cursor: 'pointer', whiteSpace: 'nowrap',
                   overflow: 'hidden', textOverflow: 'ellipsis', padding: '8px 20px',
-                  transition: 'all 0.2s ease', position: 'relative', zIndex: 10
+                  transition: 'all 0.2s ease', position: 'relative', zIndex: 10,
+                  display: 'block', textDecoration: 'none'
                 },
                 title: f.label
               }, f.label)))

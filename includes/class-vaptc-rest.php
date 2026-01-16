@@ -121,6 +121,12 @@ class VAPTC_REST
       'permission_callback' => array($this, 'check_permission'),
     ));
 
+    register_rest_route('vaptc/v1', '/build/save-config', array(
+      'methods'  => 'POST',
+      'callback' => array($this, 'save_config_to_root'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
+
     register_rest_route('vaptc/v1', '/upload-media', array(
       'methods'  => 'POST',
       'callback' => array($this, 'upload_media'),
@@ -136,6 +142,12 @@ class VAPTC_REST
     register_rest_route('vaptc/v1', '/active-file', array(
       'methods'  => array('GET', 'POST'),
       'callback' => array($this, 'handle_active_file'),
+      'permission_callback' => array($this, 'check_permission'),
+    ));
+
+    register_rest_route('vaptc/v1', '/build/sync-config', array(
+      'methods'  => 'POST',
+      'callback' => array($this, 'sync_config_from_file'),
       'permission_callback' => array($this, 'check_permission'),
     ));
   }
@@ -702,6 +714,7 @@ class VAPTC_REST
       $domain_id = $domain['id'];
       $feat_rows = $wpdb->get_results($wpdb->prepare("SELECT feature_key FROM {$wpdb->prefix}vaptc_domain_features WHERE domain_id = %d AND enabled = 1", $domain_id), ARRAY_N);
       $domain['features'] = array_column($feat_rows, 0);
+      $domain['imported_at'] = get_option('vaptc_imported_at_' . $domain['domain'], null);
     }
 
     return new WP_REST_Response($domains, 200);
@@ -920,9 +933,20 @@ class VAPTC_REST
     $zip_path = VAPTC_Build::generate($data);
 
     if (file_exists($zip_path)) {
-      // In a real scenario, we would store this and provide a hashed download link.
-      // For now, facilitating the download by returning the base64 or a redirect is tricky in REST.
-      // I'll store the zip in the uploads directory temporarily.
+      // If it was a config_only generation, handle file download directly
+      if (isset($data['generate_type']) && $data['generate_type'] === 'config_only') {
+        $upload_dir = wp_upload_dir();
+        $target_dir = $upload_dir['basedir'] . '/vaptc-builds';
+        wp_mkdir_p($target_dir);
+
+        $file_name = basename($zip_path);
+        copy($zip_path, $target_dir . '/' . $file_name);
+        $download_url = $upload_dir['baseurl'] . '/vaptc-builds/' . $file_name;
+        return new WP_REST_Response(array('success' => true, 'download_url' => $download_url), 200);
+      }
+
+      // Full Build ZIP handling
+      // Move to a public location for download (temporary)
       $upload_dir = wp_upload_dir();
       $target_dir = $upload_dir['basedir'] . '/vaptc-builds';
       wp_mkdir_p($target_dir);
@@ -936,6 +960,88 @@ class VAPTC_REST
     }
 
     return new WP_REST_Response(array('error' => 'Build failed'), 500);
+  }
+
+  public function save_config_to_root($request)
+  {
+    $domain = $request->get_param('domain');
+    $version = $request->get_param('version');
+    $features = $request->get_param('features'); // Array of keys
+
+    if (!$domain || !$version) {
+      return new WP_REST_Response(array('error' => 'Missing domain or version'), 400);
+    }
+
+    $config_content = VAPTC_Build::generate_config_content($domain, $version, $features);
+    $filename = "vapt-{$domain}-config-{$version}.php";
+    $filepath = VAPTC_PATH . $filename;
+
+    $saved = file_put_contents($filepath, $config_content);
+
+    if ($saved !== false) {
+      return new WP_REST_Response(array('success' => true, 'path' => $filepath, 'filename' => $filename), 200);
+    } else {
+      return new WP_REST_Response(array('error' => 'Failed to write config file to plugin root'), 500);
+    }
+  }
+
+  public function sync_config_from_file($request)
+  {
+    $domain = $request->get_param('domain');
+    if (!$domain) {
+      return new WP_REST_Response(array('error' => 'Missing domain'), 400);
+    }
+
+    // Look for any config file matching pattern, favoring the most recent if multiple
+    $files = glob(VAPTC_PATH . "vapt-*-config-*.php");
+    $matched_file = null;
+
+    if ($files) {
+      foreach ($files as $file) {
+        if (strpos(basename($file), "vapt-{$domain}-config-") !== false) {
+          $matched_file = $file;
+          break; // Take the first one for now, or sort by date/version
+        }
+      }
+    }
+
+    // Fallback to locked-config if specific domain config not found
+    if (!$matched_file && file_exists(VAPTC_PATH . 'vapt-locked-config.php')) {
+      $matched_file = VAPTC_PATH . 'vapt-locked-config.php';
+    }
+
+    if (!$matched_file) {
+      return new WP_REST_Response(array('error' => 'No config file found for domain: ' . $domain), 404);
+    }
+
+    // Parse File for Features
+    $content = file_get_contents($matched_file);
+    preg_match_all("/define\( 'VAPTC_FEATURE_(.*?)', true \);/", $content, $matches);
+
+    $features = array();
+    if (!empty($matches[1])) {
+      foreach ($matches[1] as $key_upper) {
+        $features[] = strtolower($key_upper);
+      }
+    }
+
+    // Also get version and domain from file if possible
+    $version = 'Unknown';
+    if (preg_match("/Build Version: (.*?)[\r\n]/", $content, $v_match)) {
+      $version = trim($v_match[1]);
+    }
+
+    // Update Imported At timestamp in Option (could assume domain-specific if needed, but simple option for now)
+    update_option('vaptc_imported_at_' . $domain, current_time('mysql'));
+    update_option('vaptc_imported_version_' . $domain, $version);
+
+    return new WP_REST_Response(array(
+      'success' => true,
+      'imported_at' => current_time('mysql'),
+      'version' => $version,
+      'features_count' => count($features),
+      'features' => $features
+    ), 200);
   }
 
   /**
